@@ -1,0 +1,22 @@
+{
+  "name": "marcus-herrmann/wireshell",
+  "description": "An extendable ProcessWire command line interface",
+  "keywords": ["processwire"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Marcus Herrmann",
+      "email": "mail@marcus-herrmann.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Wireshell\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.4.0",
+    "symfony/console": "~2.0",
+    "guzzlehttp/guzzle": "~4.0"
+  }
+}

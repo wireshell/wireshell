@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+
+<?php
+
+use Symfony\Component\Console\Application;
+use Wireshell\NewCommand;
+use Wireshell\CreateUserCommand;
+use Wireshell\CreateRoleCommand;
+use Wireshell\ServeCommand;
+
+require 'vendor/autoload.php';
+
+$app = new Application('WireShell - An extendable ProcessWire CLI', '0.1.0');
+
+$app->add(new NewCommand(new GuzzleHttp\Client));
+$app->add(new CreateUserCommand());
+$app->add(new CreateRoleCommand());
+$app->add(new ServeCommand());
+
+$app->run();
