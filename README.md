@@ -1,4 +1,5 @@
-# Wireshell - an extendable ProcessWire CLI
+# Wireshell 0.2.0
+## An extendable ProcessWire CLI
 
 Aiming for: a command line companion for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
 Since ProcessWire has a powerful API and an easy way of being bootstrapped into CLIs like this, I think such a tool has a certain potential in the PW universe.
@@ -97,6 +98,11 @@ Composer, local ProcessWire sites, Local PHP >= 5.4, OS X or Linux
 See the code, other commands can be added in easily since they are only classes. Symfony and the Console component are written in modern, comprehensible, maintainable PHP. Also, as far as the road-map for ProcessWire 3 goes it will be support Composer. So maybe there could be even more possibilities for Wireshell in the future.
 
 And what made me love Drush in the first place were commands like `drush dl modulename && drush en modulname` (Downloads and installs modules without touching the GUI). I want that for PW too! :)
+
+### Version History
+
+* 0.1.0 Initial
+* 0.2.0 Added Create Template Command, extended Create User Command
 
 ### Feedback please
 If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
