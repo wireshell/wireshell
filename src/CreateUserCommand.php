@@ -23,6 +23,7 @@ class CreateUserCommand extends PwConnector
     {
         $this
             ->setName('create-user')
+            ->setAliases(['cu', 'user'])
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address');
@@ -49,7 +50,7 @@ class CreateUserCommand extends PwConnector
 
         $user->save();
 
-        $output->writeln("<info>User '{$name}' successfully created!</info>");
+        $output->writeln("<info>User '{$name}' created successfully!</info>");
 
     }
 

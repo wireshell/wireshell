@@ -20,8 +20,10 @@ class ServeCommand extends PwConnector
      */
     protected function configure()
     {
-        $this->setName('serve');
-        $this->setDescription('Serve ProcessWire via built in PHP webserver');
+        $this
+            ->setName('serve')
+            ->setAliases(['s'])
+            ->setDescription('Serve ProcessWire via built in PHP webserver');
     }
 
     /**
