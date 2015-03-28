@@ -29,6 +29,7 @@ class CreateTemplateCommand extends PwConnector
             ->setAliases(['ct', 'template'])
             ->setDescription('Creates a ProcessWire template')
             ->addArgument('name', InputArgument::REQUIRED)
+            ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'Attach existing fields to template, comma separated')
             ->addOption('nofile', null, InputOption::VALUE_NONE, 'Prevents template file creation');
     }
 
@@ -42,6 +43,8 @@ class CreateTemplateCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $name = $input->getArgument('name');
+        $fields = explode(",", $input->getOption('fields'));
+
 
         if (wire("templates")->get("{$name}")) {
 
@@ -52,6 +55,15 @@ class CreateTemplateCommand extends PwConnector
         $fieldgroup = new \Fieldgroup();
         $fieldgroup->name = $name;
         $fieldgroup->add("title");
+
+        if ($fields) {
+            foreach ($fields as $field) {
+
+                $this->checkIfFieldExists($field, $output);
+                $fieldgroup->add($field);
+            }
+        }
+
         $fieldgroup->save();
 
         $template = new \Template();
@@ -65,6 +77,9 @@ class CreateTemplateCommand extends PwConnector
 
     }
 
+    /**
+     * @param $name
+     */
     private function createTemplateFile($name)
     {
         if ($templateFile = fopen('site/templates/' . $name . '.php', 'w')) {
@@ -72,6 +87,20 @@ class CreateTemplateCommand extends PwConnector
 
             fwrite($templateFile, $content, 1024);
             fclose($templateFile);
+        }
+    }
+
+    /**
+     * @param $field
+     * @param $output
+     * @return bool
+     */
+    private function checkIfFieldExists($field, $output)
+    {
+        if (!wire("fields")->get("{$field}")) {
+            $output->writeln("<comment>Field '{$field}' does not exist!</comment>");
+
+            return false;
         }
     }
 
