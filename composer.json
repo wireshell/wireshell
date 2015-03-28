@@ -1,5 +1,5 @@
 {
-  "name": "marcus-herrmann/wireshell",
+  "name": "wireshell/wireshell",
   "description": "An extendable ProcessWire command line interface",
   "keywords": ["processwire"],
   "license": "MIT",
