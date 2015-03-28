@@ -25,7 +25,7 @@ class CreateRoleCommand extends PwConnector
     {
         $this
             ->setName('create-role')
-            ->setAliases(['cr', 'role'])
+            ->setAliases(['c-r', 'role'])
             ->setDescription('Creates a ProcessWire role')
             ->addArgument('name', InputArgument::REQUIRED);
     }
