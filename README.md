@@ -1,4 +1,4 @@
-# Wireshell 0.2.0
+# Wireshell 0.2.1
 ## An extendable ProcessWire CLI
 
 Aiming for: a command line companion for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -22,34 +22,34 @@ Downloads and unzips ProcessWires master branch into current directory. Use `--d
 #### Create-user
 
 ```
-    $ wireshell create-user otto
+    $ wireshell create:user otto
 ```
 
 Creating a user called otto. Use `--email=otto@example.org` option to provide the email for that user. Use `--roles=superuser,editor` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
 
-**Alias:** `$ wireshell c-u`
+**Alias:** `$ wireshell c:u`
 
 
 #### Create-role
 
 ```
-    $ wireshell create-role editor
+    $ wireshell create:role editor
 ```
 
 Creating a role named editor.
 
-**Alias:** `$ wireshell c-r`
+**Alias:** `$ wireshell c:r`
 
 
 #### Create-template
 
 ```
-    $ wireshell create-template contact
+    $ wireshell create:template contact
 ```
 
 Creating a template called contact, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Use `--fields=body,website` to attach existing fields to the template. Field `title` is attached by default.
 
-**Alias:** `$ wireshell c-t`
+**Alias:** `$ wireshell c:t`
 
 
 #### Serve
@@ -101,8 +101,9 @@ And what made me love Drush in the first place were commands like `drush dl modu
 
 ### Version History
 
-* 0.1.0 Initial
+* 0.2.1 Change package name, change command wording
 * 0.2.0 Added Create Template Command, extended Create User Command
+* 0.1.0 Initial
 
 ### Feedback please
 If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
