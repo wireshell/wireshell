@@ -8,12 +8,13 @@ use Wireshell\CreateUserCommand;
 use Wireshell\CreateRoleCommand;
 use Wireshell\CreateTemplateCommand;
 use Wireshell\ServeCommand;
+use GuzzleHttp\Client;
 
 require 'vendor/autoload.php';
 
 $app = new Application('WireShell - An extendable ProcessWire CLI', '0.1.0');
 
-$app->add(new NewCommand(new GuzzleHttp\Client));
+$app->add(new NewCommand(new Client));
 $app->add(new CreateUserCommand());
 $app->add(new CreateRoleCommand());
 $app->add(new CreateTemplateCommand());
