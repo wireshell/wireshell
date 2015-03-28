@@ -54,7 +54,7 @@ class CreateTemplateCommand extends PwConnector
         $fieldgroup->name = $name;
         $fieldgroup->add("title");
 
-        if ($fields) {
+        if ($input->getOption('fields')) {
             foreach ($fields as $field) {
 
                 $this->checkIfFieldExists($field, $output);
