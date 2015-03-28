@@ -3,11 +3,11 @@
 <?php
 
 use Symfony\Component\Console\Application;
-use Wireshell\NewCommand;
-use Wireshell\CreateUserCommand;
-use Wireshell\CreateRoleCommand;
-use Wireshell\CreateTemplateCommand;
-use Wireshell\ServeCommand;
+use Wireshell\Commands\NewCommand;
+use Wireshell\Commands\CreateUserCommand;
+use Wireshell\Commands\CreateRoleCommand;
+use Wireshell\Commands\CreateTemplateCommand;
+use Wireshell\Commands\ServeCommand;
 use GuzzleHttp\Client;
 
 require 'vendor/autoload.php';

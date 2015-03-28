@@ -1,7 +1,8 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwConnector;
 
 /**
  * Class ServeCommand
