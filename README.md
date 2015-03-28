@@ -5,19 +5,62 @@ Since ProcessWire has a powerful API and an easy way of being bootstrapped into 
 
 It's totally not the first approach of this kind. But: this one should be easily extendable - and is based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible, and so on.
 
-![Wireshell](http://dateien.marcus.io/wireshell-screenshot.png)
-
 ### Commands
-Right now, these are the only commands, but I'm just beginning toying around and trying things out. But I guess you can tell from them where's Wireshell is headed:
 
-    $ wireshell new # downloading PW master branch into current directory
-    $ wireshell new --dev # downloading PW dev branch into current directory
-    $ wireshell new foobar # downloading PW master branch into foobar directory
-    $ wireshell new foobar --dev # ... dev ...
-    $ wireshell create-user otto # creating a user called "otto"
-    $ wireshell create-user otto --email="otto@example.org" # creating a user called "otto", providing email
-    $ wireshell create-role editor # creating role called editor
-    $ wireshell serve # as of now only a wrapper for 'php -S localhost:8000, but fires the small PHP web server and lets you bypass the configuration of a virtual host (the database environment must be present, though)
+Currently, Wireshell  consists of the following basic commands:
+
+#### New
+
+```
+    $ wireshell new
+```
+
+Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.
+
+
+#### Create-user
+
+```
+    $ wireshell create-user otto
+```
+
+Creating a user called otto. Use `--email=otto@example.org` option to provide the email for that user. Use `--roles=superuser,editor` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
+
+**Alias:** `$ wireshell c-u`
+
+
+#### Create-role
+
+```
+    $ wireshell create-role editor
+```
+
+Creating a role named editor.
+
+**Alias:** `$ wireshell c-r`
+
+
+#### Create-template
+
+```
+    $ wireshell create-template contact
+```
+
+Creating a template called contact, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Use `--fields=body,website` to attach existing fields to the template. Field `title` is attached by default.
+
+**Alias:** `$ wireshell c-t`
+
+
+#### Serve
+
+```
+    $ wireshell serve
+```
+
+A wrapper for 'php -S localhost:8000,  fires the small PHP web server and lets you bypass the configuration of a virtual host (the database environment must be present, though). Mainly an example for passing through console commands.
+
+**Alias:** `$ wireshell s`
+
 
 
 ### Installation (on unix-based systems)
