@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Marcus Herrmann
  */
 
-class CreateUserCommand extends PwConnector
+class CreateUserCommand extends PwUserTools
 {
 
     /**
@@ -25,7 +25,8 @@ class CreateUserCommand extends PwConnector
             ->setAliases(['c-u', 'user'])
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
-            ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address');
+            ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
+            ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
     }
 
     /**
@@ -38,6 +39,7 @@ class CreateUserCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $name = $input->getArgument('name');
+        $roles = explode(",", $input->getOption('roles'));
 
         if (!wire("pages")->get("name={$name}") instanceof \NullPage) {
 
@@ -49,7 +51,11 @@ class CreateUserCommand extends PwConnector
 
         $user->save();
 
-        $output->writeln("<info>User '{$name}' created successfully!</info>");
+        if ($input->getOption('roles')) {
+            $this->attachRolesToUser($name, $roles, $output);
+        }
+
+        $output->writeln("<info>User '{$name}' created successfully! Please do not forget to set a password.</info>");
 
     }
 
