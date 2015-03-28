@@ -17,8 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateTemplateCommand extends PwConnector
 {
 
-    use PwUserTrait;
-
     /**
      * Configures the current command.
      */

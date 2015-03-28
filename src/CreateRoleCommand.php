@@ -15,9 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateRoleCommand extends PwConnector
 {
-
-    use PwUserTrait;
-
     /**
      * Configures the current command.
      */

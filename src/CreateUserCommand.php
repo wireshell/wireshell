@@ -14,7 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateUserCommand extends PwConnector
 {
-    use PwUserTrait;
 
     /**
      * Configures the current command.

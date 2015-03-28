@@ -1,9 +1,10 @@
 <?php namespace Wireshell;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * PwUserTrait
+ * PwUserTools
  *
  * Reusable methods for both user and role creation
  *
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
  * @author Marcus Herrmann
  */
 
-trait PwUserTrait
+class PwUserTools extends PwConnector
 {
     /**
      * @param $name
@@ -20,7 +21,7 @@ trait PwUserTrait
     public function createRole($name, $roleContainer)
     {
         $user = new \Page();
-        $user->template = 'user';
+        $user->template = 'role';
         $user->setOutputFormatting(false);
 
         $user->parent = $roleContainer;
@@ -44,9 +45,43 @@ trait PwUserTrait
         $user->name = $name;
         $user->title = $name;
 
+
         $email = $input->getOption('email');
         if ($email) $user->email = $email;
 
         return $user;
+    }
+
+    /**
+     * @param $user
+     * @param $roles
+     * @return mixed
+     */
+    public function attachRolesToUser($user, $roles, $output)
+    {
+        $editedUser = wire('users')->get($user);
+
+        foreach ($roles as $role) {
+            $this->checkIfRoleExists($role, $output);
+
+            $editedUser->addRole($role);
+            $editedUser->save();
+        }
+
+        return $editedUser;
+    }
+
+    /**
+     * @param $role
+     * @param $output
+     * @return bool
+     */
+    private function checkIfRoleExists($role, $output)
+    {
+        if (wire("pages")->get("name={$role}") instanceof \NullPage) {
+            $output->writeln("<comment>Role '{$role}' does not exist!</comment>");
+
+            return false;
+        }
     }
 }
