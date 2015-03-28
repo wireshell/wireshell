@@ -21,8 +21,8 @@ class CreateUserCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('create-user')
-            ->setAliases(['c-u', 'user'])
+            ->setName('create:user')
+            ->setAliases(['c:u', 'c-u', 'create:user'])
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
