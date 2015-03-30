@@ -8,6 +8,7 @@ use Wireshell\CreateUserCommand;
 use Wireshell\CreateRoleCommand;
 use Wireshell\CreateTemplateCommand;
 use Wireshell\ServeCommand;
+use Wireshell\OneclickCommand;
 use GuzzleHttp\Client;
 
 require 'vendor/autoload.php';
@@ -19,5 +20,6 @@ $app->add(new CreateUserCommand());
 $app->add(new CreateRoleCommand());
 $app->add(new CreateTemplateCommand());
 $app->add(new ServeCommand());
+$app->add(new OneclickCommand());
 
 $app->run();
