@@ -40,16 +40,21 @@ class OneclickCommand extends Command
      * @var Filesystem
      */
     private $fs;
+
     private $projectName;
+
     private $projectDir;
+
     private $version;
+
     private $compressedFilePath;
+
     private $requirementsErrors = array();
 
     private $installer;
-    private $compressedProfilePath;
 
     private $master = 'https://github.com/ryancramerdesign/ProcessWire/archive/master.zip';
+
     private $dev = 'https://github.com/ryancramerdesign/ProcessWire/archive/dev.zip';
 
     /**
@@ -108,8 +113,7 @@ class OneclickCommand extends Command
                 ->download($branch)
                 ->extract()
                 ->cleanUp()
-                ->downloadProfile($profile)
-                ->extractProfile()
+                ->extractProfile($profile)
                 ->checkProcesswireRequirements();
 
             $helper = $this->getHelper('question');
@@ -543,86 +547,9 @@ class OneclickCommand extends Command
         return 2 === count(scandir($dir.'/'));
     }
 
-    private function downloadProfile($profile)
+    private function extractProfile($profile)
     {
         if (! $profile) {
-            return $this;
-        }
-        $this->output->writeln("\n Downloading profile...");
-        // decide which is the best compressed version to download
-        $distill = new Distill();
-        $pwArchiveFile = $distill
-            ->getChooser()
-            ->setStrategy(new MinimumSize())
-            ->addFile($profile)
-            ->getPreferredFile()
-        ;
-
-        /** @var ProgressBar|null $progressBar */
-        $progressBar = null;
-        $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
-            // Don't initialize the progress bar for redirects as the size is much smaller
-            if ($response->getStatusCode() >= 300) {
-                return;
-            }
-
-            if (null === $progressBar) {
-                ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
-                    return $this->formatSize($bar->getMaxSteps());
-                });
-                ProgressBar::setPlaceholderFormatterDefinition('current', function (ProgressBar $bar) {
-                    return str_pad($this->formatSize($bar->getStep()), 11, ' ', STR_PAD_LEFT);
-                });
-
-                $progressBar = new ProgressBar($this->output, $size);
-                $progressBar->setFormat('%current%/%max% %bar%  %percent:3s%%');
-                $progressBar->setRedrawFrequency(max(1, floor($size / 1000)));
-                $progressBar->setBarWidth(60);
-
-                if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
-                    $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
-                    $progressBar->setProgressCharacter('');
-                    $progressBar->setBarCharacter('▓'); // dark shade character \u2593
-                }
-
-                $progressBar->start();
-            }
-
-            $progressBar->setProgress($downloaded);
-        };
-
-        $client = new Client();
-        $client->getEmitter()->attach(new Progress(null, $downloadCallback));
-
-        // store the file in a temporary hidden directory with a random name
-        $this->compressedProfilePath = getcwd().DIRECTORY_SEPARATOR.'.'.uniqid(time()).DIRECTORY_SEPARATOR.'profile.'.pathinfo($pwArchiveFile, PATHINFO_EXTENSION);
-
-        try {
-            $response = $client->get($pwArchiveFile);
-        } catch (ClientException $e) {
-            if ($e->getCode() === 403 || $e->getCode() === 404) {
-                throw new \RuntimeException("The file does not exist.\n");
-            } else {
-                throw new \RuntimeException(sprintf(
-                    "Couldn't be downloaded because of the following error:\n%s",
-                    $e->getMessage()
-                ));
-            }
-        }
-
-        $this->fs->dumpFile($this->compressedProfilePath, $response->getBody());
-
-        if (null !== $progressBar) {
-            $progressBar->finish();
-            $this->output->writeln("\n");
-        }
-
-        return $this;
-    }
-
-    private function extractProfile()
-    {
-        if (! $this->compressedProfilePath) {
             return $this;
         }
         $this->output->writeln(" Extracting profile...\n");
@@ -630,7 +557,7 @@ class OneclickCommand extends Command
         try {
             $distill = new Distill();
             $extractPath = getcwd().DIRECTORY_SEPARATOR.'.'.uniqid(time()).DIRECTORY_SEPARATOR.'pwprofile';
-            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedProfilePath, $extractPath);
+            $extractionSucceeded = $distill->extractWithoutRootDirectory($profile, $extractPath);
             if ($extractionSucceeded) {
                 try {
                     $this->fs->mirror($extractPath, $this->projectDir . '/');
