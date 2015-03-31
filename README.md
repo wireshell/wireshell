@@ -10,6 +10,30 @@ It's totally not the first approach of this kind. But: this one should be easily
 
 Currently, Wireshell  consists of the following basic commands:
 
+#### Fresh installation
+
+```
+$ wireshell one-click-install /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com
+```
+
+If you don't pass the values, it will ask interactively.
+
+#### Profile installation
+
+```
+$ wireshell one-click-install /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com --profile=/path/to.zip
+```
+
+You can also install profiles. Current structure of zip is as
+
+```
+myprofile/
+    site-default/
+        modules
+        templates
+    composer.json
+```
+
 #### New
 
 ```
@@ -70,7 +94,7 @@ Wireshell uses Composer to manage its dependencies.
 1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
 2. Download/clone Wireshell.
 3. Via console, navigate into the folder where you downloaded Wireshell into
-	OR
+    OR
 3. Put all the Wireshell files into the root of a local ProcessWire installation
 4. CHMOD the "wireshell" file executable
 5. `$ composer install`
