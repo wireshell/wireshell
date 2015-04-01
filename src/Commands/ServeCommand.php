@@ -6,6 +6,7 @@ use Wireshell\PwConnector;
 
 /**
  * Class ServeCommand
+ *
  * Example command for passthru()
  *
  * @package Wireshell
@@ -35,7 +36,7 @@ class ServeCommand extends PwConnector
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $this->checkForProcessWire($output);
+        parent::checkForProcessWire($output);
 
         $output->writeln("Starting PHP server at localhost:8000");
         passthru("php -S localhost:8000");

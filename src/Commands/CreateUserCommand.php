@@ -7,6 +7,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\PwUserTools;
 
 /**
+ * Class CreateUserCommand
+ *
  * Creating ProcessWire users
  *
  * @package Wireshell
