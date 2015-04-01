@@ -13,7 +13,7 @@ Currently, Wireshell  consists of the following basic commands:
 #### Fresh installation
 
 ```
-$ wireshell one-click-install /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com
+$ wireshell new /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com
 ```
 
 If you don't pass the values, it will ask interactively.
@@ -34,10 +34,10 @@ myprofile/
     composer.json
 ```
 
-#### New
+#### Download only
 
 ```
-    $ wireshell new
+    $ wireshell new path --no-install
 ```
 
 Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.
