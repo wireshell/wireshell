@@ -14,7 +14,7 @@ use GuzzleHttp\Client;
 
 require 'vendor/autoload.php';
 
-$app = new Application('WireShell - An extendable ProcessWire CLI', '0.1.0');
+$app = new Application('WireShell - An extendable ProcessWire CLI', '0.2.1');
 
 $app->add(new NewCommand(new Client));
 $app->add(new CreateUserCommand());
