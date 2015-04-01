@@ -1,11 +1,14 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwUserTools;
 
 /**
+ * Class CreateUserCommand
+ *
  * Creating ProcessWire users
  *
  * @package Wireshell
@@ -21,8 +24,8 @@ class CreateUserCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('create-user')
-            ->setAliases(['c-u', 'user'])
+            ->setName('create:user')
+            ->setAliases(['c:u', 'c-u', 'create:user'])
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')

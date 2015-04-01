@@ -3,23 +3,24 @@
 <?php
 
 use Symfony\Component\Console\Application;
-use Wireshell\NewCommand;
-use Wireshell\CreateUserCommand;
-use Wireshell\CreateRoleCommand;
-use Wireshell\CreateTemplateCommand;
-use Wireshell\ServeCommand;
-use Wireshell\OneclickCommand;
+use Wireshell\Commands\NewCommand;
+use Wireshell\Commands\CreateUserCommand;
+use Wireshell\Commands\CreateRoleCommand;
+use Wireshell\Commands\CreateTemplateCommand;
+use Wireshell\Commands\ServeCommand;
+use Wireshell\Commands\ShowVersionCommand;
+
 use GuzzleHttp\Client;
 
 require 'vendor/autoload.php';
 
-$app = new Application('WireShell - An extendable ProcessWire CLI', '0.1.0');
+$app = new Application('WireShell - An extendable ProcessWire CLI', '0.2.1');
 
 $app->add(new NewCommand(new Client));
 $app->add(new CreateUserCommand());
 $app->add(new CreateRoleCommand());
 $app->add(new CreateTemplateCommand());
 $app->add(new ServeCommand());
-$app->add(new OneclickCommand());
+$app->add(new ShowVersionCommand());
 
 $app->run();
