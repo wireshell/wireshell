@@ -1,9 +1,10 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwConnector;
 
 /**
  * Class CreateTemplateCommand
@@ -23,8 +24,8 @@ class CreateTemplateCommand extends PwConnector
     public function configure()
     {
         $this
-            ->setName('create-template')
-            ->setAliases(['c-t', 'template'])
+            ->setName('create:template')
+            ->setAliases(['c:t', 'c-t', 'create_template'])
             ->setDescription('Creates a ProcessWire template')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'Attach existing fields to template, comma separated')

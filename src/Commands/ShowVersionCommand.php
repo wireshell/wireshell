@@ -1,18 +1,19 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwConnector;
 
 /**
- * Class ServeCommand
- * Example command for passthru()
+ * Class ShowVersionCommand
+ *
+ * Returns the version of the current PW installation
  *
  * @package Wireshell
- * @link http://php.net/manual/en/function.passthru.php
  * @author Marcus Herrmann
  */
 
-class ServeCommand extends PwConnector
+class ShowVersionCommand extends PwConnector
 {
 
     /**
@@ -21,9 +22,9 @@ class ServeCommand extends PwConnector
     protected function configure()
     {
         $this
-            ->setName('serve')
-            ->setAliases(['s'])
-            ->setDescription('Serve ProcessWire via built in PHP webserver');
+            ->setName('show:version')
+            ->setAliases(['s:v'])
+            ->setDescription('Show version of current PW installation');
     }
 
     /**
@@ -33,11 +34,12 @@ class ServeCommand extends PwConnector
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        
+        parent::bootstrapProcessWire($output);
 
-        $this->checkForProcessWire($output);
+        $version = wire('config')->version;
 
-        $output->writeln("Starting PHP server at localhost:8000");
-        passthru("php -S localhost:8000");
+        $output->writeln("ProcessWire {$version}");
 
     }
 }

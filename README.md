@@ -1,4 +1,4 @@
-# Wireshell 0.2.0
+# Wireshell 0.2.1
 ## An extendable ProcessWire CLI
 
 Aiming for: a command line companion for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -10,10 +10,34 @@ It's totally not the first approach of this kind. But: this one should be easily
 
 Currently, Wireshell  consists of the following basic commands:
 
-#### New
+#### Fresh installation
 
 ```
-    $ wireshell new
+$ wireshell new /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com
+```
+
+If you don't pass the values, it will ask interactively.
+
+#### Profile installation
+
+```
+$ wireshell one-click-install /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com --profile=/path/to.zip
+```
+
+You can also install profiles. Current structure of zip is as
+
+```
+myprofile/
+    site-default/
+        modules
+        templates
+    composer.json
+```
+
+#### Download only
+
+```
+    $ wireshell new path --no-install
 ```
 
 Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.
@@ -22,34 +46,34 @@ Downloads and unzips ProcessWires master branch into current directory. Use `--d
 #### Create-user
 
 ```
-    $ wireshell create-user otto
+    $ wireshell create:user otto
 ```
 
 Creating a user called otto. Use `--email=otto@example.org` option to provide the email for that user. Use `--roles=superuser,editor` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
 
-**Alias:** `$ wireshell c-u`
+**Alias:** `$ wireshell c:u`
 
 
 #### Create-role
 
 ```
-    $ wireshell create-role editor
+    $ wireshell create:role editor
 ```
 
 Creating a role named editor.
 
-**Alias:** `$ wireshell c-r`
+**Alias:** `$ wireshell c:r`
 
 
 #### Create-template
 
 ```
-    $ wireshell create-template contact
+    $ wireshell create:template contact
 ```
 
 Creating a template called contact, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Use `--fields=body,website` to attach existing fields to the template. Field `title` is attached by default.
 
-**Alias:** `$ wireshell c-t`
+**Alias:** `$ wireshell c:t`
 
 
 #### Serve
@@ -70,7 +94,7 @@ Wireshell uses Composer to manage its dependencies.
 1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
 2. Download/clone Wireshell.
 3. Via console, navigate into the folder where you downloaded Wireshell into
-	OR
+    OR
 3. Put all the Wireshell files into the root of a local ProcessWire installation
 4. CHMOD the "wireshell" file executable
 5. `$ composer install`
@@ -101,8 +125,9 @@ And what made me love Drush in the first place were commands like `drush dl modu
 
 ### Version History
 
-* 0.1.0 Initial
+* 0.2.1 Change package name, change command wording
 * 0.2.0 Added Create Template Command, extended Create User Command
+* 0.1.0 Initial
 
 ### Feedback please
 If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
