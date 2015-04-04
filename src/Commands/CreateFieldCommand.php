@@ -28,8 +28,8 @@ class CreateFieldCommand extends PwConnector
     protected function configure()
     {
         $this
-            ->setName('create:field')
-            ->setAliases(['c:f'])
+            ->setName('field:create')
+            ->setAliases(['f:c'])
             ->setDescription('Creates a field')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Label')
