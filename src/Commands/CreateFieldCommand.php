@@ -50,7 +50,39 @@ class CreateFieldCommand extends PwConnector
         $name = $input->getArgument('name');
         $label = $input->getOption('label') !== "" ? $input->getOption('label') : $name;
 
-        switch($input->getOption('type')) {
+        $type = $this->getProperFieldtypeName($input->getOption('type'));
+
+        $field = new Field();
+        $field->type  = wire('modules')->get($type);
+        $field->name = $name;
+        $field->label = $label;
+        $field->description = $input->getOption('desc');
+        $field->save();
+
+        if (!wire('fieldgroups')->get('wireshell')) {
+
+            $fieldGroup = new Fieldgroup();
+            $fieldGroup->name = 'wireshell';
+        } else {
+
+            $fieldGroup = wire('fieldgroups')->get('wireshell');
+        }
+
+        $fieldGroup->add($field);
+        $fieldGroup->save();
+
+        $output->writeln("<info>Field '{$name}' ($type) created successfully!</info>");
+
+
+    }
+
+    /**
+     * @param $suppliedType
+     * @return string
+     */
+    protected function getProperFieldtypeName($suppliedType)
+    {
+        switch ($suppliedType) {
             case "text":
                 $type = 'FieldtypeText';
                 break;
@@ -88,27 +120,6 @@ class CreateFieldCommand extends PwConnector
                 $type = 'FieldtypeText';
         }
 
-        $field = new Field();
-        $field->type  = wire('modules')->get($type);
-        $field->name = $name;
-        $field->label = $label;
-        $field->description = $input->getOption('desc');
-        $field->save();
-
-        if (!wire('fieldgroups')->get('wireshell')) {
-
-            $fieldGroup = new Fieldgroup();
-            $fieldGroup->name = 'wireshell';
-        } else {
-
-            $fieldGroup = wire('fieldgroups')->get('wireshell');
-        }
-
-        $fieldGroup->add($field);
-        $fieldGroup->save();
-
-        $output->writeln("<info>Field '{$name}' ($type) created successfully!</info>");
-
-
+        return $type;
     }
 }
