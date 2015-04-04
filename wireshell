@@ -10,6 +10,7 @@ use Wireshell\Commands\CreateTemplateCommand;
 use Wireshell\Commands\CreateFieldCommand;
 use Wireshell\Commands\ServeCommand;
 use Wireshell\Commands\ShowVersionCommand;
+use Wireshell\Commands\TemplateFieldsCommand;
 
 
 require 'vendor/autoload.php';
@@ -22,5 +23,6 @@ $app->add(new CreateTemplateCommand());
 $app->add(new CreateFieldCommand());
 $app->add(new ServeCommand());
 $app->add(new ShowVersionCommand());
+$app->add(new TemplateFieldsCommand());
 
 $app->run();
