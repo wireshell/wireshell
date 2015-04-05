@@ -26,7 +26,7 @@ class ModuleDisableCommand extends PwConnector
             ->setName('mod:disable')
             ->setAliases(['m:e'])
             ->setDescription('Disable provided module(s)')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma seperated: Foo,Bar');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar');
     }
 
     /**
