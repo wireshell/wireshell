@@ -17,6 +17,7 @@
   "require": {
     "php": ">=5.4.0",
     "symfony/console": "~2.0",
-    "guzzlehttp/guzzle": "~4.0"
+    "guzzlehttp/guzzle": "~4.0",
+    "rah/danpu": "~2.6"
   }
 }

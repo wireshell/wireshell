@@ -12,6 +12,7 @@ use Wireshell\Commands\ServeCommand;
 use Wireshell\Commands\ShowVersionCommand;
 use Wireshell\Commands\TemplateFieldsCommand;
 
+use Wireshell\Commands\BackupCommand;
 
 require 'vendor/autoload.php';
 
@@ -24,5 +25,6 @@ $app->add(new CreateFieldCommand());
 $app->add(new ServeCommand());
 $app->add(new ShowVersionCommand());
 $app->add(new TemplateFieldsCommand());
+$app->add(new BackupCommand());
 
 $app->run();
