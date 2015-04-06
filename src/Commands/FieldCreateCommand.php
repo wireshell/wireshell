@@ -34,7 +34,7 @@ class FieldCreateCommand extends PwConnector
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Label')
             ->addOption('desc', null, InputOption::VALUE_REQUIRED, 'Description')
-            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of field: text, image, select');
+            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of field: text|textarea|email|datetime|checkbox|file|float|image|integer|page|url');
     }
 
     /**
