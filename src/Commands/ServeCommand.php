@@ -24,7 +24,6 @@ class ServeCommand extends PwConnector
     {
         $this
             ->setName('serve')
-            ->setAliases(['s'])
             ->setDescription('Serve ProcessWire via built in PHP webserver');
     }
 
