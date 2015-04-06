@@ -6,14 +6,38 @@ Since ProcessWire has a powerful API and an easy way of being bootstrapped into 
 
 It's totally not the first approach of this kind. But: this one should be easily extendable - and is based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible, and so on.
 
-### Commands
+### New
 
 Currently, Wireshell  consists of the following basic commands:
 
-#### New
+#### Fresh installation
 
 ```
-    $ wireshell new
+$ wireshell new /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com
+```
+
+If you don't pass the values, it will ask interactively.
+
+#### Profile installation
+
+```
+$ wireshell new /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com --profile=/path/to.zip
+```
+
+You can also install profiles. Current structure of zip is as
+
+```
+myprofile/
+    site-default/
+        modules
+        templates
+    composer.json
+```
+
+#### Download only
+
+```
+    $ wireshell new /path/where/to/install --no-install
 ```
 
 Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.
@@ -70,7 +94,7 @@ Wireshell uses Composer to manage its dependencies.
 1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
 2. Download/clone Wireshell.
 3. Via console, navigate into the folder where you downloaded Wireshell into
-	OR
+    OR
 3. Put all the Wireshell files into the root of a local ProcessWire installation
 4. CHMOD the "wireshell" file executable
 5. `$ composer install`
