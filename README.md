@@ -175,7 +175,7 @@ Connects to MySQL database and dumps its complete content into an sql file in th
 --filename=some_filename
 ```
 
-### Installation (on unix-based systems)
+## Installation (on unix-based systems)
 Wireshell uses Composer to manage its dependencies.
 
 1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
@@ -191,34 +191,34 @@ Wireshell uses Composer to manage its dependencies.
 I'll either wrap Wireshell into a PHAR or submit it to packagist.org for an easier installation process soon.
 
 
-### Target group
+## Target group
 Comparable to the usage context of (Laravel) Artisan and Drush, I see Wireshell as a tool aiming to help at local development, and aimed at developers who use the console anyway. So if you're developing locally and dealing with many local installations, the tool could help you in speeding things up.
 
-### Current state
+## Current state
 Wireshell is still in an early phase. If you encounter bugs, please report them in the project's GitHub Issues. Cheers!
 
-### Prerequisites
+## Prerequisites
 Composer, local ProcessWire sites, Local PHP >= 5.4, OS X or Linux
 
-### Technical Background
+## Technical Background
 [The Symfony Console component](http://symfony.com/doc/current/components/console/introduction.html). NewCommand mainly consists of Taylor Otwell's [Laravel Installer](https://github.com/laravel/installer), and partly methods from [Somas PW Online installer](https://github.com/somatonic/PWOnlineInstaller) (moving all PW files a "folder up" after de-zipping the received files from GitHub). Also, big thanks to this PHP Screencast series: [https://laracasts.com/series/how-to-build-command-line-apps-in-php/]
 
-### Potential
+## Potential
 See the code, other commands can be added in easily since they are only classes. Symfony and the Console component are written in modern, comprehensible, maintainable PHP. Also, as far as the road-map for ProcessWire 3 goes it will be support Composer. So maybe there could be even more possibilities for Wireshell in the future.
 
 And what made me love Drush in the first place were commands like `drush dl modulename && drush en modulname` (Downloads and installs modules without touching the GUI). I want that for PW too! :)
 
-### Version History
+## Version History
 
 * 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
 * 0.2.1 Change package name, change command wording
 * 0.2.0 Added Create Template Command, extended Create User Command
 * 0.1.0 Initial
 
-### Acknowledgements
+## Acknowledgements
 [HariKT](https://github.com/harikt) for his big contribution of a real "NewCommand" and command line based installer within Wireshell!
 
-### Feedback please
+## Feedback please
 If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
 
 
