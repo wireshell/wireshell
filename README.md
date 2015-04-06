@@ -6,7 +6,7 @@ Since ProcessWire has a powerful API and an easy way of being bootstrapped into 
 
 It's totally not the first approach of this kind. But: this one should be easily extendable - and is based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible, and so on.
 
-### Commands
+### New
 
 Currently, Wireshell  consists of the following basic commands:
 
@@ -21,7 +21,7 @@ If you don't pass the values, it will ask interactively.
 #### Profile installation
 
 ```
-$ wireshell one-click-install /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com --profile=/path/to.zip
+$ wireshell new /path/where/to/install --dbUser=db-user --dbName=db-name --dbPass=db-password --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234 --useremail=someone@example.com --profile=/path/to.zip
 ```
 
 You can also install profiles. Current structure of zip is as
@@ -37,7 +37,7 @@ myprofile/
 #### Download only
 
 ```
-    $ wireshell new path --no-install
+    $ wireshell new /path/where/to/install --no-install
 ```
 
 Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.

@@ -100,7 +100,6 @@ class NewCommand extends Command
             ->addOption('userpass', null, InputOption::VALUE_REQUIRED, 'Admin password.')
             ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address.')
             ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile.')
-            // ->addArgument('color', null, InputOption::VALUE_NONE, 'Default ProcessWire color.')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
             ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');
         ;
@@ -117,7 +116,6 @@ class NewCommand extends Command
         $logger->pushHandler(new StreamHandler("php://output"));
         $this->installer = new Installer($logger, $this->projectDir);
 
-        // $this->version = trim($input->getArgument('version'));
         $this->version = '2.4.0';
         $this->output = $output;
 
@@ -257,15 +255,6 @@ class NewCommand extends Command
                     $useremail = $helper->ask($input, $output, $question);
                 }
                 $accountInfo['useremail'] = $useremail;
-
-    /*
-            $colors = array(
-                'classic',
-                'warm',
-                'modern',
-                'futura'
-            );
-    */
                 $this
                     ->installProcessWire($post, $accountInfo)
                 ;
@@ -310,14 +299,11 @@ class NewCommand extends Command
     {
         $this->output->writeln("\n Downloading ProcessWire...");
 
-        // decide which is the best compressed version to download
         $distill = new Distill();
-        // $branch = 'https://github.com/ryancramerdesign/ProcessWire/archive/master.zip';
         $pwArchiveFile = $distill
             ->getChooser()
             ->setStrategy(new MinimumSize())
             ->addFile($branch)
-            // ->addFilesWithDifferentExtensions($branch, ['zip', 'tgz'])
             ->getPreferredFile()
         ;
 
