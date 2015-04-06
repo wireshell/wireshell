@@ -6,7 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\PwUserTools;
 
 /**
- * Class CreateRoleCommand
+ * Class RoleCreateCommand
  *
  * Creating ProcessWire user roles
  *
@@ -14,7 +14,7 @@ use Wireshell\PwUserTools;
  * @author Marcus Herrmann
  */
 
-class CreateRoleCommand extends PwUserTools
+class RoleCreateCommand extends PwUserTools
 {
 
     /**
@@ -24,7 +24,7 @@ class CreateRoleCommand extends PwUserTools
     {
         $this
             ->setName('role:create')
-            ->setAliases(['r:c', 'c-r', 'create_role'])
+            ->setAliases(['r:c'])
             ->setDescription('Creates a ProcessWire role')
             ->addArgument('name', InputArgument::REQUIRED);
     }

@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\PwUserTools;
 
 /**
- * Class CreateUserCommand
+ * Class UserCreateCommand
  *
  * Creating ProcessWire users
  *
@@ -15,7 +15,7 @@ use Wireshell\PwUserTools;
  * @author Marcus Herrmann
  */
 
-class CreateUserCommand extends PwUserTools
+class UserCreateCommand extends PwUserTools
 {
 
     /**
@@ -25,7 +25,7 @@ class CreateUserCommand extends PwUserTools
     {
         $this
             ->setName('user:create')
-            ->setAliases(['u:c', 'c-u', 'create:user'])
+            ->setAliases(['u:c'])
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')

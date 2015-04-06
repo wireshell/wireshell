@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\PwConnector;
 
 /**
- * Class CreateTemplateCommand
+ * Class TemplateCreateCommand
  *
  * Creating ProcessWire templates
  *
@@ -15,7 +15,7 @@ use Wireshell\PwConnector;
  * @author Marcus Herrmann
  */
 
-class CreateTemplateCommand extends PwConnector
+class TemplateCreateCommand extends PwConnector
 {
 
     /**
@@ -25,7 +25,7 @@ class CreateTemplateCommand extends PwConnector
     {
         $this
             ->setName('template:create')
-            ->setAliases(['t:c', 'c-t', 'create_template'])
+            ->setAliases(['t:c'])
             ->setDescription('Creates a ProcessWire template')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'Attach existing fields to template, comma separated')

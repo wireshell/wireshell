@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\PwConnector;
 
 /**
- * Class CreateFieldCommand
+ * Class FieldCreateCommand
  *
  * Creates a field
  *
@@ -19,7 +19,7 @@ use Wireshell\PwConnector;
  * @author Marcus Herrmann
  */
 
-class CreateFieldCommand extends PwConnector
+class FieldCreateCommand extends PwConnector
 {
 
     /**
