@@ -1,110 +1,223 @@
-# Wireshell 0.2.0
-## An extendable ProcessWire CLI
+# Wireshell 0.3.0
+**An extendable ProcessWire command line companion**
 
-Aiming for: a command line companion for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
+Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
 Since ProcessWire has a powerful API and an easy way of being bootstrapped into CLIs like this, I think such a tool has a certain potential in the PW universe.
 
-It's totally not the first approach of this kind. But: this one should be easily extendable - and is based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible, and so on.
+It's totally not the first approach of this kind. But: this one is easily extendable, and based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible.
 
-### Commands
+## Commands
 
-Currently, Wireshell  consists of the following basic commands:
+Available commands inWwireshell:
 
-#### New
+### New
 
-```
-    $ wireshell new
-```
-
-Downloads and unzips ProcessWires master branch into current directory. Use `--dev` option for dev branch instead: `$ wireshell new --dev`. Use `$ wireshell new foobar` to download into foobar directory.
-
-
-#### Create-user
+#### General installation
 
 ```
-    $ wireshell create-user otto
+$ wireshell new /path/where/to/install
 ```
 
-Creating a user called otto. Use `--email=otto@example.org` option to provide the email for that user. Use `--roles=superuser,editor` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
-
-**Alias:** `$ wireshell c-u`
-
-
-#### Create-role
+Use `--dev` option for dev branch instead. Further available options (with example values):
 
 ```
-    $ wireshell create-role editor
+--dbHost=127.0.0.1 --dbUser=db-user --dbName=db-name --dbPass=db-password --dbEngine=MyISAM --dbPort=3306
+--dbCharset=utf8 --httpHosts=pw.dev --adminUrl=processwire --username=admin --userpass=abcd1234
+--useremail=someone@example.com --profile=/path/to/myprofile.zip --dev --no-install --chmodDir=775 --chmodFile=644
+```
+
+If you don't pass the options, it will ask interactively or use default values.
+For MAMP users, provide at least `--dbHost=127.0.0.1 --chmodDir=777`.
+
+#### Custom profile installation
+
+```
+$ wireshell new /path/where/to/install --profile=/path/to/myprofile.zip
+```
+
+You can also install profiles. Current structure of zip is as:
+
+```
+myprofile/
+    site-default/
+        modules
+        templates
+    composer.json
+```
+
+#### Download only
+
+```
+$ wireshell new /path/where/to/install --no-install
+```
+
+Downloads and unzips ProcessWires master branch into current directory.
+
+
+### User Create
+
+```
+$ wireshell create:user {user-name}
+```
+
+Creating a user. Available options (with example values):
+
+```
+--email=otto@example.org --roles=superuser,editor
+```
+
+Use `--roles` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
+
+**Alias:** `$ wireshell u:c`
+
+
+### Role Create
+
+```
+$ wireshell role:create {role-name}
 ```
 
 Creating a role named editor.
 
-**Alias:** `$ wireshell c-r`
+**Alias:** `$ wireshell r:c`
 
 
-#### Create-template
+#### Template Create
 
 ```
-    $ wireshell create-template contact
+$ wireshell template:create {template-name}
 ```
 
-Creating a template called contact, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Use `--fields=body,website` to attach existing fields to the template. Field `title` is attached by default.
+Creating a template, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Further available options (with example values):
 
-**Alias:** `$ wireshell c-t`
+```
+--fields=body,website
+```
+
+Field `title` is attached by default.
+
+**Alias:** `$ wireshell c:t`
+
+#### Template Fields
+
+```
+$ wireshell template:fields {template-name} --fields={field-name},{field-name}
+```
+
+Assign existing field(s) to existing templates, so `--field` option is mandatory here.
+
+**Alias:** `$ wireshell t:f`
+
+
+#### Field Create
+
+```
+$ wireshell field:create {field-name}
+```
+
+Creates a text field {field-name}. Available options:
+
+```
+--label=Field --desc="Fancy description for field" --type={text|textarea|email|datetime|checkbox|file|float|image|integer|page|url}
+```
+
+**Alias:** `$ wireshell f:c`
+
+
+#### Module Enable
+
+```
+$ wireshell mod:enable {module-name}
+```
+
+Enables and installs a (present!) module.
+
+**Alias:** `$ wireshell m:e`
+
+#### Module Disable
+
+```
+    $ wireshell mod:disable {module-name}
+```
+
+Disables and undinstalls a module.
+
+**Alias:** `$ wireshell m:d`
+
+#### Show Version
+
+```
+$ wireshell show:version
+```
+
+Outputs the version number of the current ProcessWire installation
+
+**Alias:** `$ wireshell s:v`
 
 
 #### Serve
 
 ```
-    $ wireshell serve
+$ wireshell serve
 ```
 
-A wrapper for 'php -S localhost:8000,  fires the small PHP web server and lets you bypass the configuration of a virtual host (the database environment must be present, though). Mainly an example for passing through console commands.
+A wrapper for 'php -S localhost:8000, fires the small PHP web server and lets you bypass the configuration of a virtual host (the database environment must be present, though). Mainly an example for passing through console commands.
 
-**Alias:** `$ wireshell s`
+### Backup DB
 
+```
+$ wireshell backup:db
+```
 
+Connects to MySQL database and dumps its complete content into an sql file in the PW installation's root folder. When no file name provided defaulting to a date-and-time based filename.
 
-### Installation (on unix-based systems)
+```
+--filename=some_filename
+```
+
+## Installation (on unix-based systems)
 Wireshell uses Composer to manage its dependencies.
 
 1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
 2. Download/clone Wireshell.
 3. Via console, navigate into the folder where you downloaded Wireshell into
-	OR
+    OR
 3. Put all the Wireshell files into the root of a local ProcessWire installation
 4. CHMOD the "wireshell" file executable
 5. `$ composer install`
 6. You should be able to use the "php wireshell" command now
 7. For convenience, create an alias like `alias wireshell='php /path/to/installation/wireshell'` in your ~/.bashrc.
 
-If this little tool has a future, I'll wrap it into a PHAR or submit it to packagist.org for an easier installation process (e.g. `$ composer global require wireshell/wireshell`).
+I'll either wrap Wireshell into a PHAR or submit it to packagist.org for an easier installation process soon.
 
 
-### Target group
+## Target group
 Comparable to the usage context of (Laravel) Artisan and Drush, I see Wireshell as a tool aiming to help at local development, and aimed at developers who use the console anyway. So if you're developing locally and dealing with many local installations, the tool could help you in speeding things up.
 
-### Current state
-As of now Wireshell is totally experimental - and not yet tested on other systems than mine ;) Right now, I can't tell if it's usable outside of OS X (but since it's based on [Composer](http://getcomposer.org) and requires PHP 5.4 it should be. Certain steps and paths may differ, though).
+## Current state
+Wireshell is still in an early phase. If you encounter bugs, please report them in the project's GitHub Issues. Cheers!
 
-**Please note**: Under some circumstances (MAMP PHP) you can't connect to ProcessWire API until you state `127.0.0.1` instead of `localhost` as `$config->dbHost` in config.php
-
-### Prerequisites
+## Prerequisites
 Composer, local ProcessWire sites, Local PHP >= 5.4, OS X or Linux
 
-### Technical Background
+## Technical Background
 [The Symfony Console component](http://symfony.com/doc/current/components/console/introduction.html). NewCommand mainly consists of Taylor Otwell's [Laravel Installer](https://github.com/laravel/installer), and partly methods from [Somas PW Online installer](https://github.com/somatonic/PWOnlineInstaller) (moving all PW files a "folder up" after de-zipping the received files from GitHub). Also, big thanks to this PHP Screencast series: [https://laracasts.com/series/how-to-build-command-line-apps-in-php/]
 
-### Potential
+## Potential
 See the code, other commands can be added in easily since they are only classes. Symfony and the Console component are written in modern, comprehensible, maintainable PHP. Also, as far as the road-map for ProcessWire 3 goes it will be support Composer. So maybe there could be even more possibilities for Wireshell in the future.
 
 And what made me love Drush in the first place were commands like `drush dl modulename && drush en modulname` (Downloads and installs modules without touching the GUI). I want that for PW too! :)
 
-### Version History
+## Version History
 
-* 0.1.0 Initial
+* 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
 * 0.2.0 Added Create Template Command, extended Create User Command
+* 0.1.0 Initial
 
-### Feedback please
+## Acknowledgements
+[HariKT](https://github.com/harikt) for his big contribution of a real "NewCommand" and command line based installer within Wireshell!
+
+## Feedback please
 If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
 
 

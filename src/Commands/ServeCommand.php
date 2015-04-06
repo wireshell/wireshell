@@ -1,10 +1,12 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwConnector;
 
 /**
  * Class ServeCommand
+ *
  * Example command for passthru()
  *
  * @package Wireshell
@@ -22,7 +24,6 @@ class ServeCommand extends PwConnector
     {
         $this
             ->setName('serve')
-            ->setAliases(['s'])
             ->setDescription('Serve ProcessWire via built in PHP webserver');
     }
 
@@ -34,7 +35,7 @@ class ServeCommand extends PwConnector
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $this->checkForProcessWire($output);
+        parent::checkForProcessWire($output);
 
         $output->writeln("Starting PHP server at localhost:8000");
         passthru("php -S localhost:8000");

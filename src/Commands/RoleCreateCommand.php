@@ -1,11 +1,12 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wireshell\PwUserTools;
 
 /**
- * Class CreateRoleCommand
+ * Class RoleCreateCommand
  *
  * Creating ProcessWire user roles
  *
@@ -13,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Marcus Herrmann
  */
 
-class CreateRoleCommand extends PwUserTools
+class RoleCreateCommand extends PwUserTools
 {
 
     /**
@@ -22,8 +23,8 @@ class CreateRoleCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('create-role')
-            ->setAliases(['c-r', 'role'])
+            ->setName('role:create')
+            ->setAliases(['r:c'])
             ->setDescription('Creates a ProcessWire role')
             ->addArgument('name', InputArgument::REQUIRED);
     }

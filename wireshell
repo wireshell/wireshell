@@ -3,21 +3,32 @@
 <?php
 
 use Symfony\Component\Console\Application;
-use Wireshell\NewCommand;
-use Wireshell\CreateUserCommand;
-use Wireshell\CreateRoleCommand;
-use Wireshell\CreateTemplateCommand;
-use Wireshell\ServeCommand;
-use GuzzleHttp\Client;
+use Wireshell\Commands\UserCreateCommand;
+use Wireshell\Commands\RoleCreateCommand;
+use Wireshell\Commands\TemplateCreateCommand;
+use Wireshell\Commands\TemplateFieldsCommand;
+use Wireshell\Commands\FieldCreateCommand;
+use Wireshell\Commands\ModuleEnableCommand;
+use Wireshell\Commands\ModuleDisableCommand;
+use Wireshell\Commands\ShowVersionCommand;
+use Wireshell\Commands\NewCommand;
+use Wireshell\Commands\ServeCommand;
+use Wireshell\Commands\BackupCommand;
 
 require 'vendor/autoload.php';
 
-$app = new Application('WireShell - An extendable ProcessWire CLI', '0.1.0');
+$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.0');
 
-$app->add(new NewCommand(new Client));
-$app->add(new CreateUserCommand());
-$app->add(new CreateRoleCommand());
-$app->add(new CreateTemplateCommand());
+$app->add(new UserCreateCommand());
+$app->add(new RoleCreateCommand());
+$app->add(new TemplateCreateCommand());
+$app->add(new TemplateFieldsCommand());
+$app->add(new FieldCreateCommand());
+$app->add(new ModuleEnableCommand());
+$app->add(new ModuleDisableCommand());
+$app->add(new ShowVersionCommand());
+$app->add(new NewCommand());
 $app->add(new ServeCommand());
+$app->add(new BackupCommand());
 
 $app->run();
