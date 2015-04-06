@@ -1,5 +1,5 @@
 # Wireshell 0.3.0
-## An extendable ProcessWire Command line companion
+**An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
 Since ProcessWire has a powerful API and an easy way of being bootstrapped into CLIs like this, I think such a tool has a certain potential in the PW universe.
@@ -211,7 +211,6 @@ And what made me love Drush in the first place were commands like `drush dl modu
 ## Version History
 
 * 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
-* 0.2.1 Change package name, change command wording
 * 0.2.0 Added Create Template Command, extended Create User Command
 * 0.1.0 Initial
 
