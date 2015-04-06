@@ -48,7 +48,7 @@ myprofile/
 #### Download only
 
 ```
-    $ wireshell new /path/where/to/install --no-install
+$ wireshell new /path/where/to/install --no-install
 ```
 
 Downloads and unzips ProcessWires master branch into current directory.
@@ -57,7 +57,7 @@ Downloads and unzips ProcessWires master branch into current directory.
 ### User Create
 
 ```
-    $ wireshell create:user {user-name}
+$ wireshell create:user {user-name}
 ```
 
 Creating a user. Available options (with example values):
@@ -74,7 +74,7 @@ Use `--roles` for setting one or more user roles (given the supplied role(s) exi
 ### Role Create
 
 ```
-    $ wireshell role:create {role-name}
+$ wireshell role:create {role-name}
 ```
 
 Creating a role named editor.
@@ -85,13 +85,13 @@ Creating a role named editor.
 #### Template Create
 
 ```
-    $ wireshell template:create {template-name}
+$ wireshell template:create {template-name}
 ```
 
 Creating a template, and corresponding empty php file in `sites/templates`. Use `--nofile` to prevent file creation. Further available options (with example values):
 
 ```
-    --fields=body,website
+--fields=body,website
 ```
 
 Field `title` is attached by default.
@@ -101,7 +101,7 @@ Field `title` is attached by default.
 #### Template Fields
 
 ```
-    $ wireshell template:fields {template-name} --fields={field-name},{field-name}
+$ wireshell template:fields {template-name} --fields={field-name},{field-name}
 ```
 
 Assign existing field(s) to existing templates, so `--field` option is mandatory here.
@@ -112,13 +112,13 @@ Assign existing field(s) to existing templates, so `--field` option is mandatory
 #### Field Create
 
 ```
-    $ wireshell field:create {field-name}
+$ wireshell field:create {field-name}
 ```
 
 Creates a text field {field-name}. Available options:
 
 ```
-    --label=Field --desc="Fancy description for field" --type={text|textarea|email|datetime|checkbox|file|float|image|integer|page|url}
+--label=Field --desc="Fancy description for field" --type={text|textarea|email|datetime|checkbox|file|float|image|integer|page|url}
 ```
 
 **Alias:** `$ wireshell f:c`
@@ -127,7 +127,7 @@ Creates a text field {field-name}. Available options:
 #### Module Enable
 
 ```
-    $ wireshell mod:enable {module-name}
+$ wireshell mod:enable {module-name}
 ```
 
 Enables and installs a (present!) module.
@@ -147,7 +147,7 @@ Disables and undinstalls a module.
 #### Show Version
 
 ```
-    $ wireshell show:version
+$ wireshell show:version
 ```
 
 Outputs the version number of the current ProcessWire installation
@@ -158,7 +158,7 @@ Outputs the version number of the current ProcessWire installation
 #### Serve
 
 ```
-    $ wireshell serve
+$ wireshell serve
 ```
 
 A wrapper for 'php -S localhost:8000, fires the small PHP web server and lets you bypass the configuration of a virtual host (the database environment must be present, though). Mainly an example for passing through console commands.
@@ -166,13 +166,13 @@ A wrapper for 'php -S localhost:8000, fires the small PHP web server and lets yo
 ### Backup DB
 
 ```
-    $ wireshell backup:db
+$ wireshell backup:db
 ```
 
 Connects to MySQL database and dumps its complete content into an sql file in the PW installation's root folder. When no file name provided defaulting to a date-and-time based filename.
 
 ```
-    --filename=some_filename
+--filename=some_filename
 ```
 
 ### Installation (on unix-based systems)
@@ -210,7 +210,7 @@ And what made me love Drush in the first place were commands like `drush dl modu
 
 ### Version History
 
-* 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT)
+* 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
 * 0.2.1 Change package name, change command wording
 * 0.2.0 Added Create Template Command, extended Create User Command
 * 0.1.0 Initial
