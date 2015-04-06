@@ -8,7 +8,7 @@ It's totally not the first approach of this kind. But: this one is easily extend
 
 ## Commands
 
-Available commands inWwireshell:
+Available commands in Wireshell:
 
 ### New
 
