@@ -17,10 +17,11 @@
   "require": {
     "php": ">=5.4.0",
     "symfony/console": "~2.0",
-        "guzzlehttp/guzzle": "~4.0",
-        "monolog/monolog": "~1.12",
-        "guzzlehttp/progress-subscriber": "~1.1",
-        "symfony/filesystem": "~2.5",
-        "raulfraile/distill": "~0.9,!=0.9.3,!=0.9.4"
+    "rah/danpu": "~2.6",
+    "guzzlehttp/guzzle": "~4.0",
+    "monolog/monolog": "~1.12",
+    "guzzlehttp/progress-subscriber": "~1.1",
+    "symfony/filesystem": "~2.5",
+    "raulfraile/distill": "~0.9,!=0.9.3,!=0.9.4"
   }
 }
