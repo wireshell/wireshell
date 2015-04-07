@@ -11,7 +11,7 @@ Wireshell requires Composer and a local PHP installation >= 5.4.0.
 
 1. Download and install Composer (if it isn't on your system already), globally: https://getcomposer.org/doc/00-intro.md#globally
 2. Run `$ composer global require wireshell/wireshell`
-3. Add Wireshell to your system path: `export PATH="$HOME/.composer/vendor/bin:$PATH"` in `.bashrc` (or similar) on unix-based systems, and `%appdata%\Composer\vendor\wireshell\wireshell\wireshell` on Windows.
+3. Add Wireshell to your system path: `export PATH="$HOME/.composer/vendor/bin:$PATH"` in `.bashrc` (or similar) on unix-based systems, and `%appdata%\Composer\vendor\wireshell\wireshell` on Windows.
 4. You should be able to run `$ wireshell` or `$ php wireshell` now.
 
 ## Commands
