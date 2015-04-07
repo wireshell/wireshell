@@ -39,7 +39,16 @@ class ShowAdminUrlCommand extends PwConnector
 
         $admin = wire('pages')->get('template=admin');
 
-        $output->writeln("Admin Url {$admin->httpUrl}");
+        $url = wire('config')->urls->admin;
+
+        if (!($admin instanceof NullPage) && isset($admin->httpUrl)) 
+        {
+            
+            $url = $admin->httpUrl;
+
+        } 
+
+        $output->writeln("Admin Url {$url}");
 
     }
 }
