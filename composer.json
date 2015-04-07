@@ -7,6 +7,10 @@
         {
             "name": "Marcus Herrmann",
             "email": "mail@marcus-herrmann.com"
+        },
+        {
+            "name": "Hari K T",
+            "homepage": "http://harikt.com"
         }
     ],
     "autoload": {

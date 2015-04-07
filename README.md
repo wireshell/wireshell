@@ -1,4 +1,4 @@
-# Wireshell 0.3.0
+# Wireshell 0.3.1
 **An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -6,13 +6,21 @@ Since ProcessWire has a powerful API and an easy way of being bootstrapped into 
 
 It's totally not the first approach of this kind. But: this one is easily extendable, and based on PHP (specifically: the Console component of the Symfony Framework). Every command is tidily wrapped in its own class, dependencies are clearly visible.
 
+## Install Wireshell on your system
+Wireshell requires Composer and a local PHP installation >= 5.4.0.
+
+1. Download and install Composer (if it isn't on your system already), globally: https://getcomposer.org/doc/00-intro.md#globally
+2. Run `$ composer global require wireshell/wireshell`
+3. Add Wireshell to your system path: `export PATH="$HOME/.composer/vendor/bin:$PATH"` in `.bashrc` (or similar) on unix-based systems, and `%appdata%\Composer\vendor\wireshell\wireshell\wireshell` on Windows.
+4. You should be able to run `$ wireshell` or `$ php wireshell` now.
+
 ## Commands
 
 Available commands in Wireshell:
 
 ### New
 
-#### General installation
+#### General ProcessWire installation
 
 ```
 $ wireshell new /path/where/to/install
@@ -29,7 +37,7 @@ Use `--dev` option for dev branch instead. Further available options (with examp
 If you don't pass the options, it will ask interactively or use default values.
 For MAMP users, provide at least `--dbHost=127.0.0.1 --chmodDir=777`.
 
-#### Custom profile installation
+#### Custom profile ProcessWire installation
 
 ```
 $ wireshell new /path/where/to/install --profile=/path/to/myprofile.zip
@@ -45,7 +53,7 @@ myprofile/
     composer.json
 ```
 
-#### Download only
+#### Download ProcessWire only
 
 ```
 $ wireshell new /path/where/to/install --no-install
@@ -137,7 +145,7 @@ Enables and installs a (present!) module.
 #### Module Disable
 
 ```
-    $ wireshell mod:disable {module-name}
+ $ wireshell mod:disable {module-name}
 ```
 
 Disables and undinstalls a module.
@@ -175,30 +183,12 @@ Connects to MySQL database and dumps its complete content into an sql file in th
 --filename=some_filename
 ```
 
-## Installation (on unix-based systems)
-Wireshell uses Composer to manage its dependencies.
-
-1. Download and install Composer (if it isn't on your system already), globally: [https://getcomposer.org/doc/00-intro.md#globally]
-2. Download/clone Wireshell.
-3. Via console, navigate into the folder where you downloaded Wireshell into
-    OR
-3. Put all the Wireshell files into the root of a local ProcessWire installation
-4. CHMOD the "wireshell" file executable
-5. `$ composer install`
-6. You should be able to use the "php wireshell" command now
-7. For convenience, create an alias like `alias wireshell='php /path/to/installation/wireshell'` in your ~/.bashrc.
-
-I'll either wrap Wireshell into a PHAR or submit it to packagist.org for an easier installation process soon.
-
 
 ## Target group
 Comparable to the usage context of (Laravel) Artisan and Drush, I see Wireshell as a tool aiming to help at local development, and aimed at developers who use the console anyway. So if you're developing locally and dealing with many local installations, the tool could help you in speeding things up.
 
 ## Current state
-Wireshell is still in an early phase. If you encounter bugs, please report them in the project's GitHub Issues. Cheers!
-
-## Prerequisites
-Composer, local ProcessWire sites, Local PHP >= 5.4, OS X or Linux
+Wireshell is still in an early phase. If you encounter bugs, please report them in the project's [GitHub Issues](https://github.com/marcus-herrmann/wireshell/issues). Cheers!
 
 ## Technical Background
 [The Symfony Console component](http://symfony.com/doc/current/components/console/introduction.html). NewCommand mainly consists of Taylor Otwell's [Laravel Installer](https://github.com/laravel/installer), and partly methods from [Somas PW Online installer](https://github.com/somatonic/PWOnlineInstaller) (moving all PW files a "folder up" after de-zipping the received files from GitHub). Also, big thanks to this PHP Screencast series: [https://laracasts.com/series/how-to-build-command-line-apps-in-php/]
@@ -210,6 +200,7 @@ And what made me love Drush in the first place were commands like `drush dl modu
 
 ## Version History
 
+* 0.3.1 Change readme: Installation via Packagist
 * 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
 * 0.2.0 Added Create Template Command, extended Create User Command
 * 0.1.0 Initial
