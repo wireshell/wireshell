@@ -11,6 +11,7 @@ use Wireshell\Commands\FieldCreateCommand;
 use Wireshell\Commands\ModuleEnableCommand;
 use Wireshell\Commands\ModuleDisableCommand;
 use Wireshell\Commands\ShowVersionCommand;
+use Wireshell\Commands\ShowAdminUrlCommand;
 use Wireshell\Commands\NewCommand;
 use Wireshell\Commands\ServeCommand;
 use Wireshell\Commands\BackupCommand;
