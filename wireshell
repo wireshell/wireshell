@@ -18,7 +18,7 @@ use Wireshell\Commands\BackupCommand;
 
 require 'vendor/autoload.php';
 
-$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.0');
+$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.2');
 
 $app->add(new UserCreateCommand());
 $app->add(new RoleCreateCommand());

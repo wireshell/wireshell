@@ -1,4 +1,4 @@
-# Wireshell 0.3.1
+# Wireshell 0.3.2
 **An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
