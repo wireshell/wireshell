@@ -6,12 +6,15 @@
     "authors": [
         {
             "name": "Marcus Herrmann",
-            "email": "mail@marcus-herrmann.com"
+            "homepage": "https://bigger-on-the-inside.net"
         },
         {
             "name": "Hari K T",
             "homepage": "http://harikt.com"
         }
+    ],
+    "bin": [
+      "wireshell"
     ],
     "autoload": {
         "psr-4": {
