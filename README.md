@@ -37,7 +37,7 @@ Use `--dev` option for dev branch instead. Further available options (with examp
 If you don't pass the options, it will ask interactively or use default values.
 For MAMP users, provide at least `--dbHost=127.0.0.1 --chmodDir=777`.
 
-#### Custom profile ProcessWire installation
+#### Custom profile ProcessWire installation π
 
 ```
 $ wireshell new /path/where/to/install --profile=/path/to/myprofile.zip
@@ -65,7 +65,7 @@ Downloads and unzips ProcessWires master branch into current directory.
 ### User Create
 
 ```
-$ wireshell create:user {user-name}
+$ wireshell user:create {user-name}
 ```
 
 Creating a user. Available options (with example values):
