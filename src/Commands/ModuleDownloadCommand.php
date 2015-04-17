@@ -25,7 +25,7 @@ use Wireshell\PwConnector;
 /**
  * Class ModuleDownloadCommand
  *
- * Downloads provided module(s)
+ * Downloads module(s)
  *
  * @package Wireshell
  * @author Marcus Herrmann
@@ -101,6 +101,12 @@ class ModuleDownloadCommand extends PwConnector
         }
     }
 
+    /**
+     * check if a module already exists
+     *
+     * @param string $module
+     * @return boolean
+     */
     private function checkIfModuleExists($module)
     {
         $moduleDir = wire('config')->paths->siteModules . $module;
@@ -115,6 +121,12 @@ class ModuleDownloadCommand extends PwConnector
         return (isset($return)) ? $return : false;
     }
 
+    /**
+     * check if a module exists in processwire module directory
+     * download it
+     *
+     * @param string $module
+     */
     public function downloadModuleIfExists($module) {
         $contents = file_get_contents(
             $this->getConfig('remoteurl') .
@@ -148,11 +160,13 @@ class ModuleDownloadCommand extends PwConnector
      * available operating system uncompressing commands and the enabled PHP extensions
      * and it downloads the file.
      *
+     * @param string $url
+     * @param string $module
      * @return NewCommand
      *
      * @throws \RuntimeException if the ProcessWire archive could not be downloaded
      */
-    private function download($branch, $module)
+    private function download($url, $module)
     {
         $this->output->writeln(" Downloading module $module...");
 
@@ -160,7 +174,7 @@ class ModuleDownloadCommand extends PwConnector
         $pwArchiveFile = $distill
             ->getChooser()
             ->setStrategy(new MinimumSize())
-            ->addFile($branch)
+            ->addFile($url)
             ->getPreferredFile();
 
             /** @var ProgressBar|null $progressBar */
@@ -232,6 +246,7 @@ class ModuleDownloadCommand extends PwConnector
      * Extracts the compressed Symfony file (ZIP or TGZ) using the
      * native operating system commands if available or PHP code otherwise.
      *
+     * param string $module
      * @return NewCommand
      *
      * @throws \RuntimeException if the downloaded archive could not be extracted
@@ -308,6 +323,7 @@ class ModuleDownloadCommand extends PwConnector
      * download the project and removes ProcessWire-related files that don't make
      * sense in a proprietary project.
      *
+     * @param string $module
      * @return NewCommand
      */
     private function cleanUp($module)
