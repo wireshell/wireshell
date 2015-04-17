@@ -131,6 +131,16 @@ Creates a text field {field-name}. Available options:
 
 **Alias:** `$ wireshell f:c`
 
+#### Module Download
+
+```
+$ wireshell mod:download {module-name},{module-name}
+```
+
+Downloads a module.
+
+**Alias:** `$ wireshell m:dl`
+
 
 #### Module Enable
 
