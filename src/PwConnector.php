@@ -14,6 +14,8 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 abstract class PwConnector extends SymfonyCommand
 {
 
+    public $moduleServiceURL;
+    public $moduleServiceKey;
     protected $userContainer;
     protected $roleContainer;
 
@@ -40,6 +42,9 @@ abstract class PwConnector extends SymfonyCommand
 
         $this->userContainer = wire('pages')->get('29');
         $this->roleContainer = wire('pages')->get('30');
+
+        $this->moduleServiceURL = wire('config')->moduleServiceURL;
+        $this->moduleServiceKey = wire('config')->moduleServiceKey;
 
     }
 
