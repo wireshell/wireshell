@@ -38,7 +38,9 @@ abstract class PwConnector extends SymfonyCommand
     {
         $this->checkForProcessWire($output);
 
-        include(getcwd() . '/index.php');
+        if (!function_exists('wire')) {
+            include(getcwd() . '/index.php');
+        }
 
         $this->userContainer = wire('pages')->get('29');
         $this->roleContainer = wire('pages')->get('30');
