@@ -46,13 +46,6 @@ class ModuleDownloadCommand extends PwConnector
      */
     private $output;
 
-    protected static $defaults = array(
-        'apikey' => 'pw223',
-        'remoteurl' => 'http://modules.processwire.com/export-json/',
-        'limit' => 1,
-        'max_redirects' => 3
-    );
-
     /**
      * Configures the current command.
      */
@@ -98,6 +91,8 @@ class ModuleDownloadCommand extends PwConnector
                     $this->downloadModuleIfExists($module);
                 }
             }
+
+            wire('modules')->resetCache();
         }
     }
 
@@ -129,10 +124,9 @@ class ModuleDownloadCommand extends PwConnector
      */
     public function downloadModuleIfExists($module) {
         $contents = file_get_contents(
-            $this->getConfig('remoteurl') .
-            '?apikey=' . $this->getConfig('apikey') .
-            '&limit=' . $this->getConfig('limit') .
-            '&class_name=' . $module
+            wire('config')->moduleServiceURL .
+            '?apikey=' . wire('config')->moduleServiceKey .
+            '&limit=1' . '&class_name=' . $module
         );
 
         $result = json_decode($contents);
@@ -221,7 +215,7 @@ class ModuleDownloadCommand extends PwConnector
         } catch (ClientException $e) {
             if ($e->getCode() === 403 || $e->getCode() === 404) {
                 throw new \RuntimeException(
-                    "The selected module $module cannot be installed because it does not exist.\n"
+                    "The selected module $module cannot be downloaded because it does not exist.\n"
                 );
             } else {
                 throw new \RuntimeException(sprintf(
@@ -258,19 +252,21 @@ class ModuleDownloadCommand extends PwConnector
         try {
             $distill = new Distill();
             $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath, wire('config')->paths->siteModules . $module);
+            $dir = wire('config')->paths->siteModules . $module;
+            if (is_dir($dir)) chmod($dir, 0755);
         } catch (FileCorruptedException $e) {
             throw new \RuntimeException(
-                "This module can't be installed because the downloaded package is corrupted.\n".
+                "This module can't be downloaded because the downloaded package is corrupted.\n".
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (FileEmptyException $e) {
             throw new \RuntimeException(
-                "This module can't be installed because the downloaded package is empty.\n".
+                "This module can't be downloaded because the downloaded package is empty.\n".
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (TargetDirectoryNotWritableException $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be installed because the installer doesn't have enough\n".
+                "This module can't be downloaded because the installer doesn't have enough\n".
                 "permissions to uncompress and rename the package contents.\n".
                 "To solve this issue, check the permissions of the %s directory and\n".
                 "try installing this module again.\n",
@@ -278,7 +274,7 @@ class ModuleDownloadCommand extends PwConnector
             ));
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be installed because the downloaded package is corrupted\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n".
                 "or because the installer doesn't have enough permissions to uncompress and\n".
                 "rename the package contents.\n".
                 "To solve this issue, check the permissions of the %s directory and\n".
@@ -289,7 +285,7 @@ class ModuleDownloadCommand extends PwConnector
 
         if (!$extractionSucceeded) {
             throw new \RuntimeException(
-                "This module can't be installed because the downloaded package is corrupted\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n".
                 "or because the uncompress commands of your operating system didn't work."
             );
         }
@@ -329,7 +325,7 @@ class ModuleDownloadCommand extends PwConnector
     private function cleanUp($module)
     {
         $this->fs->remove(dirname($this->compressedFilePath));
-        $this->output->writeln("<info> Module {$module} installed successfully.</info>\n");
+        $this->output->writeln("<info> Module {$module} downloaded successfully.</info>\n");
 
         return $this;
     }
