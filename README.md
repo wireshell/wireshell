@@ -158,7 +158,15 @@ Enables and installs a (present!) module.
  $ wireshell mod:disable {module-name}
 ```
 
-Disables and undinstalls a module.
+Disables and uninstalls a module.
+
+Available option:
+
+```
+$ wireshell mod:disable --rm {module-name}
+```
+
+Disables, uninstalls and deletes a module. 
 
 **Alias:** `$ wireshell m:d`
 
