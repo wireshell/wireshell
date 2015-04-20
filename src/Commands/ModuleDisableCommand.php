@@ -26,7 +26,8 @@ class ModuleDisableCommand extends PwConnector
             ->setName('mod:disable')
             ->setAliases(['m:d'])
             ->setDescription('Disable provided module(s)')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('rm', null, InputOption::VALUE_NONE, 'Remove module');
     }
 
     /**
@@ -42,7 +43,18 @@ class ModuleDisableCommand extends PwConnector
 
         foreach ($modules as $module) {
             $this->checkIfModuleExists($module, $output);
-            if(wire('modules')->uninstall($module)) $output->writeln("Module {$module} <comment>uninstalled</comment> successfully.");
+            if (wire('modules')->uninstall($module)) {
+                $output->writeln("Module {$module} <comment>uninstalled</comment> successfully.");
+
+                // remove module
+                if ($input->getOption('rm') === true && is_dir(wire('config')->paths->MobileDetect)) {
+                    if ($this->recurseRmdir(wire('config')->paths->$module)) {
+                        $output->writeln("Module {$module} was <comment>removed</comment> successfully.");
+                    } else {
+                        $output->writeln("Module {$module} could not be removed <fg=red>could not be removed</fg=red>.");
+                    }
+                }
+            }
         }
 
     }
@@ -54,5 +66,27 @@ class ModuleDisableCommand extends PwConnector
             return false;
         }
 
+    }
+
+    /**
+     * remove uninstalled module recursive
+     *
+     * @param string $dir
+     * @return boolean
+     */
+    private function recurseRmdir($dir)
+    {
+        if (is_dir($dir)) {
+            chmod($dir, 0775);
+            $files = array_diff(scandir($dir), array('.','..'));
+            foreach ($files as $file) {
+                (is_dir("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
+            }
+            $removed = rmdir($dir);
+        } else {
+            $removed = false;
+        }
+
+        return $removed;
     }
 }
