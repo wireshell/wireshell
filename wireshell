@@ -1,21 +1,21 @@
 #!/usr/bin/env php
 
 <?php
-
 use Symfony\Component\Console\Application;
-use Wireshell\Commands\UserCreateCommand;
-use Wireshell\Commands\RoleCreateCommand;
-use Wireshell\Commands\TemplateCreateCommand;
-use Wireshell\Commands\TemplateFieldsCommand;
-use Wireshell\Commands\FieldCreateCommand;
-use Wireshell\Commands\ModuleDownloadCommand;
-use Wireshell\Commands\ModuleEnableCommand;
-use Wireshell\Commands\ModuleDisableCommand;
-use Wireshell\Commands\ShowVersionCommand;
-use Wireshell\Commands\ShowAdminUrlCommand;
-use Wireshell\Commands\NewCommand;
-use Wireshell\Commands\ServeCommand;
-use Wireshell\Commands\BackupCommand;
+
+use Wireshell\Commands\User\UserCreateCommand;
+use Wireshell\Commands\Role\RoleCreateCommand;
+use Wireshell\Commands\Template\TemplateCreateCommand;
+use Wireshell\Commands\Template\TemplateFieldsCommand;
+use Wireshell\Commands\Field\FieldCreateCommand;
+use Wireshell\Commands\Module\ModuleDownloadCommand;
+use Wireshell\Commands\Module\ModuleEnableCommand;
+use Wireshell\Commands\Module\ModuleDisableCommand;
+use Wireshell\Commands\Show\VersionCommand;
+use Wireshell\Commands\Show\AdminUrlCommand;
+use Wireshell\Commands\Common\NewCommand;
+use Wireshell\Commands\Common\ServeCommand;
+use Wireshell\Commands\Backup\BackupCommand;
 
 if (file_exists(__DIR__.'/../../autoload.php')) {
     require __DIR__.'/../../autoload.php';
@@ -23,7 +23,7 @@ if (file_exists(__DIR__.'/../../autoload.php')) {
     require __DIR__.'/vendor/autoload.php';
 }
 
-$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.3');
+$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.4');
 
 $app->add(new UserCreateCommand());
 $app->add(new RoleCreateCommand());

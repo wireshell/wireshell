@@ -1,4 +1,5 @@
-# Wireshell 0.3.3
+# Wireshell 0.3.4
+
 **An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -181,6 +182,16 @@ Outputs the version number of the current ProcessWire installation
 **Alias:** `$ wireshell s:v`
 
 
+#### Show Admin URL
+
+```
+$ wireshell show:admin
+```
+
+Outputs the admin page url of the current ProcessWire installation
+
+**Alias:** `$ wireshell s:a`
+
 #### Serve
 
 ```
@@ -218,18 +229,15 @@ And what made me love Drush in the first place were commands like `drush dl modu
 
 ## Version History
 
-* 0.3.3 Hotfix autoload path
-* 0.3.2 Added Show Admin Url Command, added `bin` to composer.json
-* 0.3.1 Change readme: Installation via Packagist
-* 0.3.0 `NewCommand` now installs PW instead of just downloading it (thanks to @HariKT), added Commands for Fields, Modules, Backup
-* 0.2.0 Added Create Template Command, extended Create User Command
-* 0.1.0 Initial
+See CHANGELOG
 
 ## Acknowledgements
-[HariKT](https://github.com/harikt) for his big contribution of a real "NewCommand" and command line based installer within Wireshell!
 
-## Feedback please
-If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Thanks!
+See THANKS
+
+## Feedback Please
+
+If you have the time, maybe the slightest need for a tool like this and like to test things out - please grab a copy and go for a test drive with Wireshell and leave feedback in the ProcessWire forum and bugs as GitHub Issues. Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. Thanks!
 
 
 

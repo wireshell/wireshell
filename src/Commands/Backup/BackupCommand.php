@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Backup;
 
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
