@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\User;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

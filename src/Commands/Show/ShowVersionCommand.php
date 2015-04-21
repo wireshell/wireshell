@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Show;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

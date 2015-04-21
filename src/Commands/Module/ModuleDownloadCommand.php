@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Module;
 
 use Distill\Distill;
 use Distill\Exception\IO\Input\FileCorruptedException;
