@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Field;
 
 use Field;
 use Fieldgroup;
