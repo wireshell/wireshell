@@ -1,4 +1,4 @@
-# Wireshell 0.3.3
+# Wireshell 0.3.4
 **An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -180,6 +180,15 @@ Outputs the version number of the current ProcessWire installation
 
 **Alias:** `$ wireshell s:v`
 
+#### Show Admin URL
+
+```
+$ wireshell show:admin
+```
+
+Outputs the admin page url of the current ProcessWire installation
+
+**Alias:** `$ wireshell s:a`
 
 #### Serve
 
