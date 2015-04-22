@@ -41,7 +41,7 @@ class ShowAdminUrlCommand extends PwConnector
 
         $url = wire('config')->urls->admin;
 
-        if (!($admin instanceof NullPage) && isset($admin->httpUrl)) 
+        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) 
         {
             
             $url = $admin->httpUrl;
