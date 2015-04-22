@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Show;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,7 +41,7 @@ class ShowAdminUrlCommand extends PwConnector
 
         $url = wire('config')->urls->admin;
 
-        if (!($admin instanceof NullPage) && isset($admin->httpUrl)) 
+        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) 
         {
             
             $url = $admin->httpUrl;
