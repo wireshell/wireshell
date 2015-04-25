@@ -8,7 +8,7 @@ use Wireshell\PwConnector;
 /**
  * Class StatusCommand
  *
- * Returns version, path and environment info
+ * Returns versions, paths and environment info
  *
  * @package Wireshell
  * @author Marcus Herrmann
