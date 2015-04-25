@@ -60,8 +60,8 @@ class StatusCommand extends PwConnector
         ];
 
         $wsStatus = [
-            ['version',  $this->getApplication()->getVersion()],
-            ['forum', 'https://processwire.com/talk/topic/9494-wireshell-an-extendable-processwire-command-line-interface/']
+            ['Version',  $this->getApplication()->getVersion()],
+            ['Forum', 'https://processwire.com/talk/topic/9494-wireshell-an-extendable-processwire-command-line-interface/']
         ];
 
         $tablePW = $this->buildTable($output, $pwStatus, 'ProcessWire');
