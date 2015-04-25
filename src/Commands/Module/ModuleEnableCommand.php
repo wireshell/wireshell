@@ -24,7 +24,7 @@ class ModuleEnableCommand extends PwConnector
     protected function configure()
     {
         $this
-            ->setName('mod:enable')
+            ->setName('module:enable')
             ->setAliases(['m:e'])
             ->setDescription('Enables provided module(s)')
             ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar');

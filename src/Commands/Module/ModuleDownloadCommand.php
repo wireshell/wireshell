@@ -52,7 +52,7 @@ class ModuleDownloadCommand extends PwConnector
     protected function configure()
     {
         $this
-            ->setName('mod:download')
+            ->setName('module:download')
             ->setAliases(['m:dl'])
             ->setDescription('Downloads ProcessWire module(s).')
             ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar');
