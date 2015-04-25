@@ -55,7 +55,7 @@ class StatusCommand extends PwConnector
 
         $envStatus = [
             ['PHP version', PHP_VERSION],
-            ['PHP binary', PHP_BINDIR],
+            ['PHP binary', PHP_BINARY],
             ['MySQL version', $this->getMySQLVersion()]
         ];
 
