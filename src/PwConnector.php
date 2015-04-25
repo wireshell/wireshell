@@ -18,6 +18,7 @@ abstract class PwConnector extends SymfonyCommand
     public $moduleServiceKey;
     protected $userContainer;
     protected $roleContainer;
+    protected $modulePath = "/site/modules/";
 
     /**
      * @param $output
@@ -48,6 +49,11 @@ abstract class PwConnector extends SymfonyCommand
         $this->moduleServiceURL = wire('config')->moduleServiceURL;
         $this->moduleServiceKey = wire('config')->moduleServiceKey;
 
+    }
+
+    protected function getModuleDirectory()
+    {
+        return $this->modulePath;
     }
 
 }
