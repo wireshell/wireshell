@@ -104,14 +104,19 @@ class StatusCommand extends PwConnector
     }
 
     /**
-     * @return mixed
-     * @info http://stackoverflow.com/questions/10414530/how-to-get-server-mysql-version-in-php-without-connecting
+     * @return string
      */
     function getMySQLVersion() {
 
-        $output = shell_exec('mysql -V');
-        preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version);
-        return $version[0];
+        ob_start();
+        phpinfo(INFO_MODULES);
+        $info = ob_get_contents();
+        ob_end_clean();
+        $info = stristr($info, 'Client API version');
+        preg_match('/[1-9].[0-9].[1-9][0-9]/', $info, $match);
+        $gd = $match[0];
+
+        return $gd;
 
     }
 
