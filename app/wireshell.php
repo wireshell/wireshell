@@ -11,9 +11,8 @@ use Wireshell\Commands\Module\ModuleDownloadCommand;
 use Wireshell\Commands\Module\ModuleEnableCommand;
 use Wireshell\Commands\Module\ModuleDisableCommand;
 use Wireshell\Commands\Module\ModuleGenerateCommand;
-use Wireshell\Commands\Show\ShowVersionCommand;
-use Wireshell\Commands\Show\ShowAdminUrlCommand;
 use Wireshell\Commands\Common\NewCommand;
+use Wireshell\Commands\Common\StatusCommand;
 use Wireshell\Commands\Common\ServeCommand;
 use Wireshell\Commands\Backup\BackupCommand;
 
@@ -34,9 +33,8 @@ $app->add(new ModuleDownloadCommand());
 $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());
 $app->add(new ModuleGenerateCommand());
-$app->add(new ShowVersionCommand());
-$app->add(new ShowAdminUrlCommand());
 $app->add(new NewCommand());
+$app->add(new StatusCommand());
 $app->add(new ServeCommand());
 $app->add(new BackupCommand());
 
