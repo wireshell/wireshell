@@ -48,8 +48,8 @@ class StatusCommand extends PwConnector
         $pwStatus = [
             ['Version', wire('config')->version],
             ['Admin URL', $this->getAdminUrl()],
-            ['Advanced mode', wire('config')->advanced ? 'On' : 'Off'],
             ['Debug mode', wire('config')->debug ? '<error>On</error>' : '<info>Off</info>'],
+            ['Advanced mode', wire('config')->advanced ? 'On' : 'Off'],
             ['Timezone', wire('config')->timezone],
             ['HTTP hosts', implode(", ", wire('config')->httpHosts)],
             ['Admin theme', wire('config')->defaultAdminTheme],
@@ -60,21 +60,14 @@ class StatusCommand extends PwConnector
             ['Installation path', getcwd()]
         ];
 
-        $envStatus = [
-            ['PHP version', PHP_VERSION],
-            ['PHP binary', PHP_BINARY],
-            ['MySQL version', $this->getMySQLVersion()]
-        ];
-
         $wsStatus = [
             ['Version',  $this->getApplication()->getVersion()],
-            ['Forum', 'https://processwire.com/talk/topic/9494-wireshell-an-extendable-processwire-command-line-interface/']
+            ['Documentation', 'http://wireshell.pw']
         ];
 
 
         $tables = [];
         $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
-        $tables[] = $this->buildTable($output, $envStatus, 'Environment');
         $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
 
 
