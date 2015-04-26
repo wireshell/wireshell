@@ -1,7 +1,6 @@
 <?php namespace Wireshell\Commands\Common;
 
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,8 +17,9 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  * @author Camilo Castro
+ * @author netcarver
+ * @author horst
  */
-
 class StatusCommand extends PwConnector
 {
 
@@ -61,7 +61,7 @@ class StatusCommand extends PwConnector
         ];
 
         $wsStatus = [
-            ['Version',  $this->getApplication()->getVersion()],
+            ['Version', $this->getApplication()->getVersion()],
             ['Documentation', 'http://wireshell.pw']
         ];
 
@@ -116,14 +116,12 @@ class StatusCommand extends PwConnector
 
     /**
      * @param OutputInterface $output
-     * @param $tablePW
-     * @param $tableEnv
-     * @param $tableWs
+     * @param $tables
      */
     protected function renderTables(OutputInterface $output, $tables)
     {
         $output->writeln("\n");
-        foreach($tables as $table) {
+        foreach ($tables as $table) {
             $table->render();
             $output->writeln("\n");
         }
@@ -131,33 +129,33 @@ class StatusCommand extends PwConnector
 
 
     /**
-    * wrapper method for the Diagnose PHP submodule from @netcarver
-    */
+     * wrapper method for the Diagnose PHP submodule from @netcarver
+     */
     protected function getDiagnosePhp()
     {
         $sub = new DiagnosePhp();
         $rows = $sub->GetDiagnostics();
         $result = [];
-        foreach($rows as $row)
-        {
+        foreach ($rows as $row) {
             $result[] = [$row['title'], $row['value']];
         }
+
         return $result;
     }
 
 
     /**
-    * wrapper method for the Diagnose Imagehandling submodule from @netcarver & @horst
-    */
+     * wrapper method for the Diagnose Imagehandling submodule from @netcarver & @horst
+     */
     protected function getDiagnoseImagehandling()
     {
         $sub = new DiagnoseImagehandling();
         $rows = $sub->GetDiagnostics();
         $result = [];
-        foreach($rows as $row)
-        {
+        foreach ($rows as $row) {
             $result[] = [$row['title'], $row['value']];
         }
+
         return $result;
     }
 
