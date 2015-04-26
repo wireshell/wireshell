@@ -1,4 +1,4 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Helpers;
 
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 

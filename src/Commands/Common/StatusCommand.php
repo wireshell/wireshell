@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnoseImagehandling;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnosePhp;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 
 /**

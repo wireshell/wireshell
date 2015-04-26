@@ -3,7 +3,7 @@
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwUserTools;
+use Wireshell\Helpers\PwUserTools;
 
 /**
  * Class RoleCreateCommand
