@@ -31,7 +31,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Wireshell\Installer;
+use Wireshell\Helpers\Installer;
 
 /**
  * Class NewCommand
