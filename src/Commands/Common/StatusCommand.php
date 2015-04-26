@@ -115,23 +115,6 @@ class StatusCommand extends PwConnector
     }
 
     /**
-     * @return string
-     */
-    function getMySQLVersion() {
-
-        ob_start();
-        phpinfo(INFO_MODULES);
-        $info = ob_get_contents();
-        ob_end_clean();
-        $info = stristr($info, 'Client API version');
-        preg_match('/[1-9].[0-9].[1-9][0-9]/', $info, $match);
-        $gd = $match[0];
-
-        return $gd;
-
-    }
-
-    /**
      * @param OutputInterface $output
      * @param $tablePW
      * @param $tableEnv
