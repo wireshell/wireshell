@@ -32,7 +32,7 @@ $app->add(new FieldCreateCommand());
 $app->add(new ModuleDownloadCommand());
 $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());
-$app->add(new ModuleGenerateCommand());
+$app->add(new ModuleGenerateCommand(new GuzzleHttp\Client()));
 $app->add(new NewCommand());
 $app->add(new StatusCommand());
 $app->add(new ServeCommand());

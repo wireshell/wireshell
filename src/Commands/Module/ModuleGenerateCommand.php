@@ -1,12 +1,11 @@
 <?php namespace Wireshell\Commands\Module;
 
-use Symfony\Component\Console\Input\ArrayInput;
+use GuzzleHttp\ClientInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
+use ZipArchive;
 
 /**
  * Class ModuleGenerateCommand
@@ -21,15 +20,17 @@ use Wireshell\PwConnector;
 class ModuleGenerateCommand extends PwConnector
 {
 
-    protected $defaults = [
-        'name' => 'My Module name',
-        'author' => 'Alexis Awesome',
-        'type' => 'Other',
-        'version' => 10,
-        'autoload' => 'false',
-        'permanent' => 'false',
-        'singular' => 'false'
-    ];
+    protected $api = "http://modules.pw/api.php";
+    protected $client;
+
+    /**
+     * @param ClientInterface $client
+     */
+    function __construct(ClientInterface $client)
+    {
+        $this->client = $client;
+        parent::__construct();
+    }
 
 
     /**
@@ -43,25 +44,23 @@ class ModuleGenerateCommand extends PwConnector
             ->setDescription('Generates a boilerplate module')
             ->addArgument('name', InputOption::VALUE_REQUIRED, 'Provide a class name for the module')
             ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Module title')
+            ->addOption('mod-version', null, InputOption::VALUE_REQUIRED, 'Module version')
             ->addOption('author', null, InputOption::VALUE_REQUIRED, 'Module author')
             ->addOption('link', null, InputOption::VALUE_REQUIRED, 'Module link')
             ->addOption('summary', null, InputOption::VALUE_REQUIRED, 'Module summary')
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'Module type')
-            ->addOption('version', null, InputOption::VALUE_REQUIRED, 'Module version')
             ->addOption('extends', null, InputOption::VALUE_REQUIRED, 'Module extends')
             ->addOption('implements', null, InputOption::VALUE_REQUIRED, 'Module implements (Interface)')
-            ->addOption('permissions', null, InputOption::VALUE_REQUIRED, 'Module permissions')
-            ->addOption('require-pw', null, InputOption::VALUE_NONE, 'Module\'s ProcessWire version compatibility')
-            ->addOption('require-php', null, InputOption::VALUE_NONE, 'Module\'s PHP version compatibility')
+            ->addOption('require-pw', null, InputOption::VALUE_REQUIRED, 'Module\'s ProcessWire version compatibility')
+            ->addOption('require-php', null, InputOption::VALUE_REQUIRED, 'Module\'s PHP version compatibility')
             ->addOption('is-autoload', null, InputOption::VALUE_NONE, 'autoload = true')
             ->addOption('is-singular', null, InputOption::VALUE_NONE, 'singular = true')
             ->addOption('is-permanent', null, InputOption::VALUE_NONE, 'permanent = true')
             ->addOption('with-external-json', null, InputOption::VALUE_NONE, 'Generates external json config file')
-            ->addOption('with-copyright', null, InputOption::VALUE_NONE, 'Module author')
-            ->addOption('with-uninstall', null, InputOption::VALUE_NONE, 'Module author')
-            ->addOption('with-sample-code', null, InputOption::VALUE_NONE, 'Module author')
-            ->addOption('with-config-page', null, InputOption::VALUE_NONE, 'Module author');
-
+            ->addOption('with-copyright', null, InputOption::VALUE_NONE, 'Adds copyright in comments')
+            ->addOption('with-uninstall', null, InputOption::VALUE_NONE, 'Adds uninstall method')
+            ->addOption('with-sample-code', null, InputOption::VALUE_NONE, 'Adds sample code')
+            ->addOption('with-config-page', null, InputOption::VALUE_NONE, 'Adds config page');
     }
 
     /**
@@ -75,39 +74,129 @@ class ModuleGenerateCommand extends PwConnector
 
         $modName = wire('sanitizer')->name($input->getArgument('name'));
 
-        $modDir = $this->createModuleDirectory($output, $modName);
-        $this->createModuleFiles($output, $modDir, $modName);
+        $request = $this->createRequest($modName, $output, $input);
+
+        $modDir = $this->getModuleDirectory();
+
+        $this->download($request, $modDir, $output);
+
+        $this->extract($modDir, $output);
+
+        $this->cleanUp($modDir,$modName, $output);
 
     }
 
     /**
      * @return string
      */
-    protected function createModuleDirectory($output, $modName)
+    protected function getModuleDirectory()
     {
-        $pwModsDir = parent::getModuleDirectory();
+        $modDir = getcwd() . parent::getModuleDirectory();
 
-        $fs = new Filesystem();
+        return $modDir;
+    }
 
-        $path = getcwd() . $pwModsDir . $modName;
 
-        try {
+    /**
+     * @param $modName
+     * @return string
+     */
+    private function createRequest($modName, OutputInterface $output, InputInterface $input)
+    {
+        $output->writeln("<comment>Generating module at modules.pw ...</comment>");
 
-            $fs->mkdir($path);
+        $title = $input->getOption('title');
+        $modVersion = $input->getOption('mod-version');
+        $author = $input->getOption('author');
+        $link = $input->getOption('link');
+        $summary = $input->getOption('summary');
+        $type = $input->getOption('type');
+        $extends = $input->getOption('extends');
+        $implements = $input->getOption('implements');
+        $requirePw = $input->getOption('require-pw');
+        $requirePhp = $input->getOption('require-php');
+        $isAutoload = $input->getOption('is-autoload');
+        $isSingular = $input->getOption('is-singular');
+        $isPermanent = $input->getOption('is-permanent');
+        $withExternalJson = $input->getOption('with-external-json');
+        $withCopyright = $input->getOption('with-copyright');
+        $withUninstall = $input->getOption('with-uninstall');
+        $withSampleCode = $input->getOption('with-sample-code');
+        $withConfigPage = $input->getOption('with-config-page');
 
-        } catch (IOExceptionInterface $e) {
+        $request = $this->api . "?name=" . $modName;
 
-            $output->writeln("<error>An error occurred while creating your directory at {$e->getPath()}</error>");
-            exit(1);
-        }
+        if ($title) $request .= "&title={$title}";
+        if ($modVersion) $request .= "&version={$modVersion}";
+        if ($author) $request .= "&author={$author}";
+        if ($link) $request .= "&link={$link}";
+        if ($summary) $request .= "&summary={$summary}";
+        if ($type) $request .= "&summary={$type}";
+        if ($extends) $request .= "&extends={$extends}";
+        if ($implements) $request .= "&implements={$implements}";
+        if ($requirePw) $request .= "&require-pw='{$requirePw}'";
+        if ($requirePhp) $request .= "&require-php='{$requirePhp}'";
+        if ($isAutoload) $request .= "&is-autoload=true";
+        if ($isSingular) $request .= "&is-singular=true";
+        if ($isPermanent) $request .= "&is-permanent=true";
+        if ($withExternalJson) $request .= "&with-external-json=true";
+        if ($withCopyright) $request .= "&with-copyright=true";
+        if ($withUninstall) $request .= "&with-uninstall=true";
+        if ($withSampleCode) $request .= "&with-sample-code=true";
+        if ($withConfigPage) $request .= "&with-config-page=true";
 
-        $output->writeln("<comment>Path {$path} created sucessfully</comment>");
+        return $request;
 
     }
 
-    private function createModuleFiles($output, $input, $modDir)
+    /**
+     * @param $request
+     * @param $modDir
+     * @param OutputInterface $output
+     * @return $this
+     */
+    private function download($request, $modDir, OutputInterface $output)
     {
-        // @Todo: implement
+        $output->writeln("<comment>Downloading ... - {$request}</comment>");
+
+        $response = $this->client->get($request)->getBody();
+
+        file_put_contents($modDir . "/temp.zip", $response);
+
+        return $this;
+    }
+
+    /**
+     * @param $modDir
+     * @param OutputInterface $output
+     * @return $this
+     */
+    private function extract($modDir, OutputInterface $output)
+    {
+        $output->writeln("<comment>Extracting...</comment>");
+
+        $archive = new ZipArchive;
+
+        $archive->open($modDir . "/temp.zip");
+        $archive->extractTo($modDir);
+
+        $archive->close();
+
+        return $this;
+    }
+
+    /**
+     * @param $modDir
+     * @return $this
+     */
+    private function cleanUp($modDir, $modName, OutputInterface $output)
+    {
+        @chmod($modDir . "/temp.zip", 0777);
+        @unlink($modDir . "/temp.zip");
+
+        $output->writeln("<info>Module {$modName} created successfully!</info>");
+
+        return $this;
     }
 
 }
