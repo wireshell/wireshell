@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Rah\Danpu\Dump;
 use Rah\Danpu\Export;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class BackupCommand
