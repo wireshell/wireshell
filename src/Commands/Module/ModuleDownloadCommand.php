@@ -55,7 +55,9 @@ class ModuleDownloadCommand extends PwConnector
             ->setName('module:download')
             ->setAliases(['m:dl'])
             ->setDescription('Downloads ProcessWire module(s).')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('github', null, InputOption::VALUE_OPTIONAL, 'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
+            ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Optional. Define specific branch to download from.');
     }
 
     /**
@@ -80,6 +82,12 @@ class ModuleDownloadCommand extends PwConnector
             // check if module directory is writeable
             $this->output->writeln('Make sure your /site/modules directory is writeable by PHP.');
         } else {
+            $github = '';
+            if (!empty($input->getOption('github'))) {
+                $branch = (!empty($input->getOption('branch'))) ? $input->getOption('branch') : 'master';
+                $github = 'https://github.com/' . $input->getOption('github') . '/archive/' . $branch . '.zip';
+            }
+
             foreach ($modules as $module) {
                 $this->output->writeln("\n<bg=yellow;options=bold> - Module '$module': </bg=yellow;options=bold>\n");
 
@@ -88,7 +96,11 @@ class ModuleDownloadCommand extends PwConnector
                 } else {
                     // reset PW modules cache
                     wire('modules')->resetCache();
-                    $this->downloadModuleIfExists($module);
+                    if (isset($github)) {
+                        $this->downloadModule($module, $github);
+                    } else {
+                        $this->downloadModuleIfExists($module);
+                    }
                 }
             }
 
@@ -118,7 +130,6 @@ class ModuleDownloadCommand extends PwConnector
 
     /**
      * check if a module exists in processwire module directory
-     * download it
      *
      * @param string $module
      */
@@ -137,15 +148,23 @@ class ModuleDownloadCommand extends PwConnector
             // yeah! module exists
             $item = $result->items[0];
             $moduleUrl = $item->project_url . '/archive/master.zip';
+            $this->downloadModule($module, $moduleUrl);
+        }
+    }
 
-            try {
-                $this
-                    ->download($moduleUrl, $module)
-                    ->extract($module)
-                    ->cleanUp($module);
-            } catch (Exception $e) {
-                $this->output->writeln(" <error> Could not download module $module. Please try again later. </error>\n");
-            }
+    /**
+     * download module
+     *
+     * @param string $module
+     */
+    public function downloadModule($module, $moduleUrl) {
+        try {
+            $this
+                ->download($moduleUrl, $module)
+                ->extract($module)
+                ->cleanUp($module);
+        } catch (Exception $e) {
+            $this->output->writeln(" <error> Could not download module $module. Please try again later. </error>\n");
         }
     }
 
