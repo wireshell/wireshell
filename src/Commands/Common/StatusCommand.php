@@ -82,7 +82,7 @@ class StatusCommand extends PwConnector
         $dbPort = wire('config')->dbPort;
 
         $prepended = trim(wire('config')->prependTemplateFile);
-        
+
         $appended = trim(wire('config')->appendTemplateFile);
 
         $prependedTemplateFile = $prepended != '' ? $prepended : $this->tint('None', 'info');
@@ -184,7 +184,8 @@ class StatusCommand extends PwConnector
      * @return mixed
      * @info http://stackoverflow.com/questions/10414530/how-to-get-server-mysql-version-in-php-without-connecting
      */
-    function getMySQLVersion() {
+    function getMySQLVersion() 
+    {
 
         $output = shell_exec('mysql -V');
         preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version);
