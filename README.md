@@ -104,7 +104,7 @@ Creating a template, and corresponding empty php file in `sites/templates`. Use 
 
 Field `title` is attached by default.
 
-**Alias:** `$ wireshell c:t`
+**Alias:** `$ wireshell t:c`
 
 #### Template Fields
 
