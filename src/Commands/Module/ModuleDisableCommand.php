@@ -24,7 +24,7 @@ class ModuleDisableCommand extends PwConnector
     {
         $this
             ->setName('module:disable')
-            ->setAliases(['m:d'])
+            ->setAliases(['m:dis'])
             ->setDescription('Disable provided module(s)')
             ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
             ->addOption('rm', null, InputOption::VALUE_NONE, 'Remove module');
@@ -47,7 +47,7 @@ class ModuleDisableCommand extends PwConnector
                 $output->writeln("Module {$module} <comment>uninstalled</comment> successfully.");
 
                 // remove module
-                if ($input->getOption('rm') === true && is_dir(wire('config')->paths->MobileDetect)) {
+                if ($input->getOption('rm') === true && is_dir(wire('config')->paths->$module)) {
                     if ($this->recurseRmdir(wire('config')->paths->$module)) {
                         $output->writeln("Module {$module} was <comment>removed</comment> successfully.");
                     } else {
