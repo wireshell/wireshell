@@ -1,4 +1,4 @@
-# Wireshell 0.3.3
+# Wireshell 0.3.4
 **An extendable ProcessWire command line companion**
 
 Aiming for: a command line interface for ProcessWire (like Drush is for Drupal), for running certain (e.g. maintenance, installation) tasks quickly - without having to use the ProcessWire admin Interface.
@@ -131,6 +131,16 @@ Creates a text field {field-name}. Available options:
 
 **Alias:** `$ wireshell f:c`
 
+#### Module Download
+
+```
+$ wireshell mod:download {module-name},{module-name}
+```
+
+Downloads a module.
+
+**Alias:** `$ wireshell m:dl`
+
 
 #### Module Enable
 
@@ -148,7 +158,15 @@ Enables and installs a (present!) module.
  $ wireshell mod:disable {module-name}
 ```
 
-Disables and undinstalls a module.
+Disables and uninstalls a module.
+
+Available option:
+
+```
+$ wireshell mod:disable --rm {module-name}
+```
+
+Disables, uninstalls and deletes a module. 
 
 **Alias:** `$ wireshell m:d`
 
@@ -162,6 +180,15 @@ Outputs the version number of the current ProcessWire installation
 
 **Alias:** `$ wireshell s:v`
 
+#### Show Admin URL
+
+```
+$ wireshell show:admin
+```
+
+Outputs the admin page url of the current ProcessWire installation
+
+**Alias:** `$ wireshell s:a`
 
 #### Serve
 

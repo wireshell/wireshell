@@ -2,39 +2,4 @@
 
 <?php
 
-use Symfony\Component\Console\Application;
-use Wireshell\Commands\UserCreateCommand;
-use Wireshell\Commands\RoleCreateCommand;
-use Wireshell\Commands\TemplateCreateCommand;
-use Wireshell\Commands\TemplateFieldsCommand;
-use Wireshell\Commands\FieldCreateCommand;
-use Wireshell\Commands\ModuleEnableCommand;
-use Wireshell\Commands\ModuleDisableCommand;
-use Wireshell\Commands\ShowVersionCommand;
-use Wireshell\Commands\ShowAdminUrlCommand;
-use Wireshell\Commands\NewCommand;
-use Wireshell\Commands\ServeCommand;
-use Wireshell\Commands\BackupCommand;
-
-if (file_exists(__DIR__.'/../../autoload.php')) {
-    require __DIR__.'/../../autoload.php';
-} else {
-    require __DIR__.'/vendor/autoload.php';
-}
-
-$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.3');
-
-$app->add(new UserCreateCommand());
-$app->add(new RoleCreateCommand());
-$app->add(new TemplateCreateCommand());
-$app->add(new TemplateFieldsCommand());
-$app->add(new FieldCreateCommand());
-$app->add(new ModuleEnableCommand());
-$app->add(new ModuleDisableCommand());
-$app->add(new ShowVersionCommand());
-$app->add(new ShowAdminUrlCommand());
-$app->add(new NewCommand());
-$app->add(new ServeCommand());
-$app->add(new BackupCommand());
-
-$app->run();
+require require __DIR__.'/app/wireshell.php';
