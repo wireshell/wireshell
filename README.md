@@ -159,6 +159,14 @@ $ wireshell mod:enable {module-name}
 
 Enables and installs a (present!) module.
 
+Available option:
+
+```
+$ wireshell mod:enable {module-name} --github={username/repo_name} --branch={branch}
+```
+
+Optional: Download module from github if it doesn't exists in ProcessWire module directory or if you need a specific branch. Default branch is master.
+
 **Alias:** `$ wireshell m:e`
 
 #### Module Disable
