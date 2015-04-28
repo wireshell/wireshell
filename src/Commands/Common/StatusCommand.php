@@ -38,31 +38,11 @@ class StatusCommand extends PwConnector
 
         parent::bootstrapProcessWire($output);
 
-        $pwStatus = [
-            ['Version', wire('config')->version],
-            ['Admin URL', $this->getAdminUrl()],
-            ['Advanced mode', wire('config')->advanced ? 'On' : 'Off'],
-            ['Debug mode', wire('config')->debug ? '<error>On</error>' : '<info>Off</info>'],
-            ['Timezone', wire('config')->timezone],
-            ['HTTP hosts', implode(", ", wire('config')->httpHosts)],
-            ['Admin theme', wire('config')->defaultAdminTheme],
-            ['Database host', wire('config')->dbHost],
-            ['Database name', wire('config')->dbName],
-            ['Database user', wire('config')->dbUser],
-            ['Database port', wire('config')->dbPort],
-            ['Installation path', getcwd()]
-        ];
+        $pwStatus = $this->getPWStatus();
 
-        $envStatus = [
-            ['PHP version', PHP_VERSION],
-            ['PHP binary', PHP_BINDIR],
-            ['MySQL version', $this->getMySQLVersion()]
-        ];
+        $envStatus = $this->getEnvStatus();
 
-        $wsStatus = [
-            ['version',  $this->getApplication()->getVersion()],
-            ['forum', 'https://processwire.com/talk/topic/9494-wireshell-an-extendable-processwire-command-line-interface/']
-        ];
+        $wsStatus = $this->getWsStatus();
 
         $tablePW = $this->buildTable($output, $pwStatus, 'ProcessWire');
 
@@ -74,13 +54,108 @@ class StatusCommand extends PwConnector
 
     }
 
+    /**
+     * @return array
+     */
+    protected function getPWStatus()
+    {
+
+        $version = wire('config')->version;
+        
+        $adminUrl = $this->getAdminUrl();
+
+        $advancedMode = wire('config')->advanced ? $this->tint('On', 'error') : $this->tint('Off','info');
+
+        $debugMode = wire('config')->debug ? $this->tint('On', 'error') : $this->tint('Off', 'info');
+
+        $timezone = wire('config')->timezone;
+
+        $hosts = implode(", ", wire('config')->httpHosts);
+
+        $adminTheme = wire('config')->defaultAdminTheme;
+
+        $dbHost = wire('config')->dbHost;
+        $dbName = wire('config')->dbName;
+
+        $dbUser = wire('config')->dbUser;
+        $dbPass = wire('config')->dbPass;
+        $dbPort = wire('config')->dbPort;
+
+        $prepended = trim(wire('config')->prependTemplateFile);
+        $appended = trim(wire('config')->appendTemplateFile);
+
+        $prependedTemplateFile = $prepended != '' ? $prepended : $this->tint('None', 'info');
+        $appendedTemplateFile = $appended != '' ? $appended : $this->tint('None', 'info');
+
+
+        $installPath = getcwd();
+
+        $status = [
+            ['Version', $version],
+            ['Admin URL', $adminUrl],
+            ['Advanced mode', $advancedMode],
+            ['Debug mode', $debugMode],
+            ['Timezone', $timezone],
+            ['HTTP hosts', $hosts],
+            ['Admin theme', $adminTheme],
+            ['Prepended template file', $prependedTemplateFile],
+            ['Appended template file', $appendedTemplateFile],
+            ['Database host', $dbHost],
+            ['Database name', $dbName],
+            ['Database user', $dbUser],
+            ['Database password', $dbPass],
+            ['Database port', $dbPort],
+            ['Installation path', $installPath]
+        ];
+
+        return $status;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getEnvStatus()
+    {
+
+        $status = [
+            ['PHP version', PHP_VERSION],
+            ['PHP binary', PHP_BINDIR],
+            ['MySQL version', $this->getMySQLVersion()]
+        ];
+
+        return $status;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getWsStatus()
+    {
+        $version = $this->getApplication()->getVersion();
+
+        $forumLink = 'https://processwire.com/talk/topic/9494-wireshell-an-extendable-processwire-command-line-interface/';
+
+        $githubLink = 'https://github.com/marcus-herrmann/wireshell';
+
+        $status = [
+            ['Version',  $version],
+            ['Forum', $forumLink],
+            ['Source code', $githubLink],
+            ['License', "MIT"]
+        ];
+
+        return $status;
+    }
+
     protected function buildTable(OutputInterface $output, $statusArray, $label)
     {
+
+        $headers = [$this->tint($label, 'comment')];
 
         $tablePW = new Table($output);
         $tablePW
             ->setStyle('borderless')
-            ->setHeaders(["<comment>{$label}</comment>"])
+            ->setHeaders($headers)
             ->setRows($statusArray);
 
         return $tablePW;
@@ -128,6 +203,16 @@ class StatusCommand extends PwConnector
         $tableEnv->render();
         $output->writeln("\n");
         $tableWs->render();
+    }
+
+    /**
+    * @param $string
+    * @param $type
+    * @return tinted string
+    */
+    protected function tint($string, $type) 
+    {
+        return "<{$type}>{$string}</{$type}>";
     }
 
 }
