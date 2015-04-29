@@ -45,38 +45,23 @@ class StatusCommand extends PwConnector
 
         parent::bootstrapProcessWire($output);
 
-        $pwStatus = [
-            ['Version', wire('config')->version],
-            ['Admin URL', $this->getAdminUrl()],
-            ['Debug mode', wire('config')->debug ? '<error>On</error>' : '<info>Off</info>'],
-            ['Advanced mode', wire('config')->advanced ? 'On' : 'Off'],
-            ['Timezone', wire('config')->timezone],
-            ['HTTP hosts', implode(", ", wire('config')->httpHosts)],
-            ['Admin theme', wire('config')->defaultAdminTheme],
-            ['Database host', wire('config')->dbHost],
-            ['Database name', wire('config')->dbName],
-            ['Database user', wire('config')->dbUser],
-            ['Database port', wire('config')->dbPort],
-            ['Installation path', getcwd()]
-        ];
+        $pwStatus = $this->getPWStatus();
 
-        $wsStatus = [
-            ['Version', $this->getApplication()->getVersion()],
-            ['Documentation', 'http://wireshell.pw']
-        ];
-
+        $wsStatus = $this->getWsStatus();
 
         $tables = [];
         $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
         $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
 
 
-        if ($input->getOption('php')) {
-            $phpStatus = $this->getDiagnosePhp();
+        if ($input->getOption('php')) 
+        {
+            $phpStatus = $this->getDiagnosePHP();
             $tables[] = $this->buildTable($output, $phpStatus, 'PHP Diagnostics');
         }
 
-        if ($input->getOption('image')) {
+        if ($input->getOption('image')) 
+        {
             $phpStatus = $this->getDiagnoseImagehandling();
             $tables[] = $this->buildTable($output, $phpStatus, 'Image Diagnostics');
         }
@@ -85,13 +70,92 @@ class StatusCommand extends PwConnector
         $this->renderTables($output, $tables);
     }
 
+    /**
+     * @return array
+     */
+    protected function getPWStatus()
+    {
+
+        $version = wire('config')->version;
+        
+        $adminUrl = $this->getAdminUrl();
+
+        $advancedMode = wire('config')->advanced ? $this->tint('On', 'error') : $this->tint('Off','info');
+
+        $debugMode = wire('config')->debug ? $this->tint('On', 'error') : $this->tint('Off', 'info');
+
+        $timezone = wire('config')->timezone;
+
+        $hosts = implode(", ", wire('config')->httpHosts);
+
+        $adminTheme = wire('config')->defaultAdminTheme;
+
+        $dbHost = wire('config')->dbHost;
+        $dbName = wire('config')->dbName;
+
+        $dbUser = wire('config')->dbUser;
+        $dbPass = wire('config')->dbPass;
+        $dbPort = wire('config')->dbPort;
+
+        $prepended = trim(wire('config')->prependTemplateFile);
+
+        $appended = trim(wire('config')->appendTemplateFile);
+
+        $prependedTemplateFile = $prepended != '' ? $prepended : $this->tint('None', 'info');
+
+        $appendedTemplateFile = $appended != '' ? $appended : $this->tint('None', 'info');
+
+
+        $installPath = getcwd();
+
+        $status = [
+            ['Version', $version],
+            ['Admin URL', $adminUrl],
+            ['Advanced mode', $advancedMode],
+            ['Debug mode', $debugMode],
+            ['Timezone', $timezone],
+            ['HTTP hosts', $hosts],
+            ['Admin theme', $adminTheme],
+            ['Prepended template file', $prependedTemplateFile],
+            ['Appended template file', $appendedTemplateFile],
+            ['Database host', $dbHost],
+            ['Database name', $dbName],
+            ['Database user', $dbUser],
+            ['Database password', $dbPass],
+            ['Database port', $dbPort],
+            ['Installation path', $installPath]
+        ];
+
+        return $status;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getWsStatus()
+    {
+
+        $version = $this->getApplication()->getVersion();
+
+        $documentation = 'http://wireshell.pw';
+
+        $status = [
+            ['Version',  $version],
+            ['Documentation', $documentation],
+            ['License', "MIT"]
+        ];
+
+        return $status;
+    }
 
     protected function buildTable(OutputInterface $output, $statusArray, $label)
     {
+        $headers = [$this->tint($label, 'comment')];
+
         $tablePW = new Table($output);
         $tablePW
             ->setStyle('borderless')
-            ->setHeaders(["<comment>{$label}</comment>"])
+            ->setHeaders($headers)
             ->setRows($statusArray);
 
         return $tablePW;
@@ -106,8 +170,8 @@ class StatusCommand extends PwConnector
 
         $url = wire('config')->urls->admin;
 
-        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) {
-
+        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) 
+        {
             $url = $admin->httpUrl;
         }
 
@@ -121,7 +185,9 @@ class StatusCommand extends PwConnector
     protected function renderTables(OutputInterface $output, $tables)
     {
         $output->writeln("\n");
-        foreach ($tables as $table) {
+
+        foreach ($tables as $table) 
+        {
             $table->render();
             $output->writeln("\n");
         }
@@ -131,12 +197,14 @@ class StatusCommand extends PwConnector
     /**
      * wrapper method for the Diagnose PHP submodule from @netcarver
      */
-    protected function getDiagnosePhp()
+    protected function getDiagnosePHP()
     {
         $sub = new DiagnosePhp();
         $rows = $sub->GetDiagnostics();
         $result = [];
-        foreach ($rows as $row) {
+
+        foreach ($rows as $row) 
+        {
             $result[] = [$row['title'], $row['value']];
         }
 
@@ -152,11 +220,24 @@ class StatusCommand extends PwConnector
         $sub = new DiagnoseImagehandling();
         $rows = $sub->GetDiagnostics();
         $result = [];
-        foreach ($rows as $row) {
+
+        foreach ($rows as $row) 
+        {
             $result[] = [$row['title'], $row['value']];
         }
 
         return $result;
+    }
+
+    /**
+    * Simple method for coloring output
+    * @param $string
+    * @param $type
+    * @return tinted string
+    */
+    protected function tint($string, $type) 
+    {
+        return "<{$type}>{$string}</{$type}>";
     }
 
 }
