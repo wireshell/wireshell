@@ -51,7 +51,7 @@ class StatusCommand extends PwConnector
 
         $tables = [];
         $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
-        $tables[] = $this->buildTable($output, $wsStatus, 'Wireshell');
+        $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
 
 
         if ($input->getOption('php')) 
