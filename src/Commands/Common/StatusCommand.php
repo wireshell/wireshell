@@ -7,6 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnoseImagehandling;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnosePhp;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTools as Tools;
 
 
 /**
@@ -76,13 +77,20 @@ class StatusCommand extends PwConnector
     protected function getPWStatus()
     {
 
+        $on = Tools::tint('On', Tools::kTintError);
+
+        $off = Tools::tint('Off', Tools::kTintInfo);
+
+        $none = Tools::tint('None', Tools::kTintInfo);
+
+
         $version = wire('config')->version;
         
         $adminUrl = $this->getAdminUrl();
 
-        $advancedMode = wire('config')->advanced ? $this->tint('On', 'error') : $this->tint('Off','info');
+        $advancedMode = wire('config')->advanced ?  $on : $off;
 
-        $debugMode = wire('config')->debug ? $this->tint('On', 'error') : $this->tint('Off', 'info');
+        $debugMode = wire('config')->debug ? $on : $off;
 
         $timezone = wire('config')->timezone;
 
@@ -101,9 +109,9 @@ class StatusCommand extends PwConnector
 
         $appended = trim(wire('config')->appendTemplateFile);
 
-        $prependedTemplateFile = $prepended != '' ? $prepended : $this->tint('None', 'info');
+        $prependedTemplateFile = $prepended != '' ? $prepended : $none;
 
-        $appendedTemplateFile = $appended != '' ? $appended : $this->tint('None', 'info');
+        $appendedTemplateFile = $appended != '' ? $appended : $none;
 
 
         $installPath = getcwd();
@@ -150,7 +158,7 @@ class StatusCommand extends PwConnector
 
     protected function buildTable(OutputInterface $output, $statusArray, $label)
     {
-        $headers = [$this->tint($label, 'comment')];
+        $headers = [Tools::tint($label, Tools::kTintComment)];
 
         $tablePW = new Table($output);
         $tablePW
@@ -227,17 +235,6 @@ class StatusCommand extends PwConnector
         }
 
         return $result;
-    }
-
-    /**
-    * Simple method for coloring output
-    * @param $string
-    * @param $type
-    * @return tinted string
-    */
-    protected function tint($string, $type) 
-    {
-        return "<{$type}>{$string}</{$type}>";
     }
 
 }
