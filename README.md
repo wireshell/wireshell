@@ -104,7 +104,7 @@ Creating a template, and corresponding empty php file in `sites/templates`. Use 
 
 Field `title` is attached by default.
 
-**Alias:** `$ wireshell c:t`
+**Alias:** `$ wireshell t:c`
 
 #### Template Fields
 
@@ -139,6 +139,15 @@ $ wireshell mod:download {module-name},{module-name}
 
 Downloads a module.
 
+Available option:
+
+```
+$ wireshell mod:download {module-name} --github={username/repo_name} --branch={branch}
+```
+
+Optional: Download module from github if it doesn't exists in ProcessWire module directory or if you need a specific branch. Default branch is master.
+
+
 **Alias:** `$ wireshell m:dl`
 
 
@@ -149,6 +158,14 @@ $ wireshell mod:enable {module-name}
 ```
 
 Enables and installs a (present!) module.
+
+Available option:
+
+```
+$ wireshell mod:enable {module-name} --github={username/repo_name} --branch={branch}
+```
+
+Optional: Download module from github if it doesn't exists in ProcessWire module directory or if you need a specific branch. Default branch is master.
 
 **Alias:** `$ wireshell m:e`
 
@@ -168,7 +185,7 @@ $ wireshell mod:disable --rm {module-name}
 
 Disables, uninstalls and deletes a module. 
 
-**Alias:** `$ wireshell m:d`
+**Alias:** `$ wireshell m:dis`
 
 #### Show Version
 
