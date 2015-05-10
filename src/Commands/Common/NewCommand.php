@@ -81,7 +81,7 @@ class NewCommand extends Command
     {
         $this
             ->setName('new')
-            ->setDescription('Creates a new ProcessWire project.')
+            ->setDescription('Creates a new ProcessWire project')
             ->addArgument('directory', InputArgument::REQUIRED, 'Directory where the new project will be created.')
             ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user.')
             ->addOption('dbName', null, InputOption::VALUE_REQUIRED, 'Database name.')
