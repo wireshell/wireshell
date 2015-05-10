@@ -13,7 +13,6 @@ use Wireshell\Helpers\PwConnector;
  * @link http://php.net/manual/en/function.passthru.php
  * @author Marcus Herrmann
  */
-
 class ServeCommand extends PwConnector
 {
 

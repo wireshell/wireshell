@@ -55,14 +55,12 @@ class StatusCommand extends PwConnector
         $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
 
 
-        if ($input->getOption('php')) 
-        {
+        if ($input->getOption('php')) {
             $phpStatus = $this->getDiagnosePHP();
             $tables[] = $this->buildTable($output, $phpStatus, 'PHP Diagnostics');
         }
 
-        if ($input->getOption('image')) 
-        {
+        if ($input->getOption('image')) {
             $phpStatus = $this->getDiagnoseImagehandling();
             $tables[] = $this->buildTable($output, $phpStatus, 'Image Diagnostics');
         }
@@ -85,10 +83,10 @@ class StatusCommand extends PwConnector
 
 
         $version = wire('config')->version;
-        
+
         $adminUrl = $this->getAdminUrl();
 
-        $advancedMode = wire('config')->advanced ?  $on : $off;
+        $advancedMode = wire('config')->advanced ? $on : $off;
 
         $debugMode = wire('config')->debug ? $on : $off;
 
@@ -148,7 +146,7 @@ class StatusCommand extends PwConnector
         $documentation = 'http://wireshell.pw';
 
         $status = [
-            ['Version',  $version],
+            ['Version', $version],
             ['Documentation', $documentation],
             ['License', "MIT"]
         ];
@@ -178,8 +176,7 @@ class StatusCommand extends PwConnector
 
         $url = wire('config')->urls->admin;
 
-        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) 
-        {
+        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) {
             $url = $admin->httpUrl;
         }
 
@@ -194,8 +191,7 @@ class StatusCommand extends PwConnector
     {
         $output->writeln("\n");
 
-        foreach ($tables as $table) 
-        {
+        foreach ($tables as $table) {
             $table->render();
             $output->writeln("\n");
         }
@@ -211,8 +207,7 @@ class StatusCommand extends PwConnector
         $rows = $sub->GetDiagnostics();
         $result = [];
 
-        foreach ($rows as $row) 
-        {
+        foreach ($rows as $row) {
             $result[] = [$row['title'], $row['value']];
         }
 
@@ -229,8 +224,7 @@ class StatusCommand extends PwConnector
         $rows = $sub->GetDiagnostics();
         $result = [];
 
-        foreach ($rows as $row) 
-        {
+        foreach ($rows as $row) {
             $result[] = [$row['title'], $row['value']];
         }
 

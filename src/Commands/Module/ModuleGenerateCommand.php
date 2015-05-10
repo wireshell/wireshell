@@ -17,7 +17,6 @@ use ZipArchive;
  * @author Nico
  * @author Marcus Herrmann
  */
-
 class ModuleGenerateCommand extends PwModuleTools
 {
 
@@ -83,7 +82,7 @@ class ModuleGenerateCommand extends PwModuleTools
 
         $this->extract($modDir, $output);
 
-        $this->cleanUp($modDir,$modName, $output);
+        $this->cleanUp($modDir, $modName, $output);
 
     }
 
@@ -141,23 +140,57 @@ class ModuleGenerateCommand extends PwModuleTools
 
         $request = $this->api . "?name=" . $modName;
 
-        if ($title) $request .= "&title={$title}";
-        if ($modVersion) $request .= "&version={$modVersion}";
-        if ($author) $request .= "&author={$author}";
-        if ($link) $request .= "&link={$link}";
-        if ($summary) $request .= "&summary={$summary}";
-        if ($type) $request .= "&summary={$type}";
-        if ($extends) $request .= "&extends={$extends}";
-        if ($implements) $request .= "&implements={$implements}";
-        if ($requirePw) $request .= "&require-pw='{$requirePw}'";
-        if ($requirePhp) $request .= "&require-php='{$requirePhp}'";
-        if ($isAutoload) $request .= "&is-autoload=true";
-        if ($isSingular) $request .= "&is-singular=true";
-        if ($isPermanent) $request .= "&is-permanent=true";
-        if ($withExternalJson) $request .= "&with-external-json=true";
-        if ($withCopyright) $request .= "&with-copyright=true";
-        if ($withUninstall) $request .= "&with-uninstall=true";
-        if ($withConfigPage) $request .= "&with-config-page=true";
+        if ($title) {
+            $request .= "&title={$title}";
+        }
+        if ($modVersion) {
+            $request .= "&version={$modVersion}";
+        }
+        if ($author) {
+            $request .= "&author={$author}";
+        }
+        if ($link) {
+            $request .= "&link={$link}";
+        }
+        if ($summary) {
+            $request .= "&summary={$summary}";
+        }
+        if ($type) {
+            $request .= "&summary={$type}";
+        }
+        if ($extends) {
+            $request .= "&extends={$extends}";
+        }
+        if ($implements) {
+            $request .= "&implements={$implements}";
+        }
+        if ($requirePw) {
+            $request .= "&require-pw='{$requirePw}'";
+        }
+        if ($requirePhp) {
+            $request .= "&require-php='{$requirePhp}'";
+        }
+        if ($isAutoload) {
+            $request .= "&is-autoload=true";
+        }
+        if ($isSingular) {
+            $request .= "&is-singular=true";
+        }
+        if ($isPermanent) {
+            $request .= "&is-permanent=true";
+        }
+        if ($withExternalJson) {
+            $request .= "&with-external-json=true";
+        }
+        if ($withCopyright) {
+            $request .= "&with-copyright=true";
+        }
+        if ($withUninstall) {
+            $request .= "&with-uninstall=true";
+        }
+        if ($withConfigPage) {
+            $request .= "&with-config-page=true";
+        }
 
         return $request;
 
@@ -212,7 +245,6 @@ class ModuleGenerateCommand extends PwModuleTools
 
         return $this;
     }
-
 
 
 }

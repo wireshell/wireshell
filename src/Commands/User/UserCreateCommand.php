@@ -14,7 +14,6 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class UserCreateCommand extends PwUserTools
 {
 

@@ -14,7 +14,6 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class ModuleEnableCommand extends PwConnector
 {
 
@@ -27,9 +26,12 @@ class ModuleEnableCommand extends PwConnector
             ->setName('module:enable')
             ->setAliases(['m:e'])
             ->setDescription('Enables provided module(s)')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
-            ->addOption('github', null, InputOption::VALUE_OPTIONAL, 'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
-            ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Optional. Define specific branch to download from.');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED,
+                'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('github', null, InputOption::VALUE_OPTIONAL,
+                'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
+            ->addOption('branch', null, InputOption::VALUE_OPTIONAL,
+                'Optional. Define specific branch to download from.');
     }
 
     /**
@@ -45,7 +47,9 @@ class ModuleEnableCommand extends PwConnector
 
         foreach ($modules as $module) {
             $this->checkIfModuleExistsLocally($module, $output, $input);
-            if(wire('modules')->get($module)) $output->writeln("<info>Module {$module} installed successfully.</info>");
+            if (wire('modules')->get($module)) {
+                $output->writeln("<info>Module {$module} installed successfully.</info>");
+            }
         }
 
     }

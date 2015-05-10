@@ -10,7 +10,6 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 abstract class PwConnector extends SymfonyCommand
 {
 

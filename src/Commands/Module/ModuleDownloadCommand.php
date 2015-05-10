@@ -9,17 +9,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Subscriber\Progress\Progress;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\PwModuleTools;
 
 /**
@@ -31,7 +25,6 @@ use Wireshell\Helpers\PwModuleTools;
  * @author Marcus Herrmann
  * @author Tabea David <td@kf-interactive.com>
  */
-
 class ModuleDownloadCommand extends PwModuleTools
 {
 
@@ -55,9 +48,12 @@ class ModuleDownloadCommand extends PwModuleTools
             ->setName('module:download')
             ->setAliases(['m:dl'])
             ->setDescription('Downloads ProcessWire module(s).')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
-            ->addOption('github', null, InputOption::VALUE_OPTIONAL, 'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
-            ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Optional. Define specific branch to download from.');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED,
+                'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('github', null, InputOption::VALUE_OPTIONAL,
+                'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
+            ->addOption('branch', null, InputOption::VALUE_OPTIONAL,
+                'Optional. Define specific branch to download from.');
     }
 
     /**
@@ -112,7 +108,8 @@ class ModuleDownloadCommand extends PwModuleTools
      *
      * @param string $module
      */
-    public function downloadModuleIfExists($module) {
+    public function downloadModuleIfExists($module)
+    {
         $contents = file_get_contents(
             wire('config')->moduleServiceURL .
             '?apikey=' . wire('config')->moduleServiceKey .
@@ -136,7 +133,8 @@ class ModuleDownloadCommand extends PwModuleTools
      *
      * @param string $module
      */
-    public function downloadModule($module, $moduleUrl) {
+    public function downloadModule($module, $moduleUrl)
+    {
         try {
             $this
                 ->download($moduleUrl, $module)
@@ -169,9 +167,9 @@ class ModuleDownloadCommand extends PwModuleTools
             ->addFile($url)
             ->getPreferredFile();
 
-            /** @var ProgressBar|null $progressBar */
-            $progressBar = null;
-            $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
+        /** @var ProgressBar|null $progressBar */
+        $progressBar = null;
+        $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
             // Don't initialize the progress bar for redirects as the size is much smaller
             if ($response->getStatusCode() >= 300) {
                 return;
@@ -206,7 +204,8 @@ class ModuleDownloadCommand extends PwModuleTools
         $client->getEmitter()->attach(new Progress(null, $downloadCallback));
 
         // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = wire('config')->paths->siteModules.'.'.uniqid(time()).DIRECTORY_SEPARATOR.$module.'.'.pathinfo($pwArchiveFile, PATHINFO_EXTENSION);
+        $this->compressedFilePath = wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
+                PATHINFO_EXTENSION);
 
         try {
             $response = $client->get($pwArchiveFile);
@@ -249,33 +248,36 @@ class ModuleDownloadCommand extends PwModuleTools
 
         try {
             $distill = new Distill();
-            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath, wire('config')->paths->siteModules . $module);
+            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath,
+                wire('config')->paths->siteModules . $module);
             $dir = wire('config')->paths->siteModules . $module;
-            if (is_dir($dir)) chmod($dir, 0755);
+            if (is_dir($dir)) {
+                chmod($dir, 0755);
+            }
         } catch (FileCorruptedException $e) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is corrupted.\n".
+                "This module can't be downloaded because the downloaded package is corrupted.\n" .
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (FileEmptyException $e) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is empty.\n".
+                "This module can't be downloaded because the downloaded package is empty.\n" .
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (TargetDirectoryNotWritableException $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be downloaded because the installer doesn't have enough\n".
-                "permissions to uncompress and rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "This module can't be downloaded because the installer doesn't have enough\n" .
+                "permissions to uncompress and rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing this module again.\n",
                 getcwd()
             ));
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be downloaded because the downloaded package is corrupted\n".
-                "or because the installer doesn't have enough permissions to uncompress and\n".
-                "rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
+                "or because the installer doesn't have enough permissions to uncompress and\n" .
+                "rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing this module again.\n",
                 getcwd()
             ));
@@ -283,7 +285,7 @@ class ModuleDownloadCommand extends PwModuleTools
 
         if (!$extractionSucceeded) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is corrupted\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
                 "or because the uncompress commands of your operating system didn't work."
             );
         }
@@ -295,7 +297,7 @@ class ModuleDownloadCommand extends PwModuleTools
     /**
      * Utility method to show the number of bytes in a readable format.
      *
-     * @param int     $bytes The number of bytes to format
+     * @param int $bytes The number of bytes to format
      *
      * @return string The human readable string of bytes (e.g. 4.32MB)
      */
@@ -309,31 +311,17 @@ class ModuleDownloadCommand extends PwModuleTools
 
         $bytes /= pow(1024, $pow);
 
-        return number_format($bytes, 2).' '.$units[$pow];
+        return number_format($bytes, 2) . ' ' . $units[$pow];
     }
 
-    /**
-     * Removes all the temporary files and directories created to
-     * download the project and removes ProcessWire-related files that don't make
-     * sense in a proprietary project.
-     *
-     * @param string $module
-     * @return NewCommand
-     */
-    private function cleanUp($module)
-    {
-        $this->fs->remove(dirname($this->compressedFilePath));
-        $this->output->writeln("<info> Module {$module} downloaded successfully.</info>\n");
-
-        return $this;
-    }
 
     /**
      * get the config either default or overwritten by user config
      * @param  string $key name of the option
      * @return mixed      return requested option value
      */
-    public function getConfig($key) {
+    public function getConfig($key)
+    {
         return self::$defaults[$key];
     }
 }

@@ -13,7 +13,6 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class ModuleDisableCommand extends PwConnector
 {
 
@@ -26,7 +25,8 @@ class ModuleDisableCommand extends PwConnector
             ->setName('module:disable')
             ->setAliases(['m:dis'])
             ->setDescription('Disable provided module(s)')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addArgument('modules', InputOption::VALUE_REQUIRED,
+                'Provide one or more module class name, comma separated: Foo,Bar')
             ->addOption('rm', null, InputOption::VALUE_NONE, 'Remove module');
     }
 
@@ -63,6 +63,7 @@ class ModuleDisableCommand extends PwConnector
     {
         if (!wire("modules")->get("{$module}")) {
             $output->writeln("<error>Module '{$module}' does not exist!</error>");
+
             return false;
         }
 
@@ -78,7 +79,7 @@ class ModuleDisableCommand extends PwConnector
     {
         if (is_dir($dir)) {
             chmod($dir, 0775);
-            $files = array_diff(scandir($dir), array('.','..'));
+            $files = array_diff(scandir($dir), array('.', '..'));
             foreach ($files as $file) {
                 (is_dir("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
             }

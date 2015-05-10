@@ -12,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Tabea David <td@kf-interactive.com>
  * @author Marcus Herrmann
  */
-
 class PwModuleTools extends PwConnector
 {
     /**
@@ -38,13 +37,13 @@ class PwModuleTools extends PwConnector
     /**
      * Checks whether the given directory is empty or not.
      *
-     * @param  string  $dir the path of the directory to check
+     * @param  string $dir the path of the directory to check
      * @return bool
      */
     public function isEmptyDirectory($dir)
     {
         // glob() cannot be used because it doesn't take into account hidden files
         // scandir() returns '.'  and '..'  for an empty dir
-        return 2 === count(scandir($dir.'/'));
+        return 2 === count(scandir($dir . '/'));
     }
 }

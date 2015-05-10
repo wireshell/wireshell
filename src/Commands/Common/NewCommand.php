@@ -48,7 +48,6 @@ use Wireshell\Helpers\Installer;
  * @author Hari KT
  *
  */
-
 class NewCommand extends Command
 {
 
@@ -101,15 +100,14 @@ class NewCommand extends Command
             ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address.')
             ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile.')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');
-        ;
+            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->fs = new Filesystem();
         $directory = rtrim(trim($input->getArgument('directory')), DIRECTORY_SEPARATOR);
-        $this->projectDir = $this->fs->isAbsolutePath($directory) ? $directory : getcwd().DIRECTORY_SEPARATOR.$directory;
+        $this->projectDir = $this->fs->isAbsolutePath($directory) ? $directory : getcwd() . DIRECTORY_SEPARATOR . $directory;
         $this->projectName = basename($directory);
 
         $logger = new Logger('name');
@@ -154,21 +152,21 @@ class NewCommand extends Command
                     'httpHosts' => ''
                 );
                 $dbUser = $input->getOption('dbUser');
-                if (! $dbUser) {
+                if (!$dbUser) {
                     $question = new Question('Please enter the database user name : ', 'dbUser');
                     $dbUser = $helper->ask($input, $output, $question);
                 }
                 $post['dbUser'] = $dbUser;
 
                 $dbName = $input->getOption('dbName');
-                if (! $dbName) {
+                if (!$dbName) {
                     $question = new Question('Please enter the database name : ', 'dbName');
                     $dbName = $helper->ask($input, $output, $question);
                 }
                 $post['dbName'] = $dbName;
 
                 $dbPass = $input->getOption('dbPass');
-                if (! $dbPass) {
+                if (!$dbPass) {
                     $question = new Question('Please enter the database password : ', 'dbPass');
                     $question->setHidden(true);
                     $question->setHiddenFallback(false);
@@ -212,11 +210,11 @@ class NewCommand extends Command
                 }
 
                 $httpHosts = $input->getOption('httpHosts');
-                if (! $httpHosts) {
+                if (!$httpHosts) {
                     $question = new Question('Please enter the hostname without www. Eg: pw.dev : ', 'httpHosts');
                     $httpHosts = $helper->ask($input, $output, $question);
                 }
-                $post['httpHosts'] = $httpHosts . "\n" . "www.". $httpHosts;
+                $post['httpHosts'] = $httpHosts . "\n" . "www." . $httpHosts;
 
                 $accountInfo = array(
                     'admin_name' => 'processwire',
@@ -233,14 +231,14 @@ class NewCommand extends Command
                 }
 
                 $username = $input->getOption('username');
-                if (! $username) {
+                if (!$username) {
                     $question = new Question('Please enter admin user name : ', 'username');
                     $username = $helper->ask($input, $output, $question);
                 }
                 $accountInfo['username'] = $username;
 
                 $userpass = $input->getOption('userpass');
-                if (! $userpass) {
+                if (!$userpass) {
                     $question = new Question('Please enter admin password : ', 'password');
                     $question->setHidden(true);
                     $question->setHiddenFallback(false);
@@ -250,14 +248,13 @@ class NewCommand extends Command
                 $accountInfo['userpass_confirm'] = $userpass;
 
                 $useremail = $input->getOption('useremail');
-                if (! $useremail) {
+                if (!$useremail) {
                     $question = new Question('Please enter admin email address : ', 'useremail');
                     $useremail = $helper->ask($input, $output, $question);
                 }
                 $accountInfo['useremail'] = $useremail;
                 $this
-                    ->installProcessWire($post, $accountInfo)
-                ;
+                    ->installProcessWire($post, $accountInfo);
             }
         } catch (\Exception $e) {
             $this->cleanUp();
@@ -277,7 +274,7 @@ class NewCommand extends Command
     {
         if (is_dir($this->projectDir) && !$this->isEmptyDirectory($this->projectDir)) {
             throw new \RuntimeException(sprintf(
-                "There is already a '%s' project in this directory (%s).\n".
+                "There is already a '%s' project in this directory (%s).\n" .
                 "Change your project name or create it in another directory.",
                 $this->projectName, $this->projectDir
             ));
@@ -304,8 +301,7 @@ class NewCommand extends Command
             ->getChooser()
             ->setStrategy(new MinimumSize())
             ->addFile($branch)
-            ->getPreferredFile()
-        ;
+            ->getPreferredFile();
 
         /** @var ProgressBar|null $progressBar */
         $progressBar = null;
@@ -344,15 +340,16 @@ class NewCommand extends Command
         $client->getEmitter()->attach(new Progress(null, $downloadCallback));
 
         // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = getcwd().DIRECTORY_SEPARATOR.'.'.uniqid(time()).DIRECTORY_SEPARATOR.'pw.'.pathinfo($pwArchiveFile, PATHINFO_EXTENSION);
+        $this->compressedFilePath = getcwd() . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pw.' . pathinfo($pwArchiveFile,
+                PATHINFO_EXTENSION);
 
         try {
             $response = $client->get($pwArchiveFile);
         } catch (ClientException $e) {
             if ($e->getCode() === 403 || $e->getCode() === 404) {
                 throw new \RuntimeException(sprintf(
-                    "The selected version (%s) cannot be installed because it does not exist.\n".
-                    "Try the special \"latest\" version to install the latest stable ProcessWire release:\n".
+                    "The selected version (%s) cannot be installed because it does not exist.\n" .
+                    "Try the special \"latest\" version to install the latest stable ProcessWire release:\n" .
                     '%s %s %s latest',
                     $this->version,
                     $_SERVER['PHP_SELF'],
@@ -395,30 +392,30 @@ class NewCommand extends Command
             $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath, $this->projectDir);
         } catch (FileCorruptedException $e) {
             throw new \RuntimeException(sprintf(
-                "ProcessWire can't be installed because the downloaded package is corrupted.\n".
+                "ProcessWire can't be installed because the downloaded package is corrupted.\n" .
                 "To solve this issue, try installing ProcessWire again.\n%s",
                 $this->getExecutedCommand()
             ));
         } catch (FileEmptyException $e) {
             throw new \RuntimeException(sprintf(
-                "ProcessWire can't be installed because the downloaded package is empty.\n".
+                "ProcessWire can't be installed because the downloaded package is empty.\n" .
                 "To solve this issue, try installing ProcessWire again.\n%s",
                 $this->getExecutedCommand()
             ));
         } catch (TargetDirectoryNotWritableException $e) {
             throw new \RuntimeException(sprintf(
-                "ProcessWire can't be installed because the installer doesn't have enough\n".
-                "permissions to uncompress and rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "ProcessWire can't be installed because the installer doesn't have enough\n" .
+                "permissions to uncompress and rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing ProcessWire again.\n%s",
                 getcwd(), $this->getExecutedCommand()
             ));
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf(
-                "ProcessWire can't be installed because the downloaded package is corrupted\n".
-                "or because the installer doesn't have enough permissions to uncompress and\n".
-                "rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "ProcessWire can't be installed because the downloaded package is corrupted\n" .
+                "or because the installer doesn't have enough permissions to uncompress and\n" .
+                "rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing ProcessWire again.\n%s",
                 getcwd(), $this->getExecutedCommand()
             ));
@@ -426,7 +423,7 @@ class NewCommand extends Command
 
         if (!$extractionSucceeded) {
             throw new \RuntimeException(
-                "ProcessWire can't be installed because the downloaded package is corrupted\n".
+                "ProcessWire can't be installed because the downloaded package is corrupted\n" .
                 "or because the uncompress commands of your operating system didn't work."
             );
         }
@@ -446,15 +443,16 @@ class NewCommand extends Command
         $this->fs->remove(dirname($this->compressedFilePath));
 
         try {
-            $licenseFile = array($this->projectDir.'/LICENSE');
-            $upgradeFiles = glob($this->projectDir.'/UPGRADE*.md');
-            $changelogFiles = glob($this->projectDir.'/CHANGELOG*.md');
+            $licenseFile = array($this->projectDir . '/LICENSE');
+            $upgradeFiles = glob($this->projectDir . '/UPGRADE*.md');
+            $changelogFiles = glob($this->projectDir . '/CHANGELOG*.md');
 
             $filesToRemove = array_merge($licenseFile, $upgradeFiles, $changelogFiles);
             $this->fs->remove($filesToRemove);
 
-            $readmeContents = sprintf("%s\n%s\n\nA ProcessWire project created on %s.\n", $this->projectName, str_repeat('=', strlen($this->projectName)), date('F j, Y, g:i a'));
-            $this->fs->dumpFile($this->projectDir.'/README.md', $readmeContents);
+            $readmeContents = sprintf("%s\n%s\n\nA ProcessWire project created on %s.\n", $this->projectName,
+                str_repeat('=', strlen($this->projectName)), date('F j, Y, g:i a'));
+            $this->fs->dumpFile($this->projectDir . '/README.md', $readmeContents);
         } catch (\Exception $e) {
             // don't throw an exception in case any of the ProcessWire-related files cannot
             // be removed, because this is just an enhancement, not something mandatory
@@ -472,19 +470,21 @@ class NewCommand extends Command
     private function checkProcessWireRequirements()
     {
         $this->installer->compatibilityCheck();
+
         return $this;
     }
 
     private function installProcessWire($post, $accountInfo)
     {
         $this->installer->dbSaveConfig($post, $accountInfo);
+
         return $this;
     }
 
     /**
      * Utility method to show the number of bytes in a readable format.
      *
-     * @param int     $bytes The number of bytes to format
+     * @param int $bytes The number of bytes to format
      *
      * @return string The human readable string of bytes (e.g. 4.32MB)
      */
@@ -498,7 +498,7 @@ class NewCommand extends Command
 
         $bytes /= pow(1024, $pow);
 
-        return number_format($bytes, 2).' '.$units[$pow];
+        return number_format($bytes, 2) . ' ' . $units[$pow];
     }
 
     /**
@@ -506,7 +506,7 @@ class NewCommand extends Command
      * using the optional line length provided.
      *
      * @param \Requirement $requirement The ProcessWire requirements
-     * @param int          $lineSize    The maximum line length
+     * @param int $lineSize The maximum line length
      *
      * @return string
      */
@@ -516,8 +516,8 @@ class NewCommand extends Command
             return;
         }
 
-        $errorMessage  = wordwrap($requirement->getTestMessage(), $lineSize - 3, PHP_EOL.'   ').PHP_EOL;
-        $errorMessage .= '   > '.wordwrap($requirement->getHelpText(), $lineSize - 5, PHP_EOL.'   > ').PHP_EOL;
+        $errorMessage = wordwrap($requirement->getTestMessage(), $lineSize - 3, PHP_EOL . '   ') . PHP_EOL;
+        $errorMessage .= '   > ' . wordwrap($requirement->getHelpText(), $lineSize - 5, PHP_EOL . '   > ') . PHP_EOL;
 
         return $errorMessage;
     }
@@ -548,26 +548,26 @@ class NewCommand extends Command
     /**
      * Checks whether the given directory is empty or not.
      *
-     * @param  string  $dir the path of the directory to check
+     * @param  string $dir the path of the directory to check
      * @return bool
      */
     private function isEmptyDirectory($dir)
     {
         // glob() cannot be used because it doesn't take into account hidden files
         // scandir() returns '.'  and '..'  for an empty dir
-        return 2 === count(scandir($dir.'/'));
+        return 2 === count(scandir($dir . '/'));
     }
 
     private function extractProfile($profile)
     {
-        if (! $profile) {
+        if (!$profile) {
             return $this;
         }
         $this->output->writeln(" Extracting profile...\n");
 
         try {
             $distill = new Distill();
-            $extractPath = getcwd().DIRECTORY_SEPARATOR.'.'.uniqid(time()).DIRECTORY_SEPARATOR.'pwprofile';
+            $extractPath = getcwd() . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pwprofile';
             $extractionSucceeded = $distill->extractWithoutRootDirectory($profile, $extractPath);
             if ($extractionSucceeded) {
                 try {
@@ -580,9 +580,9 @@ class NewCommand extends Command
                     $process = new Process("cd $this->projectDir; composer install");
                     $process->run(function ($type, $buffer) {
                         if (Process::ERR === $type) {
-                            echo ' '.$buffer;
+                            echo ' ' . $buffer;
                         } else {
-                            echo ' '.$buffer;
+                            echo ' ' . $buffer;
                         }
                     });
                 } catch (\Exception $e) {
@@ -598,21 +598,21 @@ class NewCommand extends Command
             );
         } catch (TargetDirectoryNotWritableException $e) {
             throw new \RuntimeException(
-                "The profile can't be installed because the installer doesn't have enough\n".
+                "The profile can't be installed because the installer doesn't have enough\n" .
                 "permissions to uncompress and rename the package contents.\n"
             );
         } catch (\Exception $e) {
             throw new \RuntimeException(
-                "The profile can't be installed because the downloaded package is corrupted\n".
-                "or because the installer doesn't have enough permissions to uncompress and\n".
-                "rename the package contents.\n".
+                "The profile can't be installed because the downloaded package is corrupted\n" .
+                "or because the installer doesn't have enough permissions to uncompress and\n" .
+                "rename the package contents.\n" .
                 $e->getMessage()
             );
         }
 
         if (!$extractionSucceeded) {
             throw new \RuntimeException(
-                "The profile can't be installed because the downloaded package is corrupted\n".
+                "The profile can't be installed because the downloaded package is corrupted\n" .
                 "or because the uncompress commands of your operating system didn't work."
             );
         }
