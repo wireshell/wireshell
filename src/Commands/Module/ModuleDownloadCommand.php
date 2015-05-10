@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\PwModuleTools;
 
 /**
  * Class ModuleDownloadCommand
@@ -32,7 +32,7 @@ use Wireshell\Helpers\PwConnector;
  * @author Tabea David <td@kf-interactive.com>
  */
 
-class ModuleDownloadCommand extends PwConnector
+class ModuleDownloadCommand extends PwModuleTools
 {
 
 
@@ -105,26 +105,6 @@ class ModuleDownloadCommand extends PwConnector
 
             wire('modules')->resetCache();
         }
-    }
-
-    /**
-     * check if a module already exists
-     *
-     * @param string $module
-     * @return boolean
-     */
-    private function checkIfModuleExists($module)
-    {
-        $moduleDir = wire('config')->paths->siteModules . $module;
-        if (wire("modules")->get("{$module}")) {
-            $return = true;
-        }
-
-        if (is_dir($moduleDir) && !$this->isEmptyDirectory($moduleDir)) {
-            $return = true;
-        }
-
-        return (isset($return)) ? $return : false;
     }
 
     /**
@@ -347,20 +327,6 @@ class ModuleDownloadCommand extends PwConnector
 
         return $this;
     }
-
-    /**
-     * Checks whether the given directory is empty or not.
-     *
-     * @param  string  $dir the path of the directory to check
-     * @return bool
-     */
-    private function isEmptyDirectory($dir)
-    {
-        // glob() cannot be used because it doesn't take into account hidden files
-        // scandir() returns '.'  and '..'  for an empty dir
-        return 2 === count(scandir($dir.'/'));
-    }
-
 
     /**
      * get the config either default or overwritten by user config
