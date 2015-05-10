@@ -96,6 +96,15 @@ class ModuleGenerateCommand extends PwConnector
         return $modDir;
     }
 
+    protected function getDefaults()
+    {
+        return [
+            'version' => '0.0.1',
+            'requirePw' => wire('config')->version,
+            'requirePhp' => PHP_VERSION
+        ];
+    }
+
 
     /**
      * @param $modName
@@ -103,25 +112,25 @@ class ModuleGenerateCommand extends PwConnector
      */
     private function createRequest($modName, OutputInterface $output, InputInterface $input)
     {
+        $defaults = $this->getDefaults();
         $output->writeln("<comment>Generating module at modules.pw ...</comment>");
 
         $title = $input->getOption('title');
-        $modVersion = $input->getOption('mod-version');
+        $modVersion = ($input->getOption('mod-version')) ? $input->getOption('mod-version') : $defaults['version'];
         $author = $input->getOption('author');
         $link = $input->getOption('link');
         $summary = $input->getOption('summary');
         $type = $input->getOption('type');
         $extends = $input->getOption('extends');
         $implements = $input->getOption('implements');
-        $requirePw = $input->getOption('require-pw');
-        $requirePhp = $input->getOption('require-php');
+        $requirePw = ($input->getOption('require-pw')) ? $input->getOption('require-pw') : $defaults['requirePw'];
+        $requirePhp = ($input->getOption('require-php')) ? $input->getOption('require-php') : $defaults['requirePhp'];
         $isAutoload = $input->getOption('is-autoload');
         $isSingular = $input->getOption('is-singular');
         $isPermanent = $input->getOption('is-permanent');
         $withExternalJson = $input->getOption('with-external-json');
         $withCopyright = $input->getOption('with-copyright');
         $withUninstall = $input->getOption('with-uninstall');
-        $withSampleCode = $input->getOption('with-sample-code');
         $withConfigPage = $input->getOption('with-config-page');
 
         $request = $this->api . "?name=" . $modName;
@@ -142,7 +151,6 @@ class ModuleGenerateCommand extends PwConnector
         if ($withExternalJson) $request .= "&with-external-json=true";
         if ($withCopyright) $request .= "&with-copyright=true";
         if ($withUninstall) $request .= "&with-uninstall=true";
-        if ($withSampleCode) $request .= "&with-sample-code=true";
         if ($withConfigPage) $request .= "&with-config-page=true";
 
         return $request;
