@@ -3,6 +3,9 @@
 use Symfony\Component\Console\Application;
 
 use Wireshell\Commands\User\UserCreateCommand;
+use Wireshell\Commands\User\UserUpdateCommand;
+use Wireshell\Commands\User\UserDeleteCommand;
+use Wireshell\Commands\User\UserListCommand;
 use Wireshell\Commands\Role\RoleCreateCommand;
 use Wireshell\Commands\Template\TemplateCreateCommand;
 use Wireshell\Commands\Template\TemplateFieldsCommand;
@@ -25,6 +28,9 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
 $app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.4');
 
 $app->add(new UserCreateCommand());
+$app->add(new UserUpdateCommand());
+$app->add(new UserDeleteCommand());
+$app->add(new UserListCommand());
 $app->add(new RoleCreateCommand());
 $app->add(new TemplateCreateCommand());
 $app->add(new TemplateFieldsCommand());
