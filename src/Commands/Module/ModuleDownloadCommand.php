@@ -293,6 +293,21 @@ class ModuleDownloadCommand extends PwModuleTools
         return $this;
     }
 
+    /**
+     * Removes all the temporary files and directories created to
+     * download the project and removes ProcessWire-related files that don't make
+     * sense in a proprietary project.
+     *
+     * @param string $module
+     * @return NewCommand
+     */
+    private function cleanUp($module)
+    {
+        $this->fs->remove(dirname($this->compressedFilePath));
+        $this->output->writeln("<info> Module {$module} downloaded successfully.</info>\n");
+
+        return $this;
+    }
 
     /**
      * Utility method to show the number of bytes in a readable format.
