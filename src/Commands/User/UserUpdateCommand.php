@@ -15,7 +15,7 @@ use Wireshell\Helpers\PwUserTools;
  * @author Marcus Herrmann
  */
 
-class UserCreateCommand extends PwUserTools
+class UserUpdateCommand extends PwUserTools
 {
 
     /**
@@ -24,10 +24,11 @@ class UserCreateCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('user:create')
-            ->setAliases(['u:c'])
-            ->setDescription('Creates a ProcessWire user')
+            ->setName('user:update')
+            ->setAliases(['u:u'])
+            ->setDescription('Updates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
+            ->addOption('newname', null, InputOption::VALUE_REQUIRED, 'Supply an user name')
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply an password')
             ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
@@ -46,25 +47,22 @@ class UserCreateCommand extends PwUserTools
         $roles = explode(",", $input->getOption('roles'));
         $pass = $input->getOption('password');
 
-        if (!wire("pages")->get("name={$name}") instanceof \NullPage) {
+        if (wire("pages")->get("name={$name}") instanceof \NullPage) {
 
-            $output->writeln("<error>User '{$name}' already exists!</error>");
+            $output->writeln("<error>User '{$name}' doesn't exists!</error>");
             exit(1);
         }
 
-        $user = $this->createUser($input, $name, $this->userContainer, $pass);
+        $user = $this->updateUser($input, $name, $pass);
         $user->save();
 
         if ($input->getOption('roles')) {
-            $this->attachRolesToUser($name, $roles, $output);
+            $this->attachRolesToUser($name, $roles, $output, true);
         }
 
-        if (!empty($pass)) {
-          $output->writeln("<info>User '{$name}' created successfully!</info>");
-        } else {
-          $output->writeln("<info>User '{$name}' created successfully! Please do not forget to set a password.</info>");
-        }
+        $output->writeln("<info>User '{$name}' updated successfully!</info>");
     }
 
 
 }
+

@@ -68,16 +68,57 @@ Downloads and unzips ProcessWires master branch into current directory.
 $ wireshell user:create {user-name}
 ```
 
-Creating a user. Available options (with example values):
+Creating an user. Available options (with example values):
 
 ```
---email=otto@example.org --roles=superuser,editor
+--email=otto@example.org --roles=superuser,editor --password=somepass
 ```
 
 Use `--roles` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
 
 **Alias:** `$ wireshell u:c`
 
+### User List
+
+```
+$ wireshell user:list
+```
+
+Lists all users.
+
+```
+--role=superuser
+```
+
+Use `--role` for setting one user role (given the supplied role(s) exist).
+
+**Alias:** `$ wireshell u:l`
+
+### User Delete
+
+```
+$ wireshell user:delete {user-name},{user-name}
+```
+
+Deletes users. Available options (with example values):
+
+**Alias:** `$ wireshell u:d`
+
+### User Update
+
+```
+$ wireshell user:update {user-name}
+```
+
+Updates an existing user. Available options (with example values):
+
+```
+--email=otto@example.org --roles=superuser,editor --password=somepass
+```
+
+Use `--roles` for setting one or more user roles (given the supplied role(s) exist). Role `guest` is attached by default.
+
+**Alias:** `$ wireshell u:u`
 
 ### Role Create
 
