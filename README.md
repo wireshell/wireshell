@@ -29,13 +29,24 @@ Find more background, documentation and examples on [http://wireshell.pw](http:/
 
 ## Changelog
 
-* 0.4.0 (5/15/15) Big update with a lot of contributed commands and interfaces: "Module Download" command, extended "Module Enable" command (thanks @justonestep), "Module Generate" command using modules.pw (thanks @nicoknoll), "Status" command listing information on development, ProcessWire installation, image libraries (thanks @horst-n). wireshell's code and documentation were extended/cleaned up by @clource. Also 0.4.0 introduced this very documentation microsite, wireshell.pw
+* 0.4.0  (5/15/15) Big update with a lot of contributed
+                  commands and interfaces: "Module Download" command, extended
+                  "Module Enable" command (thanks @justonestep), "Module Generate"
+                  command using <a href="http://modules.pw">modules.pw</a> (thanks
+                  @nicoknoll), enhanced "User Create", added "User Delete", "User
+                  List" and "User Update". Added "Status" command listing information on
+                  development, ProcessWire installation, image libraries (thanks
+                  @horst-n). wireshell's code and documentation were extended/cleaned up
+                  by @clource. Also 0.4.0 introduced documentation microsite,
+                  [wireshell.pw](http://wireshell.pw)
 * 0.3.3 (4/8/15) Just a hotfix release, regarding the autoload path
 * 0.3.2 (4/8/15) Added "Show Admin Url" command (since 0.4.0 part of "Status" command), added bin to composer.json
 * 0.3.1 (4/8/15) Listed wireshell on Packagist, added that in the readme
-* 0.3.0 (4/6/15) "New" Command now installs PW instead of just downloading it (thanks to a great PR by @HariKT), added commands regarding gields, modules, and database backup
+* 0.3.0 (4/6/15) "New" Command now installs PW instead of just downloading it (thanks to a great PR by @HariKT), added
+commands regarding fields, modules, and database backup
 * 0.2.0 (28/3/15) Added "Create Template", extended "Create User" command with role assignment on the fly
-* 0.1.0 (27/3/15) Started project :) With basic commands like "New" (just downloading ProcessWire, back then), "Create User", "Create Role"
+* 0.1.0 (27/3/15) Started project :) With basic commands like "New" (just downloading ProcessWire, back then),
+"Create User", "Create Role"
 
 ## Licence
 
