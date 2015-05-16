@@ -1,9 +1,9 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Role;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwUserTools;
+use Wireshell\Helpers\PwUserTools;
 
 /**
  * Class RoleCreateCommand
@@ -13,7 +13,6 @@ use Wireshell\PwUserTools;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class RoleCreateCommand extends PwUserTools
 {
 

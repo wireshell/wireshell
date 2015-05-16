@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Field;
 
 use Field;
 use Fieldgroup;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class FieldCreateCommand
@@ -18,7 +18,6 @@ use Wireshell\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class FieldCreateCommand extends PwConnector
 {
 
@@ -34,7 +33,8 @@ class FieldCreateCommand extends PwConnector
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Label')
             ->addOption('desc', null, InputOption::VALUE_REQUIRED, 'Description')
-            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of field: text|textarea|email|datetime|checkbox|file|float|image|integer|page|url');
+            ->addOption('type', null, InputOption::VALUE_REQUIRED,
+                'Type of field: text|textarea|email|datetime|checkbox|file|float|image|integer|page|url');
     }
 
     /**
@@ -53,7 +53,7 @@ class FieldCreateCommand extends PwConnector
         $type = $this->getProperFieldtypeName($input->getOption('type'));
 
         $field = new Field();
-        $field->type  = wire('modules')->get($type);
+        $field->type = wire('modules')->get($type);
         $field->name = $name;
         $field->label = $label;
         $field->description = $input->getOption('desc');

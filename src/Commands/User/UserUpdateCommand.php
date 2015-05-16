@@ -1,10 +1,10 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\User;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwUserTools;
+use Wireshell\Helpers\PwUserTools;
 
 /**
  * Class UserCreateCommand
@@ -15,7 +15,7 @@ use Wireshell\PwUserTools;
  * @author Marcus Herrmann
  */
 
-class UserCreateCommand extends PwUserTools
+class UserUpdateCommand extends PwUserTools
 {
 
     /**
@@ -24,11 +24,13 @@ class UserCreateCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('user:create')
-            ->setAliases(['u:c'])
-            ->setDescription('Creates a ProcessWire user')
+            ->setName('user:update')
+            ->setAliases(['u:u'])
+            ->setDescription('Updates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
+            ->addOption('newname', null, InputOption::VALUE_REQUIRED, 'Supply an user name')
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
+            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply a password')
             ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
     }
 
@@ -43,24 +45,24 @@ class UserCreateCommand extends PwUserTools
 
         $name = $input->getArgument('name');
         $roles = explode(",", $input->getOption('roles'));
+        $pass = $input->getOption('password');
 
-        if (!wire("pages")->get("name={$name}") instanceof \NullPage) {
+        if (wire("pages")->get("name={$name}") instanceof \NullPage) {
 
-            $output->writeln("<error>User '{$name}' already exists!</error>");
+            $output->writeln("<error>User '{$name}' doesn't exists!</error>");
             exit(1);
         }
 
-        $user = $this->createUser($input, $name, $this->userContainer);
-
+        $user = $this->updateUser($input, $name, $pass);
         $user->save();
 
         if ($input->getOption('roles')) {
-            $this->attachRolesToUser($name, $roles, $output);
+            $this->attachRolesToUser($name, $roles, $output, true);
         }
 
-        $output->writeln("<info>User '{$name}' created successfully! Please do not forget to set a password.</info>");
-
+        $output->writeln("<info>User '{$name}' updated successfully!</info>");
     }
 
 
 }
+

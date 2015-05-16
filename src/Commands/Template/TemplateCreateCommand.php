@@ -1,10 +1,10 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Template;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class TemplateCreateCommand
@@ -14,7 +14,6 @@ use Wireshell\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class TemplateCreateCommand extends PwConnector
 {
 
@@ -28,7 +27,8 @@ class TemplateCreateCommand extends PwConnector
             ->setAliases(['t:c'])
             ->setDescription('Creates a ProcessWire template')
             ->addArgument('name', InputArgument::REQUIRED)
-            ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'Attach existing fields to template, comma separated')
+            ->addOption('fields', null, InputOption::VALUE_REQUIRED,
+                'Attach existing fields to template, comma separated')
             ->addOption('nofile', null, InputOption::VALUE_NONE, 'Prevents template file creation');
     }
 
@@ -70,7 +70,9 @@ class TemplateCreateCommand extends PwConnector
         $template->fieldgroup = $fieldgroup;
         $template->save();
 
-        if (!$input->getOption('nofile')) $this->createTemplateFile($name);
+        if (!$input->getOption('nofile')) {
+            $this->createTemplateFile($name);
+        }
 
         $output->writeln("<info>Template '{$name}' created successfully!</info>");
 

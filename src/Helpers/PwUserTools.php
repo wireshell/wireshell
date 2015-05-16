@@ -1,4 +1,4 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Helpers;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class PwUserTools extends PwConnector
 {
     /**
@@ -27,15 +26,18 @@ class PwUserTools extends PwConnector
         $user->parent = $roleContainer;
         $user->name = $name;
         $user->title = $name;
+
         return $user;
     }
 
     /**
      * @param InputInterface $input
      * @param $name
+     * @param $userContainer
+     * @param $pass
      * @return \Page
      */
-    public function createUser(InputInterface $input, $name, $userContainer)
+    public function createUser(InputInterface $input, $name, $userContainer, $pass)
     {
         $user = new \Page();
         $user->template = 'user';
@@ -45,9 +47,39 @@ class PwUserTools extends PwConnector
         $user->name = $name;
         $user->title = $name;
 
+        if (!empty($pass)) $user->pass = $pass;
 
         $email = $input->getOption('email');
-        if ($email) $user->email = $email;
+        if ($email) {
+            $user->email = $email;
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param $name
+     * @param $pass
+     * @return \Page
+     */
+    public function updateUser(InputInterface $input, $name, $pass)
+    {
+        $user = wire('users')->get($name);
+        $user->setOutputFormatting(false);
+
+        if (!empty($input->getOption('newname'))) {
+          $name = wire('sanitizer')->username($input->getOption('newname'));
+          $user->name = $name;
+          $user->title = $name;
+        }
+
+        if (!empty($pass)) $user->pass = $pass;
+
+        if (!empty($input->getOption('email'))) {
+          $email = wire('sanitizer')->email($input->getOption('email'));
+          if ($email) $user->email = $email;
+        }
 
         return $user;
     }
@@ -55,12 +87,22 @@ class PwUserTools extends PwConnector
     /**
      * @param $user
      * @param $roles
+     * @param $output
+     * @param boolean $reset
      * @return mixed
      */
-    public function attachRolesToUser($user, $roles, $output)
+    public function attachRolesToUser($user, $roles, $output, $reset = false)
     {
         $editedUser = wire('users')->get($user);
 
+        // remove existing roles
+        if ($reset === true) {
+            foreach ($editedUser->roles as $role) {
+                $editedUser->removeRole($role->name);
+            }
+        }
+
+        // add roles
         foreach ($roles as $role) {
             $this->checkIfRoleExists($role, $output);
 

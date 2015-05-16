@@ -1,4 +1,4 @@
-<?php namespace Wireshell;
+<?php namespace Wireshell\Helpers;
 
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
@@ -10,12 +10,14 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 abstract class PwConnector extends SymfonyCommand
 {
 
+    public $moduleServiceURL;
+    public $moduleServiceKey;
     protected $userContainer;
     protected $roleContainer;
+    protected $modulePath = "/site/modules/";
 
     /**
      * @param $output
@@ -36,11 +38,21 @@ abstract class PwConnector extends SymfonyCommand
     {
         $this->checkForProcessWire($output);
 
-        include(getcwd() . '/index.php');
+        if (!function_exists('wire')) {
+            include(getcwd() . '/index.php');
+        }
 
         $this->userContainer = wire('pages')->get('29');
         $this->roleContainer = wire('pages')->get('30');
 
+        $this->moduleServiceURL = wire('config')->moduleServiceURL;
+        $this->moduleServiceKey = wire('config')->moduleServiceKey;
+
+    }
+
+    protected function getModuleDirectory()
+    {
+        return $this->modulePath;
     }
 
 }

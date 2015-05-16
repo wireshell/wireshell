@@ -1,5 +1,5 @@
 <?php
-namespace Wireshell;
+namespace Wireshell\Helpers;
 
 use Psr\Log\LoggerInterface;
 use PDO;

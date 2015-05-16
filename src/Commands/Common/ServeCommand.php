@@ -1,8 +1,8 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Common;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class ServeCommand
@@ -13,7 +13,6 @@ use Wireshell\PwConnector;
  * @link http://php.net/manual/en/function.passthru.php
  * @author Marcus Herrmann
  */
-
 class ServeCommand extends PwConnector
 {
 

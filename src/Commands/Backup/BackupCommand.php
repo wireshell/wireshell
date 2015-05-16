@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands;
+<?php namespace Wireshell\Commands\Backup;
 
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Rah\Danpu\Dump;
 use Rah\Danpu\Export;
-use Wireshell\PwConnector;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class BackupCommand
@@ -16,7 +16,6 @@ use Wireshell\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class BackupCommand extends PwConnector
 {
 
@@ -46,7 +45,7 @@ class BackupCommand extends PwConnector
         $user = wire('config')->dbUser;
         $pass = wire('config')->dbPass;
 
-        $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s").'.sql';
+        $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
 
         try {
             $dump = new Dump;
