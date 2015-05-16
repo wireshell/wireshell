@@ -9,18 +9,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Subscriber\Progress\Progress;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\PwModuleTools;
 
 /**
  * Class ModuleDownloadCommand
@@ -31,8 +25,7 @@ use Wireshell\Helpers\PwConnector;
  * @author Marcus Herrmann
  * @author Tabea David <td@kf-interactive.com>
  */
-
-class ModuleDownloadCommand extends PwConnector
+class ModuleDownloadCommand extends PwModuleTools
 {
 
 
@@ -55,9 +48,12 @@ class ModuleDownloadCommand extends PwConnector
             ->setName('module:download')
             ->setAliases(['m:dl'])
             ->setDescription('Downloads ProcessWire module(s).')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED, 'Provide one or more module class name, comma separated: Foo,Bar')
-            ->addOption('github', null, InputOption::VALUE_OPTIONAL, 'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
-            ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Optional. Define specific branch to download from.');
+            ->addArgument('modules', InputOption::VALUE_REQUIRED,
+                'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('github', null, InputOption::VALUE_OPTIONAL,
+                'Download module via github. Use this option if the module isn\'t added to the ProcessWire module directory.')
+            ->addOption('branch', null, InputOption::VALUE_OPTIONAL,
+                'Optional. Define specific branch to download from.');
     }
 
     /**
@@ -108,31 +104,12 @@ class ModuleDownloadCommand extends PwConnector
     }
 
     /**
-     * check if a module already exists
-     *
-     * @param string $module
-     * @return boolean
-     */
-    private function checkIfModuleExists($module)
-    {
-        $moduleDir = wire('config')->paths->siteModules . $module;
-        if (wire("modules")->get("{$module}")) {
-            $return = true;
-        }
-
-        if (is_dir($moduleDir) && !$this->isEmptyDirectory($moduleDir)) {
-            $return = true;
-        }
-
-        return (isset($return)) ? $return : false;
-    }
-
-    /**
      * check if a module exists in processwire module directory
      *
      * @param string $module
      */
-    public function downloadModuleIfExists($module) {
+    public function downloadModuleIfExists($module)
+    {
         $contents = file_get_contents(
             wire('config')->moduleServiceURL .
             '?apikey=' . wire('config')->moduleServiceKey .
@@ -156,7 +133,8 @@ class ModuleDownloadCommand extends PwConnector
      *
      * @param string $module
      */
-    public function downloadModule($module, $moduleUrl) {
+    public function downloadModule($module, $moduleUrl)
+    {
         try {
             $this
                 ->download($moduleUrl, $module)
@@ -189,9 +167,9 @@ class ModuleDownloadCommand extends PwConnector
             ->addFile($url)
             ->getPreferredFile();
 
-            /** @var ProgressBar|null $progressBar */
-            $progressBar = null;
-            $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
+        /** @var ProgressBar|null $progressBar */
+        $progressBar = null;
+        $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
             // Don't initialize the progress bar for redirects as the size is much smaller
             if ($response->getStatusCode() >= 300) {
                 return;
@@ -226,7 +204,8 @@ class ModuleDownloadCommand extends PwConnector
         $client->getEmitter()->attach(new Progress(null, $downloadCallback));
 
         // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = wire('config')->paths->siteModules.'.'.uniqid(time()).DIRECTORY_SEPARATOR.$module.'.'.pathinfo($pwArchiveFile, PATHINFO_EXTENSION);
+        $this->compressedFilePath = wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
+                PATHINFO_EXTENSION);
 
         try {
             $response = $client->get($pwArchiveFile);
@@ -269,33 +248,36 @@ class ModuleDownloadCommand extends PwConnector
 
         try {
             $distill = new Distill();
-            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath, wire('config')->paths->siteModules . $module);
+            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath,
+                wire('config')->paths->siteModules . $module);
             $dir = wire('config')->paths->siteModules . $module;
-            if (is_dir($dir)) chmod($dir, 0755);
+            if (is_dir($dir)) {
+                chmod($dir, 0755);
+            }
         } catch (FileCorruptedException $e) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is corrupted.\n".
+                "This module can't be downloaded because the downloaded package is corrupted.\n" .
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (FileEmptyException $e) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is empty.\n".
+                "This module can't be downloaded because the downloaded package is empty.\n" .
                 "To solve this issue, try installing the module again.\n"
             );
         } catch (TargetDirectoryNotWritableException $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be downloaded because the installer doesn't have enough\n".
-                "permissions to uncompress and rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "This module can't be downloaded because the installer doesn't have enough\n" .
+                "permissions to uncompress and rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing this module again.\n",
                 getcwd()
             ));
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf(
-                "This module can't be downloaded because the downloaded package is corrupted\n".
-                "or because the installer doesn't have enough permissions to uncompress and\n".
-                "rename the package contents.\n".
-                "To solve this issue, check the permissions of the %s directory and\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
+                "or because the installer doesn't have enough permissions to uncompress and\n" .
+                "rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing this module again.\n",
                 getcwd()
             ));
@@ -303,33 +285,12 @@ class ModuleDownloadCommand extends PwConnector
 
         if (!$extractionSucceeded) {
             throw new \RuntimeException(
-                "This module can't be downloaded because the downloaded package is corrupted\n".
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
                 "or because the uncompress commands of your operating system didn't work."
             );
         }
 
         return $this;
-    }
-
-
-    /**
-     * Utility method to show the number of bytes in a readable format.
-     *
-     * @param int     $bytes The number of bytes to format
-     *
-     * @return string The human readable string of bytes (e.g. 4.32MB)
-     */
-    private function formatSize($bytes)
-    {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-        $bytes = max($bytes, 0);
-        $pow = $bytes ? floor(log($bytes, 1024)) : 0;
-        $pow = min($pow, count($units) - 1);
-
-        $bytes /= pow(1024, $pow);
-
-        return number_format($bytes, 2).' '.$units[$pow];
     }
 
     /**
@@ -349,16 +310,23 @@ class ModuleDownloadCommand extends PwConnector
     }
 
     /**
-     * Checks whether the given directory is empty or not.
+     * Utility method to show the number of bytes in a readable format.
      *
-     * @param  string  $dir the path of the directory to check
-     * @return bool
+     * @param int $bytes The number of bytes to format
+     *
+     * @return string The human readable string of bytes (e.g. 4.32MB)
      */
-    private function isEmptyDirectory($dir)
+    private function formatSize($bytes)
     {
-        // glob() cannot be used because it doesn't take into account hidden files
-        // scandir() returns '.'  and '..'  for an empty dir
-        return 2 === count(scandir($dir.'/'));
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        $bytes = max($bytes, 0);
+        $pow = $bytes ? floor(log($bytes, 1024)) : 0;
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return number_format($bytes, 2) . ' ' . $units[$pow];
     }
 
 
@@ -367,7 +335,8 @@ class ModuleDownloadCommand extends PwConnector
      * @param  string $key name of the option
      * @return mixed      return requested option value
      */
-    public function getConfig($key) {
+    public function getConfig($key)
+    {
         return self::$defaults[$key];
     }
 }

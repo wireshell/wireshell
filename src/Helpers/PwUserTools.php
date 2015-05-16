@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class PwUserTools extends PwConnector
 {
     /**
@@ -27,6 +26,7 @@ class PwUserTools extends PwConnector
         $user->parent = $roleContainer;
         $user->name = $name;
         $user->title = $name;
+
         return $user;
     }
 
@@ -50,7 +50,9 @@ class PwUserTools extends PwConnector
         if (!empty($pass)) $user->pass = $pass;
 
         $email = $input->getOption('email');
-        if ($email) $user->email = $email;
+        if ($email) {
+            $user->email = $email;
+        }
 
         return $user;
     }

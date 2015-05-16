@@ -30,7 +30,7 @@ class UserUpdateCommand extends PwUserTools
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('newname', null, InputOption::VALUE_REQUIRED, 'Supply an user name')
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
-            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply an password')
+            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply a password')
             ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
     }
 

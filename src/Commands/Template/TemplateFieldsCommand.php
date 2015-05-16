@@ -14,7 +14,6 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class TemplateFieldsCommand extends PwConnector
 {
 

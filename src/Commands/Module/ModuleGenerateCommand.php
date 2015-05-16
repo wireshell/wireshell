@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\PwModuleTools;
 use ZipArchive;
 
 /**
@@ -16,8 +17,7 @@ use ZipArchive;
  * @author Nico
  * @author Marcus Herrmann
  */
-
-class ModuleGenerateCommand extends PwConnector
+class ModuleGenerateCommand extends PwModuleTools
 {
 
     protected $api = "http://modules.pw/api.php";
@@ -82,7 +82,7 @@ class ModuleGenerateCommand extends PwConnector
 
         $this->extract($modDir, $output);
 
-        $this->cleanUp($modDir,$modName, $output);
+        $this->cleanUp($modDir, $modName, $output);
 
     }
 
@@ -140,23 +140,57 @@ class ModuleGenerateCommand extends PwConnector
 
         $request = $this->api . "?name=" . $modName;
 
-        if ($title) $request .= "&title={$title}";
-        if ($modVersion) $request .= "&version={$modVersion}";
-        if ($author) $request .= "&author={$author}";
-        if ($link) $request .= "&link={$link}";
-        if ($summary) $request .= "&summary={$summary}";
-        if ($type) $request .= "&summary={$type}";
-        if ($extends) $request .= "&extends={$extends}";
-        if ($implements) $request .= "&implements={$implements}";
-        if ($requirePw) $request .= "&require-pw='{$requirePw}'";
-        if ($requirePhp) $request .= "&require-php='{$requirePhp}'";
-        if ($isAutoload) $request .= "&is-autoload=true";
-        if ($isSingular) $request .= "&is-singular=true";
-        if ($isPermanent) $request .= "&is-permanent=true";
-        if ($withExternalJson) $request .= "&with-external-json=true";
-        if ($withCopyright) $request .= "&with-copyright=true";
-        if ($withUninstall) $request .= "&with-uninstall=true";
-        if ($withConfigPage) $request .= "&with-config-page=true";
+        if ($title) {
+            $request .= "&title={$title}";
+        }
+        if ($modVersion) {
+            $request .= "&version={$modVersion}";
+        }
+        if ($author) {
+            $request .= "&author={$author}";
+        }
+        if ($link) {
+            $request .= "&link={$link}";
+        }
+        if ($summary) {
+            $request .= "&summary={$summary}";
+        }
+        if ($type) {
+            $request .= "&summary={$type}";
+        }
+        if ($extends) {
+            $request .= "&extends={$extends}";
+        }
+        if ($implements) {
+            $request .= "&implements={$implements}";
+        }
+        if ($requirePw) {
+            $request .= "&require-pw='{$requirePw}'";
+        }
+        if ($requirePhp) {
+            $request .= "&require-php='{$requirePhp}'";
+        }
+        if ($isAutoload) {
+            $request .= "&is-autoload=true";
+        }
+        if ($isSingular) {
+            $request .= "&is-singular=true";
+        }
+        if ($isPermanent) {
+            $request .= "&is-permanent=true";
+        }
+        if ($withExternalJson) {
+            $request .= "&with-external-json=true";
+        }
+        if ($withCopyright) {
+            $request .= "&with-copyright=true";
+        }
+        if ($withUninstall) {
+            $request .= "&with-uninstall=true";
+        }
+        if ($withConfigPage) {
+            $request .= "&with-config-page=true";
+        }
 
         return $request;
 
@@ -212,37 +246,5 @@ class ModuleGenerateCommand extends PwConnector
         return $this;
     }
 
-    /**
-     * check if a module already exists
-     *
-     * @param string $module
-     * @return boolean
-     */
-    private function checkIfModuleExists($module)
-    {
-        $moduleDir = wire('config')->paths->siteModules . $module;
-        if (wire("modules")->get("{$module}")) {
-            $return = true;
-        }
-
-        if (is_dir($moduleDir) && !$this->isEmptyDirectory($moduleDir)) {
-            $return = true;
-        }
-
-        return (isset($return)) ? $return : false;
-    }
-
-    /**
-     * Checks whether the given directory is empty or not.
-     *
-     * @param  string  $dir the path of the directory to check
-     * @return bool
-     */
-    private function isEmptyDirectory($dir)
-    {
-        // glob() cannot be used because it doesn't take into account hidden files
-        // scandir() returns '.'  and '..'  for an empty dir
-        return 2 === count(scandir($dir.'/'));
-    }
 
 }

@@ -25,7 +25,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Application('Wireshell - An extendable ProcessWire CLI', '0.3.4');
+$app = new Application('wireshell - An extendable ProcessWire CLI', '0.4.0');
 
 $app->add(new UserCreateCommand());
 $app->add(new UserUpdateCommand());

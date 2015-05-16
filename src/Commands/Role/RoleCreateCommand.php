@@ -13,7 +13,6 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class RoleCreateCommand extends PwUserTools
 {
 

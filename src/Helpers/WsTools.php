@@ -16,13 +16,13 @@ abstract class WsTools
     const kTintComment = "comment";
 
     /**
-    * Simple method for coloring output
-    * Possible Types: error, info, comment
-    * @param $string
-    * @param $type
-    * @return tinted string
-    */
-    public static function tint($string, $type) 
+     * Simple method for coloring output
+     * Possible Types: error, info, comment
+     * @param $string
+     * @param $type
+     * @return tinted string
+     */
+    public static function tint($string, $type)
     {
         return "<{$type}>{$string}</{$type}>";
     }

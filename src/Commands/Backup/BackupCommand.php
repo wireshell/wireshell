@@ -16,7 +16,6 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class BackupCommand extends PwConnector
 {
 
@@ -46,7 +45,7 @@ class BackupCommand extends PwConnector
         $user = wire('config')->dbUser;
         $pass = wire('config')->dbPass;
 
-        $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s").'.sql';
+        $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
 
         try {
             $dump = new Dump;

@@ -14,7 +14,6 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-
 class UserCreateCommand extends PwUserTools
 {
 
@@ -29,7 +28,7 @@ class UserCreateCommand extends PwUserTools
             ->setDescription('Creates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
-            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply an password')
+            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply a password')
             ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
     }
 
