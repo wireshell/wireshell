@@ -31,13 +31,13 @@ Find more background, documentation and examples on [http://wireshell.pw](http:/
 
 * 0.4.0  (5/15/15) Big update with a lot of contributed
                   commands and interfaces: "Module Download" command, extended
-                  "Module Enable" command (thanks @justonestep), "Module Generate"
-                  command using <a href="http://modules.pw">modules.pw</a> (thanks
-                  @nicoknoll), enhanced "User Create", added "User Delete", "User
-                  List" and "User Update". Added "Status" command listing information on
+                  "Module Enable" command, enhanced "User Create", added "User Delete", "User
+                  List" and "User Update" (thanks @justonestep). "Module Generate" command using
+                  <a href="http://modules.pw">modules.pw</a>
+                  (thanks @nicoknoll), added "Status" command listing information on
                   development, ProcessWire installation, image libraries (thanks
                   @horst-n). wireshell's code and documentation were extended/cleaned up
-                  by @clource. Also 0.4.0 introduced documentation microsite,
+                  by @clsource. Also 0.4.0 introduced documentation microsite,
                   [wireshell.pw](http://wireshell.pw)
 * 0.3.3 (4/8/15) Just a hotfix release, regarding the autoload path
 * 0.3.2 (4/8/15) Added "Show Admin Url" command (since 0.4.0 part of "Status" command), added bin to composer.json
@@ -51,6 +51,8 @@ commands regarding fields, modules, and database backup
 ## Licence
 
 see LICENCE.md
+
+![wireshell logo](http://wireshell.pw/logo.png)
 
 
 
