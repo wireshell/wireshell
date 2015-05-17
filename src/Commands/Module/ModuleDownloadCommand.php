@@ -78,8 +78,12 @@ class ModuleDownloadCommand extends PwModuleTools
             // check if module directory is writeable
             $this->output->writeln('Make sure your /site/modules directory is writeable by PHP.');
         } else {
-            if (!empty($input->getOption('github'))) {
-                $branch = (!empty($input->getOption('branch'))) ? $input->getOption('branch') : 'master';
+
+            $github = $input->getOption('github');
+            $branch =$input->getOption('branch');
+
+            if (!empty($github)) {
+                $branch = (!empty($branch)) ? $input->getOption('branch') : 'master';
                 $github = 'https://github.com/' . $input->getOption('github') . '/archive/' . $branch . '.zip';
             }
 
