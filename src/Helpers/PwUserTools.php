@@ -68,7 +68,10 @@ class PwUserTools extends PwConnector
         $user = wire('users')->get($name);
         $user->setOutputFormatting(false);
 
-        if (!empty($input->getOption('newname'))) {
+        $newname = $input->getOption('newname');
+        $email = $input->getOption('email');
+
+        if (!empty($newname)) {
           $name = wire('sanitizer')->username($input->getOption('newname'));
           $user->name = $name;
           $user->title = $name;
@@ -76,7 +79,7 @@ class PwUserTools extends PwConnector
 
         if (!empty($pass)) $user->pass = $pass;
 
-        if (!empty($input->getOption('email'))) {
+        if (!empty($email)) {
           $email = wire('sanitizer')->email($input->getOption('email'));
           if ($email) $user->email = $email;
         }
