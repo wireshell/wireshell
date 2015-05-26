@@ -67,26 +67,26 @@ abstract class PwConnector extends SymfonyCommand
     protected function checkForCoreUpgrades($output, $dev = false) {
         $branches = $this->getCoreBranches();
         $master = $branches['master'];
-        $branch = null;
+        $upgrade = false;
         $new = version_compare($master['version'], wire('config')->version);
 
         if ($new > 0 && $dev === false) {
             // master is newer than current
             $branch = $master;
-        } else if ($new < 0 || ($new > 0 && $dev === true)) {
+            $upgrade = true;
+        } else if ($new <= 0 || ($new > 0 && $dev === true)) {
             // we will assume dev branch
             $dev = $branches['dev'];
             $new = version_compare($dev['version'], wire('config')->version);
-            if ($new > 0) $branch = $dev;
+            $branch = $dev;
+            if ($new > 0) $upgrade = true;
         }
 
-        if ($branch) {
-            $versionStr = "$branch[name] $branch[version]";
-            $output->writeln("<info>A ProcessWire core upgrade is available $versionStr</info>");
-            $upgrade = true;
+        $versionStr = "$branch[name] $branch[version]";
+        if ($upgrade) {
+            $output->writeln("<info>A ProcessWire core upgrade is available: $versionStr</info>");
         } else {
-            $output->writeln("<info>Your ProcessWire core is up-to-date</info>");
-            $upgrade = false;
+            $output->writeln("<info>Your ProcessWire core is up-to-date: $versionStr</info>");
         }
 
         return array('upgrade' => $upgrade, 'branch' => $branch);
