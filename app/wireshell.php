@@ -41,7 +41,7 @@ $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());
 $app->add(new ModuleGenerateCommand(new GuzzleHttp\Client()));
 $app->add(new NewCommand());
-$app->add(new UpgradeCommand());
+$app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));
 $app->add(new StatusCommand());
 $app->add(new ServeCommand());
 $app->add(new BackupCommand());

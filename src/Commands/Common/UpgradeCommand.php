@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Wireshell\Helpers\PwConnector;
 
 /**
@@ -33,6 +34,8 @@ class UpgradeCommand extends PwConnector
      */
     private $output;
 
+    private $fs;
+
     protected $indexHashes = array(
         '2.4.0' => 'ae121ccc9c14a2cd5fa57e8786bdbb3f',
         '2.5.0' => '9b20ce2898be505608d54a1e0dd81215',
@@ -46,6 +49,13 @@ class UpgradeCommand extends PwConnector
     );
 
     protected $filesToReplace = array('wire', 'htaccess.txt', 'index.php');
+
+    function __construct(Filesystem $fs)
+    {
+        $this->fs = $fs;
+        parent::__construct();
+    }
+
 
     /**
      * Configures the current command.
@@ -95,7 +105,7 @@ class UpgradeCommand extends PwConnector
                         ->extract()
                         ->move()
                         ->cleanup()
-                        ->replace($input->getOption('just-download'));
+                        ->replace($input->getOption('just-download'), $input, $output);
                 } catch (Exception $e) {
                 }
             }
@@ -295,8 +305,10 @@ class UpgradeCommand extends PwConnector
      * Replace Core Files
      *
      * @param boolean $justDownload
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    private function replace($justDownload) {
+    private function replace($justDownload, InputInterface $input, OutputInterface $output) {
         if ($justDownload === true) {
             $this->output->writeln("
   We have prepared copies of upgrade files for installation.
@@ -352,6 +364,9 @@ class UpgradeCommand extends PwConnector
             }
 
             $this->output->writeln("<info>  Upgrade completed.</info>");
+
+            $this->checkPermissions($input, $output);
+
             $this->output->writeln("  Now double check that everything works.");
 
             $files = is_array($manually) ? implode(', ', array_flip($manually)) : '';
@@ -360,5 +375,31 @@ class UpgradeCommand extends PwConnector
             }
 
         }
+    }
+
+    private function checkPermissions(InputInterface $input, OutputInterface $output)
+    {
+        $wireFolder = getcwd() . '/wire';
+        $indexFile = getcwd() . '/index.php';
+
+        $wireDirPermissions = substr(sprintf('%o', fileperms($wireFolder)), -4);
+        $indexFilePermissions = substr(sprintf('%o', fileperms($indexFile)), -4);
+
+        if (($wireDirPermissions == '0700') && ($indexFilePermissions == '0644')) {
+
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion('  Change permissions on updated files and folders? Type y or n: ', false);
+
+            if (!$helper->ask($input, $output, $question)) {
+                return;
+            }
+
+            $this->fs->chmod($indexFile, 0755);
+            $this->fs->chmod($wireFolder, 0755, 0000, true);
+
+            $this->output->writeln("<info>  Permissions changed.</info>");
+            
+        }
+
     }
 }
