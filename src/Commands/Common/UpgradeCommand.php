@@ -377,6 +377,12 @@ class UpgradeCommand extends PwConnector
         }
     }
 
+    /**
+     * Check of permissions of updated files, chmod them on user's input via prompt
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     private function checkPermissions(InputInterface $input, OutputInterface $output)
     {
         $wireFolder = getcwd() . '/wire';
@@ -398,7 +404,7 @@ class UpgradeCommand extends PwConnector
             $this->fs->chmod($wireFolder, 0755, 0000, true);
 
             $this->output->writeln("<info>  Permissions changed.</info>");
-            
+
         }
 
     }
