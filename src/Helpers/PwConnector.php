@@ -100,9 +100,10 @@ abstract class PwConnector extends SymfonyCommand
         $http = new \WireHttp();
         $http->setHeader('User-Agent', 'ProcessWireUpgrade');
         $json = $http->get(self::branchesURL);
+
         if (!$json) {
             $error = "Error loading GitHub branches " . self::branchesURL;
-            if($throw) throw new WireException($error);
+            throw new \WireException($error);
             $this->error($error);
             return array();
         }
@@ -110,7 +111,7 @@ abstract class PwConnector extends SymfonyCommand
         $data = json_decode($json, true);
         if (!$data) {
             $error = "Error JSON decoding GitHub branches " . self::branchesURL;
-            if($throw) throw new WireException($error);
+            throw new \WireException($error);
             $this->error($error);
             return array();
         }
