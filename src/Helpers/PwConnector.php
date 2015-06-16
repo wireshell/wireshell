@@ -30,8 +30,24 @@ abstract class PwConnector extends SymfonyCommand
     {
         if (!is_dir(getcwd() . "/wire")) {
 
-            $output->writeln("<error>No ProcessWire installation found.</error>");
-            exit(1);
+            foreach (new \DirectoryIterator(getcwd()) as $fileInfo) {
+                if (is_dir($fileInfo->getPathname() . '/wire')) {
+                    chdir($fileInfo->getPathname());
+                }
+            }
+
+            if (!is_dir(getcwd() . "/wire")) {
+                chdir('..');
+
+                if (empty(pathinfo(getcwd())['basename'])) {
+                    $output->writeln("<error>No ProcessWire installation found.</error>");
+                    exit(1);
+                } else {
+                    $this->checkForProcessWire($output);
+                }
+            } else {
+                $output->writeln("<info>Working directory changed to `" . getcwd() . "`.</info>\n");
+            }
         }
     }
 
