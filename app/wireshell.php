@@ -20,6 +20,8 @@ use Wireshell\Commands\Common\UpgradeCommand;
 use Wireshell\Commands\Common\StatusCommand;
 use Wireshell\Commands\Common\ServeCommand;
 use Wireshell\Commands\Backup\BackupCommand;
+use Wireshell\Commands\Backup\BackupImagesCommand;
+use Wireshell\Commands\Page\PageCreateCommand;
 
 if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../../../autoload.php';
@@ -47,5 +49,7 @@ $app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));
 $app->add(new StatusCommand());
 $app->add(new ServeCommand());
 $app->add(new BackupCommand());
+$app->add(new BackupImagesCommand());
+$app->add(new PageCreateCommand());
 
 $app->run();
