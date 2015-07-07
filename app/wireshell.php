@@ -23,6 +23,8 @@ use Wireshell\Commands\Backup\BackupCommand;
 use Wireshell\Commands\Backup\BackupImagesCommand;
 use Wireshell\Commands\Page\PageCreateCommand;
 use Wireshell\Commands\Page\PageListCommand;
+use Wireshell\Commands\Page\PageDeleteCommand;
+use Wireshell\Commands\Page\PageEmptyTrashCommand;
 
 if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../../../autoload.php';
@@ -53,5 +55,7 @@ $app->add(new BackupCommand());
 $app->add(new BackupImagesCommand());
 $app->add(new PageCreateCommand());
 $app->add(new PageListCommand());
+$app->add(new PageDeleteCommand());
+$app->add(new PageEmptyTrashCommand());
 
 $app->run();
