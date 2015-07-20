@@ -48,7 +48,8 @@ class PageCreateCommand extends PwUserTools
         $parent = $this->getParent($input, $output);
 
         foreach ($names as $name) {
-            if (!wire('pages')->get($parent . $name . '/') instanceof \NullPage) {
+          $sanitizedName = wire('sanitizer')->pageName($name);
+            if (!wire('pages')->get($parent . $sanitizedName . '/') instanceof \NullPage) {
                 $output->writeln("<error>The page name  '{$name}' is already taken.</error>");
                 continue;
             }
@@ -56,7 +57,7 @@ class PageCreateCommand extends PwUserTools
             $p = new \Page();
             $p->template = $template;
             $p->parent = wire('pages')->get($parent);
-            $p->name = $name; // give it a name used in the url for the page
+            $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
             $p->save();
         }
