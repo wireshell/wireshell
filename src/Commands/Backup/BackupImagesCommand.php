@@ -68,7 +68,6 @@ class BackupImagesCommand extends PwConnector
                             $fp = fopen($path, "w");
                             fwrite($fp, $content);
                             fclose($fp);
-                            var_dump('blbl');
                         }
                         $total++;
                     }
