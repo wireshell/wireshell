@@ -1,7 +1,7 @@
 # wireshell
 **ProcessWire command-line companion**
 
-Version 0.4.1
+Version 0.5.0
 
 A command-line interface for CMS/CMF [ProcessWire](https://processwire.com) based on Symfony Console component.
 Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great [API](https://processwire.com/api/) and
@@ -29,8 +29,10 @@ Find more background, documentation and examples on [http://wireshell.pw](http:/
 
 ## Changelog
 
-* 0.4.1  (5/17/15) Fixed some bugs regarding PHP 5.4/5.5
-* 0.4.0  (5/15/15) Big update with a lot of contributed
+* 0.5.0  (9/5/15) Adds PW core upgrade command, template:delete and :list commands, page command context including
+                  creating, deleting, listing and trash-emptying
+* 0.4.1 (5/17/15) Fixed some bugs regarding PHP 5.4/5.5
+* 0.4.0 (5/15/15) Big update with a lot of contributed
                   commands and interfaces: "Module Download" command, extended
                   "Module Enable" command, enhanced "User Create", added "User Delete", "User
                   List" and "User Update" (thanks @justonestep). "Module Generate" command using
