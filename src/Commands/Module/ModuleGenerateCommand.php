@@ -23,12 +23,10 @@ class ModuleGenerateCommand extends PwModuleTools
     protected $api = "http://modules.pw/api.php";
     protected $client;
 
-    /**
-     * @param ClientInterface $client
-     */
-    function __construct(ClientInterface $client)
+
+    function __construct()
     {
-        $this->client = $client;
+        $this->client = new \GuzzleHttp\Client();
         parent::__construct();
     }
 

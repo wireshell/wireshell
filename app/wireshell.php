@@ -2,6 +2,7 @@
 
 use Symfony\Component\Console\Application;
 
+use Symfony\Component\Finder\Finder;
 use Wireshell\Commands\User\UserCreateCommand;
 use Wireshell\Commands\User\UserUpdateCommand;
 use Wireshell\Commands\User\UserDeleteCommand;
@@ -28,22 +29,43 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
 
 $app = new Application('wireshell - An extendable ProcessWire CLI', '0.4.1');
 
-$app->add(new UserCreateCommand());
-$app->add(new UserUpdateCommand());
-$app->add(new UserDeleteCommand());
-$app->add(new UserListCommand());
-$app->add(new RoleCreateCommand());
-$app->add(new TemplateCreateCommand());
-$app->add(new TemplateFieldsCommand());
-$app->add(new FieldCreateCommand());
-$app->add(new ModuleDownloadCommand());
-$app->add(new ModuleEnableCommand());
-$app->add(new ModuleDisableCommand());
-$app->add(new ModuleGenerateCommand(new GuzzleHttp\Client()));
-$app->add(new NewCommand());
-$app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));
-$app->add(new StatusCommand());
-$app->add(new ServeCommand());
-$app->add(new BackupCommand());
+//$app->add(new UserCreateCommand());
+//$app->add(new UserUpdateCommand());
+//$app->add(new UserDeleteCommand());
+//$app->add(new UserListCommand());
+//$app->add(new RoleCreateCommand());
+//$app->add(new TemplateCreateCommand());
+//$app->add(new TemplateFieldsCommand());
+//$app->add(new FieldCreateCommand());
+//$app->add(new ModuleDownloadCommand());
+//$app->add(new ModuleEnableCommand());
+//$app->add(new ModuleDisableCommand());
+//$app->add(new ModuleGenerateCommand(new GuzzleHttp\Client()));
+//$app->add(new NewCommand());
+//$app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));
+//$app->add(new StatusCommand());
+//$app->add(new ServeCommand());
+//$app->add(new BackupCommand());
+
+
+if (!is_dir($dir = __DIR__ . '/../src/Commands')) {
+    return;
+}
+
+$finder = new Finder();
+$finder->files()->name('*Command.php')->in($dir);
+
+foreach ($finder as $file) {
+
+    $r = new \ReflectionClass('\\Wireshell\\Commands\\' . $file->getRelativePath() . '\\'.$file->getBasename('.php'));
+
+    if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command')
+        && !$r->isAbstract()
+        && !$r->getConstructor()->getNumberOfRequiredParameters()) {
+
+            $app->add($r->newInstance());
+
+    }
+}
 
 $app->run();
