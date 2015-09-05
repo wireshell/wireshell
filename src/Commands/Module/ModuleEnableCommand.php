@@ -47,7 +47,7 @@ class ModuleEnableCommand extends PwConnector
 
         foreach ($modules as $module) {
             $this->checkIfModuleExistsLocally($module, $output, $input);
-            if (wire('modules')->get($module)) {
+            if (wire('modules')->getModule($module, array('noPermissionCheck' => true))) {
                 $output->writeln("<info>Module {$module} installed successfully.</info>");
             }
         }
@@ -56,7 +56,7 @@ class ModuleEnableCommand extends PwConnector
 
     private function checkIfModuleExistsLocally($module, $output, $input)
     {
-        if (!wire("modules")->get("{$module}")) {
+        if (!wire('modules')->get($module)) {
             $output->writeln("<comment>Cannot find '{$module}' locally, trying to download...</comment>");
 
             $this->passOnToModuleDownloadCommand($module, $output, $input);

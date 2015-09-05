@@ -40,32 +40,39 @@ class ModuleDisableCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $modules = explode(",", $input->getArgument('modules'));
+        $remove = $input->getOption('rm') === true ? true : false;
 
         foreach ($modules as $module) {
-            $this->checkIfModuleExists($module, $output);
+            $this->checkIfModuleExists($module, $output, $remove);
+
             if (wire('modules')->uninstall($module)) {
                 $output->writeln("Module {$module} <comment>uninstalled</comment> successfully.");
+            }
 
-                // remove module
-                if ($input->getOption('rm') === true && is_dir(wire('config')->paths->$module)) {
-                    if ($this->recurseRmdir(wire('config')->paths->$module)) {
-                        $output->writeln("Module {$module} was <comment>removed</comment> successfully.");
-                    } else {
-                        $output->writeln("Module {$module} could not be removed <fg=red>could not be removed</fg=red>.");
-                    }
+            // remove module
+            if ($remove === true && is_dir(wire('config')->paths->$module)) {
+                if ($this->recurseRmdir(wire('config')->paths->$module)) {
+                    $output->writeln("Module {$module} was <comment>removed</comment> successfully.");
+                } else {
+                    $output->writeln("Module {$module} could not be removed <fg=red>could not be removed</fg=red>.");
                 }
             }
         }
 
     }
 
-    private function checkIfModuleExists($module, $output)
+    private function checkIfModuleExists($module, $output, $remove)
     {
-        if (!wire("modules")->get("{$module}")) {
+        if (!is_dir(wire('config')->paths->siteModules . $module)) {
             $output->writeln("<error>Module '{$module}' does not exist!</error>");
-
-            return false;
+            exit(1);
         }
+
+        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true)) && $remove === false) {
+            $output->writeln("<info>Module '{$module}' is not installed!</info>");
+            exit(1);
+        }
+
 
     }
 

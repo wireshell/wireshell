@@ -28,7 +28,6 @@ class FieldCreateCommand extends PwConnector
     {
         $this
             ->setName('field:create')
-            ->setAliases(['f:c'])
             ->setDescription('Creates a field')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Label')
@@ -58,18 +57,6 @@ class FieldCreateCommand extends PwConnector
         $field->label = $label;
         $field->description = $input->getOption('desc');
         $field->save();
-
-        if (!wire('fieldgroups')->get('wireshell')) {
-
-            $fieldGroup = new Fieldgroup();
-            $fieldGroup->name = 'wireshell';
-        } else {
-
-            $fieldGroup = wire('fieldgroups')->get('wireshell');
-        }
-
-        $fieldGroup->add($field);
-        $fieldGroup->save();
 
         $output->writeln("<info>Field '{$name}' ($type) created successfully!</info>");
 
