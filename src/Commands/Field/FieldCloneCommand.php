@@ -13,7 +13,7 @@ use Wireshell\Helpers\PwConnector;
 /**
  * Class FieldCloneCommand
  *
- * Creates a field
+ * Clones a field
  *
  * @package Wireshell
  * @author Tabea David
