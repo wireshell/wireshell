@@ -55,7 +55,7 @@ class FieldCloneCommand extends PwConnector
 
         $clone = $fields->clone($fieldToClone);
 
-        if (!empty($input->getOption('name'))) {
+        if ($input->getOption('name')) {
             $clone->name = $input->getOption('name');
             $clone->label = ucfirst($input->getOption('name'));
             $clone->save();
