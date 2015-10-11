@@ -102,9 +102,9 @@ $app = loadCommandsInFilesForApp($coreFiles, $app, '\\Wireshell\\Commands\\');
  */
 
 $moduleDir = getcwd() . '/site/modules';
-//
+
 $moduleFiles = getCommandFilesInDir($moduleDir);
-//
+
 $app = loadCommandsInFilesForApp($moduleFiles, $app, '');
 
 $app->run();
