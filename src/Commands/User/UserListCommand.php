@@ -1,12 +1,12 @@
 <?php namespace Wireshell\Commands\User;
 
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
 use Wireshell\Helpers\WsTools as Tools;
+use Wireshell\Helpers\WsTables as WsTables;
 
 /**
  * Class UserListCommand
@@ -48,8 +48,8 @@ class UserListCommand extends PwUserTools
         if ($users->getTotal() > 0) {
             $content = $this->getUserData($users);
             $headers = array('Username', 'E-Mail', 'Superuser', 'Roles');
-            $tables = array($this->buildTable($output, $content, $headers));
-            $this->renderTables($output, $tables);
+            $tables = array(WsTables::buildTable($output, $content, $headers));
+            WsTables::renderTables($output, $tables);
         }
     }
 
