@@ -1,10 +1,9 @@
 <?php namespace Wireshell\Commands\Module;
 
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\PwModuleTools;
 use ZipArchive;
 
@@ -26,7 +25,7 @@ class ModuleGenerateCommand extends PwModuleTools
 
     function __construct()
     {
-        $this->client = new \GuzzleHttp\Client();
+        $this->client = new Client();
         parent::__construct();
     }
 

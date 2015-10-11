@@ -50,9 +50,9 @@ class UpgradeCommand extends PwConnector
 
     protected $filesToReplace = array('wire', 'htaccess.txt', 'index.php');
 
-    function __construct(Filesystem $fs)
+    function __construct()
     {
-        $this->fs = $fs;
+        $this->fs = new Filesystem();
         parent::__construct();
     }
 
