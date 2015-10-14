@@ -28,15 +28,15 @@ Find more background, documentation and examples on [http://wireshell.pw](http:/
 * [Support](http://wireshell.pw/#support)
 
 ## Changelog 
-Dates using ISO 8601 Format (AAAA-MM-DD).
+Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-**0.5.0  (2015/09/05)** 
+**0.5.0  (2015-09-05)** 
   - Adds PW core upgrade command, template:delete and :list commands, page command context including creating, deleting, listing and trash-emptying.
                   
-**0.4.1 (2015/05/17)** 
+**0.4.1 (2015-05-17)** 
  - Fixed some bugs regarding PHP 5.4/5.5
  
-**0.4.0 (2015/05/15)** 
+**0.4.0 (2015-05-15)** 
 - Big update with a lot of contributed commands and interfaces. 
 - "Module Download" command.
 - Extended "Module Enable" command.
@@ -48,24 +48,24 @@ Dates using ISO 8601 Format (AAAA-MM-DD).
 - wireshell's code and documentation were extended/cleaned up by @clsource. 
 - Also 0.4.0 introduced documentation microsite, [wireshell.pw](http://wireshell.pw).
 
-**0.3.3 (2015/04/08)**
+**0.3.3 (2015-04-08)**
 - Just a hotfix release, regarding the autoload path.
 
-**0.3.2 (2015/04/08)** 
+**0.3.2 (2015-04-08)** 
 - Added "Show Admin Url" command (since 0.4.0 part of "Status" command), added bin to composer.json.
 
-**0.3.1 (2015/04/08)** 
+**0.3.1 (2015-04-08)** 
 - Listed wireshell on Packagist, added that in the readme.
 
-**0.3.0 (2015/04/06)** 
+**0.3.0 (2015-04-06)** 
 - "New" Command now installs PW instead of just downloading it (thanks to a great PR by @HariKT). 
 - Added commands regarding fields, modules, and database backup.
 
-**0.2.0 (2015/03/28)** 
+**0.2.0 (2015-03-28)** 
 - Added "Create Template".
 - Extended "Create User" command with role assignment on the fly.
 
-**0.1.0 (2015/03/27)** 
+**0.1.0 (2015-03-27)** 
 - Started project :) With basic commands like "New" (just downloading ProcessWire, back then), "Create User", "Create Role".
 
 ## Licence
