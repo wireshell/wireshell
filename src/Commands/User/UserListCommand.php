@@ -58,10 +58,9 @@ class UserListCommand extends PwUserTools
      * @param InputInterface $input
      */
     private function getUsers($input) {
-
         $role = $input->getOption('role');
 
-        if (!empty($role)) {
+        if ($role) {
             $users = wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
         } else {
             $users = wire('users')->find('start=0')->sort('name');

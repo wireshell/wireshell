@@ -57,7 +57,7 @@ class UserCreateCommand extends PwUserTools
             $this->attachRolesToUser($name, $roles, $output);
         }
 
-        if (!empty($pass)) {
+        if ($pass) {
           $output->writeln("<info>User '{$name}' created successfully!</info>");
         } else {
           $output->writeln("<info>User '{$name}' created successfully! Please do not forget to set a password.</info>");

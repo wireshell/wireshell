@@ -40,12 +40,10 @@ class FieldCloneCommand extends PwConnector
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         parent::bootstrapProcessWire($output);
 
         $field = $input->getArgument('field');
         $fields = wire('fields');
-
         $fieldToClone = $fields->get($field);
 
         if (is_null($fieldToClone)) {
@@ -55,7 +53,7 @@ class FieldCloneCommand extends PwConnector
 
         $clone = $fields->clone($fieldToClone);
 
-        if (!empty($input->getOption('name'))) {
+        if ($input->getOption('name')) {
             $clone->name = $input->getOption('name');
             $clone->label = ucfirst($input->getOption('name'));
             $clone->save();

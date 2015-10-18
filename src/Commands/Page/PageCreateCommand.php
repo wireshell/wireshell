@@ -78,12 +78,12 @@ class PageCreateCommand extends PwUserTools
         }
 
         $template = wire('templates')->get($templateName);
-        if (empty($template)) {
+        if (!$template) {
             $output->writeln("<error>Template '{$templateName}' doesn't exist!</error>");
             exit(1);
         }
 
-        if (!empty($template->noParents)) {
+        if ($template->noParents) {
             $output->writeln("<error>Template '{$templateName}' is not allowed to be used for new pages!</error>");
             exit(1);
         }

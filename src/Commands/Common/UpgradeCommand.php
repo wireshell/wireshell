@@ -364,13 +364,11 @@ class UpgradeCommand extends PwConnector
             }
 
             $this->output->writeln("<info>  Upgrade completed.</info>");
-
             $this->checkPermissions($input, $output);
-
             $this->output->writeln("  Now double check that everything works.");
 
             $files = is_array($manually) ? implode(', ', array_flip($manually)) : '';
-            if (!empty($files)) {
+            if ($files) {
                 $this->output->writeln("  You have to replace <fg=cyan;options=bold>$files</fg=cyan;options=bold> manually.");
             }
 

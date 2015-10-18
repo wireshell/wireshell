@@ -46,7 +46,7 @@ class FieldTagCommand extends PwConnector
         $inputFields = explode(',', $input->getArgument('field'));
         $fields = wire('fields');
 
-        if (!empty($input->getOption('tag'))) {
+        if ($input->getOption('tag')) {
             $tag = $input->getOption('tag');
         } else {
             $output->writeln("\n<error> Please provide a tag name (`--tag=tagname`).</error>");
