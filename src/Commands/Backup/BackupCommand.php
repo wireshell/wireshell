@@ -26,7 +26,6 @@ class BackupCommand extends PwConnector
     {
         $this
             ->setName('backup:db')
-            ->setAliases(['b:db'])
             ->setDescription('Performs database dump')
             ->addOption('filename', null, InputOption::VALUE_REQUIRED, 'Provide a file name for the dump');
     }

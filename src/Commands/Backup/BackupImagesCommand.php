@@ -22,7 +22,6 @@ class BackupImagesCommand extends PwConnector
     {
         $this
             ->setName('backup:images')
-            ->setAliases(['b:i'])
             ->setDescription('Performs images backup')
             ->addOption('selector', null, InputOption::VALUE_REQUIRED, 'Provide a pages selector')
             ->addOption('field', null, InputOption::VALUE_REQUIRED, 'Provide a image field name')

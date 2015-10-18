@@ -25,7 +25,6 @@ class TemplateListCommand extends PwConnector
     {
         $this
             ->setName('template:list')
-            ->setAliases(['t:l'])
             ->setDescription('Lists ProcessWire templates')
             ->addOption('advanced', null, InputOption::VALUE_NONE, 'Show system templates. By default, system/internal templates are not shown.');
           ;

@@ -23,7 +23,6 @@ class ModuleDisableCommand extends PwConnector
     {
         $this
             ->setName('module:disable')
-            ->setAliases(['m:dis'])
             ->setDescription('Disable provided module(s)')
             ->addArgument('modules', InputOption::VALUE_REQUIRED,
                 'Provide one or more module class name, comma separated: Foo,Bar')

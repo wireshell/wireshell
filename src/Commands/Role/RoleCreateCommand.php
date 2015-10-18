@@ -23,7 +23,6 @@ class RoleCreateCommand extends PwUserTools
     {
         $this
             ->setName('role:create')
-            ->setAliases(['r:c'])
             ->setDescription('Creates a ProcessWire role')
             ->addArgument('name', InputArgument::REQUIRED);
     }

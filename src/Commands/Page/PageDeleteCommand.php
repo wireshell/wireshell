@@ -25,7 +25,6 @@ class PageDeleteCommand extends PwUserTools
     {
         $this
             ->setName('page:delete')
-            ->setAliases(['p:d'])
             ->setDescription('Deletes ProcessWire pages')
             ->addArgument('selector', InputArgument::REQUIRED)
             ->addOption('rm', null, InputOption::VALUE_NONE, 'Force deletion, do not move page to trash');

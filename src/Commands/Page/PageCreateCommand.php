@@ -25,7 +25,6 @@ class PageCreateCommand extends PwUserTools
     {
         $this
             ->setName('page:create')
-            ->setAliases(['p:c'])
             ->setDescription('Creates a ProcessWire page')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('template', null, InputOption::VALUE_REQUIRED, 'Template')

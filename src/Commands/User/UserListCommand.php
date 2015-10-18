@@ -28,7 +28,6 @@ class UserListCommand extends PwUserTools
     {
         $this
             ->setName('user:list')
-            ->setAliases(['u:l'])
             ->setDescription('Lists ProcessWire users')
             ->addOption('role', null, InputOption::VALUE_REQUIRED, 'Find user by role');
     }
