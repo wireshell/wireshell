@@ -32,6 +32,7 @@ use Symfony\Component\Process\Process;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\Installer;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class NewCommand
@@ -46,6 +47,7 @@ use Wireshell\Helpers\Installer;
  * @author Philipp Urlich
  * @author Marcus Herrmann
  * @author Hari KT
+ * @author Tabea David
  *
  */
 class NewCommand extends Command
@@ -67,10 +69,6 @@ class NewCommand extends Command
     private $requirementsErrors = array();
 
     private $installer;
-
-    private $master = 'https://github.com/ryancramerdesign/ProcessWire/archive/master.zip';
-
-    private $dev = 'https://github.com/ryancramerdesign/ProcessWire/archive/dev.zip';
 
     /**
      * @var OutputInterface
@@ -100,7 +98,9 @@ class NewCommand extends Command
             ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address.')
             ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile.')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');;
+            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+            ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
+            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -118,7 +118,7 @@ class NewCommand extends Command
         $this->output = $output;
 
         $profile = $input->getOption('profile');
-        $branch = ($input->getOption('dev')) ? $this->dev : $this->master;
+        $branch = $this->getZipURL($input);
 
         try {
             $this
@@ -260,6 +260,32 @@ class NewCommand extends Command
             $this->cleanUp();
             throw $e;
         }
+    }
+
+    private function getZipURL($input) {
+        if ($input->getOption('dev')) {
+            $targetBranch = PwConnector::BRANCH_DEV;
+        } elseif ($input->getOption('devns')) {
+            $targetBranch = PwConnector::BRANCH_DEVNS;
+        } elseif ($input->getOption('sha')) {
+            $targetBranch = $input->getOption('sha');
+        } else {
+            $targetBranch = PwConnector::BRANCH_MASTER;
+        }
+
+        $branch = str_replace('{branch}', $targetBranch, PwConnector::zipURL);
+        $check = str_replace('{branch}', $targetBranch, PwConnector::versionURL);
+        $ch = curl_init($check);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_exec($ch);
+        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ((int)$retcode !== 200) {
+            throw new \RuntimeException("Error loading sha `$targetBranch`.");
+        }
+
+        return $branch;
     }
 
     /**

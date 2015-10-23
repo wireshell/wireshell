@@ -66,6 +66,8 @@ class UpgradeCommand extends PwConnector
             ->setName('upgrade')
             ->setDescription('Checks for core upgrades.')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
+            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+            ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
             ->addOption('just-check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
             ->addOption('just-download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
     }
@@ -77,11 +79,9 @@ class UpgradeCommand extends PwConnector
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         parent::bootstrapProcessWire($output);
-        $dev = ($input->getOption('dev')) ? true : false;
 
-        $check = parent::checkForCoreUpgrades($output, $dev);
+        $check = parent::checkForCoreUpgrades($output, $input);
         $this->output = $output;
         $this->root = wire('config')->paths->root;
 
