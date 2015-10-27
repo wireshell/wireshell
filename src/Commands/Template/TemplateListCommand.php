@@ -56,7 +56,7 @@ class TemplateListCommand extends PwConnector
     private function getTemplateData($advanced) {
         $content = array();
         $advanced = wire('config')->advanced || $advanced;
-        foreach(wire('templates') as $t) {
+        foreach (wire('templates') as $t) {
             if (!$advanced && ($t->flags & \Template::flagSystem)) continue;
 
             $content[] = array(

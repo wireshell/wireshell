@@ -26,4 +26,25 @@ abstract class WsTools
     {
         return "<{$type}>{$string}</{$type}>";
     }
+
+    /**
+     * Simple method for listing output
+     * one column
+     *
+     * @param string $header
+     * @param array $items
+     * @param OutputInterface $output
+     */
+    public static function renderList($header, $items, $output) {
+        $output->writeln('<fg=yellow;options=underscore>' . ucfirst($header) . "</>\n");
+
+        if (count($items) > 0) {
+            foreach ($items as $item) {
+                $output->writeln(" - $item");
+            }
+        }
+
+        $output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
+    }
+
 }
