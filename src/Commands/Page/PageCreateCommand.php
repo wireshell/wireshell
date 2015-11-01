@@ -30,7 +30,8 @@ class PageCreateCommand extends PwUserTools
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('template', null, InputOption::VALUE_REQUIRED, 'Template')
             ->addOption('parent', null, InputOption::VALUE_REQUIRED, 'Parent Page')
-            ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Title');
+            ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Title')
+			->addOption('field-contents', null, InputOption::VALUE_REQUIRED, 'Fields');
     }
 
     /**
@@ -49,16 +50,19 @@ class PageCreateCommand extends PwUserTools
 
         foreach ($names as $name) {
           $sanitizedName = wire('sanitizer')->pageName($name);
+		  $field_contents = json_decode($input->getOption('field-contents'));
             if (!wire('pages')->get($parent . $sanitizedName . '/') instanceof \NullPage) {
                 $output->writeln("<error>The page name  '{$name}' is already taken.</error>");
                 continue;
             }
-
             $p = new \Page();
             $p->template = $template;
             $p->parent = wire('pages')->get($parent);
             $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
+			foreach ( $field_contents as $fieldname => $fieldcontent ) {
+				$p->$fieldname = $fieldcontent;
+			}
             $p->save();
         }
     }
