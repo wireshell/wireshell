@@ -30,12 +30,25 @@ Find more background, documentation and examples on [http://wireshell.pw](http:/
 ## Changelog 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-**0.5.0  (2015-09-05)** 
+**0.5.1 (2015-xx-xx)** 
+  - Improved `new` command, support for site profiles (`path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`), autocompletion for timezone
+  - Adds `field:list` command including filters `--all, --template=, --type=`
+  - Adds list `field:types` command
+  - Extends `field:create` command, allow custom field types
+  - Extends `new` command: adds ability to specify version of ProcessWire `--dev, --devns, --sha=`
+  - Extends `upgrade` command: adds ability to specify version of ProcessWire `--dev, --devns, --sha=`
+  - Removes unnecessary checks of empty
+  - Removes command aliases for better list overview #36
+  - Fixed wrong iso format
+  - Improved changelog format
+  - Adds field commands `field:delete` and `field:tag`
+
+**0.5.0 (2015-09-05)** 
   - Adds PW core upgrade command, template:delete and :list commands, page command context including creating, deleting, listing and trash-emptying.
-                  
+
 **0.4.1 (2015-05-17)** 
  - Fixed some bugs regarding PHP 5.4/5.5
- 
+
 **0.4.0 (2015-05-15)** 
 - Big update with a lot of contributed commands and interfaces. 
 - "Module Download" command.
