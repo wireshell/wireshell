@@ -104,21 +104,26 @@ class Installer
   }
 
   /**
-   * Step 1: Check for ProcessWire compatibility
+   * Step 0: Get `site` folder
    *
    */
-  public function compatibilityCheck() {
-
+  public function getSiteFolder($profile) {
     $projectDir = $this->projectDir;
 
-    if(is_file($projectDir . "/site/install/install.sql")) {
+    $site = 'site-default';
+    $availableProfiles = array('beginner', 'blank', 'classic', 'default', 'languages');
+    if ($profile) {
+        $site = in_array($profile, $availableProfiles) ? 'site-' . $profile : $profile;
+    }
+
+    if (is_file($projectDir . "/site/install/install.sql")) {
       $this->log->info("Found installation profile in /site/install/");
 
-    } else if(is_dir($projectDir . "/site/")) {
+    } else if (is_dir($projectDir . "/site/")) {
       $this->log->info("Found /site/ -- already installed? ");
 
-    } else if(@rename($projectDir . "/site-default", $projectDir . "/site")) {
-      $this->log->info("Renamed /site-default => /site");
+    } else if (@rename($projectDir . "/$site", $projectDir . "/site")) {
+      $this->log->info("Renamed /$site => /site");
 
     } else {
       $this->error("Before continuing, please rename '/site-default' to '/site' -- this is the default installation profile.");
@@ -126,19 +131,29 @@ class Installer
       return;
     }
 
-    if(version_compare(PHP_VERSION, self::MIN_REQUIRED_PHP_VERSION) >= 0) {
+    return $this;
+  }
+
+  /**
+   * Step 1: Check for ProcessWire compatibility
+   *
+   */
+  public function compatibilityCheck() {
+    $projectDir = $this->projectDir;
+
+    if (version_compare(PHP_VERSION, self::MIN_REQUIRED_PHP_VERSION) >= 0) {
       $this->log->info("PHP version " . PHP_VERSION);
     } else {
       $this->error("ProcessWire requires PHP version " . self::MIN_REQUIRED_PHP_VERSION . " or newer. You are running PHP " . PHP_VERSION);
     }
 
-    if(extension_loaded('pdo_mysql')) {
+    if (extension_loaded('pdo_mysql')) {
       $this->log->info("PDO (mysql) database");
     } else {
       $this->error("PDO (pdo_mysql) is required (for MySQL database)");
     }
 
-    if(self::TEST_MODE) {
+    if (self::TEST_MODE) {
       $this->error("Example error message for test mode");
     }
 
@@ -153,38 +168,38 @@ class Installer
     $this->checkFunction("hash", "HASH support");
     $this->checkFunction("spl_autoload_register", "SPL support");
 
-    if(function_exists('apache_get_modules')) {
-      if(in_array('mod_rewrite', apache_get_modules())) $this->log->info("Found Apache module: mod_rewrite");
+    if (function_exists('apache_get_modules')) {
+      if (in_array('mod_rewrite', apache_get_modules())) $this->log->info("Found Apache module: mod_rewrite");
         else $this->info("Apache mod_rewrite does not appear to be installed and is required by ProcessWire.");
     } else {
       // apache_get_modules doesn't work on a cgi installation.
       // check for environment var set in htaccess file, as submitted by jmarjie.
       $mod_rewrite = getenv('HTTP_MOD_REWRITE') == 'On' || getenv('REDIRECT_HTTP_MOD_REWRITE') == 'On' ? true : false;
-      if($mod_rewrite) {
+      if ($mod_rewrite) {
         $this->log->info("Found Apache module (cgi): mod_rewrite");
       } else {
         // $this->error("Unable to determine if Apache mod_rewrite (required by ProcessWire) is installed. On some servers, we may not be able to detect it until your .htaccess file is place. Please click the 'check again' button at the bottom of this screen, if you haven't already.");
       }
     }
 
-    if(is_writable($projectDir . "/site/assets/")) $this->log->info($projectDir . "/site/assets/ is writable");
+    if (is_writable($projectDir . "/site/assets/")) $this->log->info($projectDir . "/site/assets/ is writable");
       else $this->error("Error: Directory {$projectDir}/site/assets/ must be writable. Please adjust the permissions before continuing.");
 
-    if(is_writable($projectDir . "/site/config.php")) $this->log->info($projectDir . "/site/config.php is writable");
+    if (is_writable($projectDir . "/site/config.php")) $this->log->info($projectDir . "/site/config.php is writable");
       else $this->error("Error: File {$projectDir}/site/config.php must be writable. Please adjust the permissions before continuing.");
 
-    if(!is_file($projectDir . "/.htaccess") || !is_readable($projectDir . "/.htaccess")) {
+    if (!is_file($projectDir . "/.htaccess") || !is_readable($projectDir . "/.htaccess")) {
       if(@rename($projectDir . "/htaccess.txt", $projectDir . "/.htaccess")) $this->log->info("Installed .htaccess");
         else $this->error("/.htaccess doesn't exist. Before continuing, you should rename the included htaccess.txt file to be .htaccess (with the period in front of it, and no '.txt' at the end).");
 
-    } else if(!strpos(file_get_contents($projectDir . "/.htaccess"), "PROCESSWIRE")) {
+    } else if (!strpos(file_get_contents($projectDir . "/.htaccess"), "PROCESSWIRE")) {
       $this->error("/.htaccess file exists, but is not for ProcessWire. Please overwrite or combine it with the provided /htaccess.txt file (i.e. rename /htaccess.txt to /.htaccess, with the period in front).");
 
     } else {
       $this->log->info(".htaccess looks good");
     }
 
-    if($this->numErrors) {
+    if ($this->numErrors) {
       $this->log->error("One or more errors were found above. We recommend you correct these issues before proceeding or contact ProcessWire support if you have questions or think the error is incorrect. But if you want to proceed anyway, click Continue below.");
     }
   }
