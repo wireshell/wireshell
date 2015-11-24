@@ -56,6 +56,12 @@ class Installer
   const TEST_MODE = false;
 
   /**
+   * Default site profile
+   *
+   */
+  const PROFILE_DEFAULT = 'site-default';
+
+  /**
    * File permissions, determined in the dbConfig function
    *
    * Below are last resort defaults
@@ -110,10 +116,11 @@ class Installer
   public function getSiteFolder($profile) {
     $projectDir = $this->projectDir;
 
-    $site = 'site-default';
+    $site = self::PROFILE_DEFAULT;
     $availableProfiles = array('beginner', 'blank', 'classic', 'default', 'languages');
     if ($profile) {
         $site = in_array($profile, $availableProfiles) ? 'site-' . $profile : $profile;
+        if (!is_dir("$projectDir/$site")) $site = self::PROFILE_DEFAULT;
     }
 
     if (is_file($projectDir . "/site/install/install.sql")) {
@@ -247,10 +254,10 @@ class Installer
       $values[$field] = $value;
     }
 
-    $timezone = (int) $post['timezone'];
-
     $timezones = $this->timezones();
-    if(isset($timezones[$timezone])) {
+    if (in_array($post['timezone'], timezone_identifiers_list())) {
+      $values['timezone'] = $post['timezone'];
+    } else if ($timezones[(int)$post['timezone']]) {
       $value = $timezones[$timezone];
       if(strpos($value, '|')) list($label, $value) = explode('|', $value);
       $values['timezone'] = $value;
