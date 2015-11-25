@@ -7,15 +7,6 @@ A command-line interface for CMS/CMF [ProcessWire](https://processwire.com) base
 Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great [API](https://processwire.com/api/) and
 Symfony Console's [modular command approach](http://symfony.com/doc/current/components/console/introduction%20%20%20%20%20%20.html).
 
-### Quicklinks
-
-
-### Licence
-
-Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](licence.md)
-
-![wireshell logo](logo.png)
-
 ## Contributors & Thanks
 
 ### Core
@@ -26,6 +17,13 @@ Unless stated differently in particular files, wireshell is licenced under MIT, 
 
 ### Community
 
-- HariKT [(GitHub)](https://github.com/HariUt)
+- HariKT [(GitHub)](https://github.com/HariKT)
 - horst-n [(GitHub)](https://github.com/horst-n)
 - nicoknoll [(GitHub)](https://github.com/nicoknoll)
+
+### Licence
+
+Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](licence.md)
+
+![wireshell logo](logo.png)
+
