@@ -4,6 +4,8 @@
 
 ## Create
 
+Creates a new page with the given parameters
+
 ---
 
 ## Delete
@@ -50,8 +52,12 @@ $ wireshell page:delete About
 
 ## Empty Trash
 
+Empties ProcessWire's Trash.
+
 ---
 
 ## List
+
+Outputs current ProcessWire install's page structure with hierarchy, titles, IDs, and page names.
 
 ---
