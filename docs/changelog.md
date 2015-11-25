@@ -1,4 +1,6 @@
-# changelog 
+### Changelog 
+
+![Wireshell Logo](http://wireshell.pw/favicon-16x16.png)
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
