@@ -21,9 +21,8 @@ Symfony Console's [modular command approach](http://symfony.com/doc/current/comp
 - horst-n [(GitHub)](https://github.com/horst-n)
 - nicoknoll [(GitHub)](https://github.com/nicoknoll)
 
-### Licence
+## Licence
 
 Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](licence.md)
 
 ![wireshell logo](logo.png)
-
