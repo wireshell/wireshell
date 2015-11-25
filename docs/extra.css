@@ -5,13 +5,15 @@
   display: none;
 }
 
-code.shell {
+code.bash {
   margin-bottom: 2rem;
   font-size: 1rem;
 }
 
-/* do not interprete -- as comment */
-code.shell .hljs-comment {
-  color: #333;
-  font-style: normal;
+/* simulate headline */
+img > strong {
+  font-size: 150%;
+  padding-left: .5rem;
+  font-family: "Roboto Slab", "ff-tisa-web-pro", "Georgia", Arial, sans-serif;
+  vertical-align: middle;
 }
