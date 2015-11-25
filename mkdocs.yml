@@ -4,7 +4,7 @@ site_url: http://wireshell.pw/
 repo_url: https://github.com/wireshell/wireshell
 repo_name: wireshell
 repo_name: Github
-site_description: A command-line interface for CMS/CMF ProcessWire based on Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
+site_description: A command-line interface for CMS/CMF ProcessWire based on the Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
 site_favicon: favicon.ico
 theme: readthedocs
 # extra_javascript:
@@ -14,7 +14,7 @@ markdown_extensions:
   - extra
 include_search: true
 pages:
-- Home: index.md
+- wireshell: index.md
 - General:
   - Installation: install.md
   - Updating: updating.md

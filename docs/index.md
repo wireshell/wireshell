@@ -1,4 +1,5 @@
-# wireshell
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **wireshell**
+
 **ProcessWire command-line companion**
 
 Version 0.5.1
