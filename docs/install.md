@@ -1,4 +1,4 @@
-![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Installation**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Installation**
 
 wireshell requires [Composer](https://getcomposer.org/), a local PHP installation >= 5.4.0, and, of course, [ProcessWire](https://processwire.com/).
 

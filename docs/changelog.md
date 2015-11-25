@@ -1,4 +1,4 @@
-![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Changelog**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Changelog**
 
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).

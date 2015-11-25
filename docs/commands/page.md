@@ -1,4 +1,4 @@
-![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Page**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Page**
 
 ---
 
@@ -19,7 +19,7 @@ $ wireshell page:delete {selector}
 ### Available options:
 
 ```sh
---rm : forces deletes the selected page without putting it in the trash first
+--rm : force deletes the selected page without putting it in the trash first
 ```
 
 ### Examples

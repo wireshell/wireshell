@@ -1,4 +1,4 @@
-![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Frequently Asked Questions**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Frequently Asked Questions**
 
 > "I use MAMP PRO for Mac and get the error message 'Error: Exception: SQLSTATE[HY000] [2002]...'"
 

@@ -1,4 +1,4 @@
-![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Contributors & Thanks**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Contributors & Thanks**
 
 ### Core
 
