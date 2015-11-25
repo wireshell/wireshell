@@ -1,8 +1,17 @@
-.toctree-l4 {
+/* do not display nested headline in menu bar except h2 */
+.wy-menu-vertical .toctree-l4,
+.wy-menu-vertical .toctree-l5,
+.wy-menu-vertical .toctree-l6 {
   display: none;
 }
 
 code.shell {
   margin-bottom: 2rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
+}
+
+/* do not interprete -- as comment */
+code.shell .hljs-comment {
+  color: #333;
+  font-style: normal;
 }
