@@ -1,5 +1,4 @@
-![Wireshell Logo](http://wireshell.pw/favicon-16x16.png) **Code Of Conduct**
-
+![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Code Of Conduct**
 
 As contributors and maintainers of this project, we pledge to respect all people who contribute through reporting issues, posting feature requests, updating documentation, submitting pull requests or patches, and other activities.
 

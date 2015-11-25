@@ -8,7 +8,10 @@ site_description: A command-line interface for CMS/CMF ProcessWire based on Symf
 site_favicon: favicon.ico
 theme: readthedocs
 # extra_javascript:
-extra_css: [extra.css]
+extra_css: 
+  - assets/css/extra.css
+markdown_extensions:
+  - extra
 include_search: true
 pages:
 - Home: index.md

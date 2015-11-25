@@ -1,4 +1,4 @@
-![Wireshell Logo](http://wireshell.pw/favicon-16x16.png) **Role**
+![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Role**
 
 
 

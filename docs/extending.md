@@ -1,5 +1,4 @@
-![Wireshell Logo](http://wireshell.pw/favicon-16x16.png) **Extending**
-
+![Wireshell Logo](assets/img/favicon-16x16.png){.logo} **Extending**
 
 ## Symfony Console
 
