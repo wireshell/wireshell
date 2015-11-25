@@ -1,3 +1,11 @@
+/* insert logo above menu */
+.wy-menu.wy-menu-vertical:before {
+    content: '';
+    display: inline-block;
+    background: url(../img/logo.svg) no-repeat;
+    margin-left: 1.6em;
+}
+
 /* do not display nested headline in menu bar except h2 */
 .wy-menu-vertical .toctree-l4,
 .wy-menu-vertical .toctree-l5,
