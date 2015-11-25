@@ -14,16 +14,16 @@ $ wireshell page:delete {selector}
 
 ### Available options:
 
-```shell
-\--rm : forces deletes the selected page without putting it in the trash first
+```
+--rm : forces deletes the selected page without putting it in the trash first
 ```
 
 ### Examples
 
 Deletes all pages where the parent id equals 1004:
 
-```shell
-$ wireshell page:delete \--rm "has_parent=1004"
+```console
+$ wireshell page:delete --rm "has_parent=1004"
 ```
 
 Deletes page with id 1005:
