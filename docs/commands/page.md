@@ -2,6 +2,8 @@
 
 ## Create
 
+---
+
 ## Delete
 
 Puts a page into the trash. Selector is either page name, page id or selector. 
@@ -13,7 +15,7 @@ $ wireshell page:delete {selector}
 ### Available options:
 
 ```shell
---rm : forces deletes the selected page without putting it in the trash first
+\--rm : forces deletes the selected page without putting it in the trash first
 ```
 
 ### Examples
@@ -21,10 +23,8 @@ $ wireshell page:delete {selector}
 Deletes all pages where the parent id equals 1004:
 
 ```shell
-$ wireshell page:delete --rm "has_parent=1004"
+$ wireshell page:delete \--rm "has_parent=1004"
 ```
-
-<br>
 
 Deletes page with id 1005:
 
@@ -32,15 +32,11 @@ Deletes page with id 1005:
 $ wireshell page:delete 1005
 ```
 
-<br>
-
 Deletes pages with id 1002 and 1003:
 
 ```shell
 $ wireshell page:delete 1002,1003
 ```
-
-<br>
 
 Deletes pages with page name *About*:
 
@@ -48,6 +44,10 @@ Deletes pages with page name *About*:
 $ wireshell page:delete About
 ```
 
+---
+
 ## Empty Trash
+
+---
 
 ## List
