@@ -1,4 +1,4 @@
-### Installation
+##### ![Wireshell Logo](http://wireshell.pw/favicon-16x16.png) Installation
 
 wireshell requires [Composer](https://getcomposer.org/), a local PHP installation >= 5.4.0, and, of course, [ProcessWire](https://processwire.com/).
 
