@@ -1,9 +1,10 @@
 /* insert logo above menu */
 .wy-menu.wy-menu-vertical:before {
     content: '';
-    display: inline-block;
+    display: block;
     background: url(../img/logo.svg) no-repeat;
-    margin-left: 1.6em;
+    margin: 1.6em;
+    height: 56px;
 }
 
 /* do not display nested headline in menu bar except h2 */
@@ -13,9 +14,20 @@
   display: none;
 }
 
-code.bash {
+/* inline code */
+code {
+  border-radius: 2px;
+  padding: .2rem .3rem;
+  margin: 0 .1rem;
+  font-size: 82%;
+  background: rgba(111,112,114,.1);
+  color: #333;
+}
+
+/* block code */
+pre code {
+  background: #fff;
   margin-bottom: 2rem;
-  font-size: .9rem;
 }
 
 /* simulate headline */
