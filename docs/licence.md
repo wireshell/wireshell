@@ -2,4 +2,4 @@
 
 Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](licence.md)
 
-![wireshell logo](logo.png)
+![wireshell logo](/assets/img/logo.png)
