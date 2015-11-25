@@ -16,14 +16,14 @@ pages:
   - Extending: extending.md
   - Changelog: changelog.md
 - Commands:
-  - Common: common.md
-  - Template: template.md
-  - Page: page.md
-  - Field: field.md
-  - Module: module.md
-  - User: user.md
-  - Role: role.md
-  - Backup: backup.md
+  - Common: commands/common.md
+  - Template: commands/template.md
+  - Page: commands/page.md
+  - Field: commands/field.md
+  - Module: commands/module.md
+  - User: commands/user.md
+  - Role: commands/role.md
+  - Backup: commands/backup.md
 - About: 
   - FAQ: faq.md
   - Licence: licence.md
