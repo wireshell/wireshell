@@ -2,88 +2,6 @@
 
 ---
 
-## Create
-
-Creates a new page with the given parameters
-
-```sh
-$ wireshell page:create {page-name} --template={template-name} --parent={parent-page-name} --title="Some title"
-```
-
-### Available options:
-
-```sh
---template : template for new page
---parent : parent page name
---title : page title
-```
-
-### Examples
-
-Creates a new page.
-
-```sh
-$ wireshell page:create example --template=basic-page --parent=home --title="Example Page"
-```
-
-Creates multiple pages.
-
-```sh
-$ wireshell page:create example-1,example-2,example-3 --template=basic-page --parent=home
-```
-
-Create new page, ask for template.
-
-```sh
-$ wireshell page:create newpage --title="Child page example 3"
-
-Please enter the template : basic-page
-```
-
----
-
-## Delete
-
-Puts a page into the trash. Selector is either page name, page id or selector. 
-
-```sh
-$ wireshell page:delete {selector}
-```
-
-### Available options:
-
-```sh
---rm : force deletes the selected page without putting it in the trash first
-```
-
-### Examples
-
-Deletes all pages where the parent id equals 1004:
-
-```sh
-$ wireshell page:delete --rm "has_parent=1004"
-```
-
-Deletes page with id 1005:
-
-```sh
-$ wireshell page:delete 1005
-```
-
-Deletes pages with id 1002 and 1003:
-
-```sh
-$ wireshell page:delete 1002,1003
-```
-
-Deletes pages with page name *About*:
-
-```sh
-$ wireshell page:delete About
-```
-
----
-
 ## List
 
 Outputs current ProcessWire install's page structure with hierarchy, titles, IDs, and page names.
@@ -170,7 +88,87 @@ $ wireshell page:list --all --trash --level=1
 |  |-- Trash { 7, admin }
 ```
 
-![Wireshell Logo](/assets/img/page-list.gif)
+---
+
+## Create
+
+Creates a new page with the given parameters
+
+```sh
+$ wireshell page:create {page-name} --template={template-name} --parent={parent-page-name} --title="Some title"
+```
+
+### Available options:
+
+```sh
+--template : template for new page
+--parent : parent page name
+--title : page title
+```
+
+### Examples
+
+Creates a new page.
+
+```sh
+$ wireshell page:create example --template=basic-page --parent=home --title="Example Page"
+```
+
+Creates multiple pages.
+
+```sh
+$ wireshell page:create example-1,example-2,example-3 --template=basic-page --parent=home
+```
+
+Create new page, ask for template.
+
+```sh
+$ wireshell page:create newpage --title="Child page example 3"
+
+Please enter the template : basic-page
+```
+
+---
+
+## Delete
+
+Puts a page into the trash. Selector is either page name, page id or selector. 
+
+```sh
+$ wireshell page:delete {selector}
+```
+
+### Available options:
+
+```sh
+--rm : force deletes the selected page without putting it in the trash first
+```
+
+### Examples
+
+Deletes all pages where the parent id equals 1004:
+
+```sh
+$ wireshell page:delete --rm "has_parent=1004"
+```
+
+Deletes page with id 1005:
+
+```sh
+$ wireshell page:delete 1005
+```
+
+Deletes pages with id 1002 and 1003:
+
+```sh
+$ wireshell page:delete 1002,1003
+```
+
+Deletes pages with page name *About*:
+
+```sh
+$ wireshell page:delete About
+```
 
 ---
 

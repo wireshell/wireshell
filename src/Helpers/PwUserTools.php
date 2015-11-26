@@ -31,13 +31,13 @@ class PwUserTools extends PwConnector
     }
 
     /**
-     * @param InputInterface $input
+     * @param $email
      * @param $name
      * @param $userContainer
      * @param $pass
      * @return \Page
      */
-    public function createUser(InputInterface $input, $name, $userContainer, $pass)
+    public function createUser($email, $name, $userContainer, $pass)
     {
         $user = new \Page();
         $user->template = 'user';
@@ -46,13 +46,8 @@ class PwUserTools extends PwConnector
         $user->parent = $userContainer;
         $user->name = $name;
         $user->title = $name;
-
-        if (!empty($pass)) $user->pass = $pass;
-
-        $email = $input->getOption('email');
-        if ($email) {
-            $user->email = $email;
-        }
+        $user->pass = $pass;
+        $user->email = $email;
 
         return $user;
     }

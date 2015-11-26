@@ -16,6 +16,8 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 - Fixed wrong iso format
 - Improved changelog format
 - Adds field commands `field:delete` and `field:tag`
+- Adds tag option for `field:create` command
+- Extends `user:create` command, ask for password and email address
 
 **0.5.0 (2015-09-05)** 
 
