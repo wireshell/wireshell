@@ -51,7 +51,6 @@ $ wireshell log:tail {selector}
 ```
 
 \* You can use all integers and strings that are accepted by DateTime constructor. For example: 
-
 * -2days
 * 2015-11-27
 * 1448617151
@@ -118,7 +117,7 @@ Log system-updater
 (2 in set, total: 16)
 ```
 
-Find all **session** log enties which matches "timed out".
+Find all **session** log entries which match "timed out".
 
 ```sh
 $ wireshell log:tail session --text="timed out"

@@ -43,3 +43,7 @@ img + strong {
   width: auto;
 }
 
+/* reduce margin bottom */
+p {
+  margin-bottom: 1rem;
+}
