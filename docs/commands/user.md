@@ -62,7 +62,7 @@ $ wireshell user:create {user-name}
 ```sh
 --email : mail address for the user 
 --password : password for the user
---roles : assign user roles, comma separated (given the role exist), role`guest is attached by default
+--roles : assign user roles, comma separated (given the role exist), role `guest` is attached by default
 ```
 
 ### Examples
@@ -92,7 +92,7 @@ Please enter a password :
 
 ## Delete
 
-Delete a user or multiple users at once.
+Delete an user or multiple users at once.
 
 ```sh
 $ wireshell user:delete {user-name},{user-name}
@@ -100,7 +100,7 @@ $ wireshell user:delete {user-name},{user-name}
 
 ### Examples
 
-Delete a user.
+Delete an user.
 
 ```sh
 $ wireshell user:delete pweditor
@@ -127,7 +127,7 @@ $ wireshell user:update {user-name}
 ```sh
 --email : mail address for the user 
 --password : password for the user
---roles : assign user roles, comma separated (given the role exist), role`guest is attached by default
+--roles : assign user roles, comma separated (given the role exist), role `guest` is attached by default
 ```
 
 ### Examples

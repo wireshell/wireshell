@@ -5,6 +5,7 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 **0.5.1 (2015-xx-xx)** 
 
 - Adds `log:tail` command including filters `--limit=, --text=, --from=, to=`
+- Adds `log:list` command
 - Improved `new` command, support for site profiles (`path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`), autocompletion for timezone
 - Adds `field:list` command including filters `--all, --template=, --type=`
 - Adds list `field:types` command
