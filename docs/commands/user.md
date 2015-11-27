@@ -13,7 +13,7 @@ $ wireshell user:list
 ### Available options:
 
 ```sh
---role : for filtering by user role (given the role exist)
+--role : filter by user role (given the role exists)
 ```
 
 ### Examples

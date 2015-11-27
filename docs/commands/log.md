@@ -43,7 +43,6 @@ $ wireshell log:tail {selector}
 ### Available options:
 
 ```sh
---role : for filtering by user role (given the role exist)
 --limit : Specify number of lines. Default: 10. (int)
 --text : Text to find. (string)
 --from : Oldest date to match entries. (int|string) *
