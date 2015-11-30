@@ -4,7 +4,8 @@
 
 ## Database
 
-Connects to MySQL database and dumps its complete content into an sql file in the PW installation's root folder. When no file name is provided defaulting to a date-and-time based filename.
+Connects a to MySQL database and dumps its complete content into a sql file in the PW installation's root folder.
+Defaults to a date-and-time based filename when no file name is provided.
 
 ```sh
 $ wireshell backup:db
@@ -65,7 +66,7 @@ $ wireshell backup:images
 
 ### Examples
 
-Dump images into specific folder.
+Dump images into a specific folder.
 
 ```sh
 $ wireshell backup:images --target=images
@@ -73,20 +74,20 @@ $ wireshell backup:images --target=images
 Dumped 2 images into /Users/username/Projects/pw/images successfully.
 ```
 
-Dump images refer to non-existing field `logo`.
+Dump images that refer to the field `logo`. Provide field as well as selector.
 
 ```sh
-$ wireshell backup:images --field=logo
-
-No images found. Recheck your options.
-```
-
-Provide field as well as selector.
-
-```sh
-$ wireshell backup:images --field=logo_images --selector=1171
+$ wireshell backup:images --field=logo --selector=1171
 
 Dumped 2 images into /Users/username/Projects/pw/dump-2015-11-30-09-46-32 successfully.
+```
+
+Dump images that refer to a non-existing field `nologo`.
+
+```sh
+$ wireshell backup:images --field=nologo
+
+No images found. Recheck your options.
 ```
 
 ---
