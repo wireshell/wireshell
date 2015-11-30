@@ -74,7 +74,7 @@ $ wireshell backup:images --target=images
 Dumped 2 images into /Users/username/Projects/pw/images successfully.
 ```
 
-Dump images that refer to the field `logo`. Provide field as well as selector.
+Dump images that refer to the field `logo`. Provide field and selector.
 
 ```sh
 $ wireshell backup:images --field=logo --selector=1171

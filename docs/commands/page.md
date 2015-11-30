@@ -95,7 +95,7 @@ $ wireshell page:list --all --trash --level=1
 Create a new page with the given parameters.
 
 ```sh
-$ wireshell page:create {page-name} --template={template-name} --parent={parent-page-name} --title="Some title"
+$ wireshell page:create
 ```
 
 ### Available options:
