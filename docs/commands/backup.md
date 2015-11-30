@@ -36,6 +36,7 @@ Export failed with message: Unable to move the temporary file.
 ```
 
 You can use absolute as well as relative paths.
+
 * db
 * "../db"
 * /Users/username/Downloads
@@ -72,7 +73,7 @@ $ wireshell backup:images --target=images
 Dumped 2 images into /Users/username/Projects/pw/images successfully.
 ```
 
-Dump images refer non-existing field `logo`.
+Dump images refer to non-existing field `logo`.
 
 ```sh
 $ wireshell backup:images --field=logo
@@ -80,7 +81,7 @@ $ wireshell backup:images --field=logo
 No images found. Recheck your options.
 ```
 
-Provide field as and selector.
+Provide field as well as selector.
 
 ```sh
 $ wireshell backup:images --field=logo_images --selector=1171
