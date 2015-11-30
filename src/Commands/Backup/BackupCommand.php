@@ -27,7 +27,8 @@ class BackupCommand extends PwConnector
         $this
             ->setName('backup:db')
             ->setDescription('Performs database dump')
-            ->addOption('filename', null, InputOption::VALUE_REQUIRED, 'Provide a file name for the dump');
+            ->addOption('filename', null, InputOption::VALUE_REQUIRED, 'Provide a file name for the dump')
+            ->addOption('target', null, InputOption::VALUE_REQUIRED, 'Provide a file path for the dump');
     }
 
     /**
@@ -45,11 +46,13 @@ class BackupCommand extends PwConnector
         $pass = wire('config')->dbPass;
 
         $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
+        $target = $input->getOption('target') ? $input->getOption('target') : '';
+        if ($target && !preg_match('/$\//', $target)) $target = "$target/";
 
         try {
             $dump = new Dump;
             $dump
-                ->file($filename)
+                ->file($target . $filename)
                 ->dsn("mysql:dbname={$database};host={$host}")
                 ->user($user)
                 ->pass($pass)
@@ -57,11 +60,10 @@ class BackupCommand extends PwConnector
 
             new Export($dump);
         } catch (Exception $e) {
-            echo 'Export failed with message: ' . $e->getMessage();
+            $output->writeln("<error>Export failed with message: {$e->getMessage()}</error>");
+            exit(1);
         }
 
-        $output->writeln("<info>Dumped database into {$filename} successfully.</info>");
-
-
+        $output->writeln("<info>Dumped database into `{$target}{$filename}` successfully.</info>");
     }
 }

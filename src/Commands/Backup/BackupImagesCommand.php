@@ -56,19 +56,23 @@ class BackupImagesCommand extends PwConnector
 
         if ($pages) {
             $total = 0;
+            $imgNames = array();
             foreach ($pages as $page) {
                 if ($page->$fieldname) {
                     foreach ($page->$fieldname as $img) {
-                        if (function_exists('copy')) {
-                            // php 5.5+
-                            copy($img->filename, $path . '/' . $img->name);
-                        } else {
-                            $content = file_get_contents($img->filename);
-                            $fp = fopen($path, "w");
-                            fwrite($fp, $content);
-                            fclose($fp);
+                        if (!in_array($img->name, $imgNames)) {
+                            if (function_exists('copy')) {
+                                // php 5.5+
+                                copy($img->filename, $path . '/' . $img->name);
+                            } else {
+                                $content = file_get_contents($img->filename);
+                                $fp = fopen($path, "w");
+                                fwrite($fp, $content);
+                                fclose($fp);
+                            }
+                            $total++;
+                            $imgNames[] = $img->name;
                         }
-                        $total++;
                     }
                 }
             }
