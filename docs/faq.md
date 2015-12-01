@@ -16,7 +16,7 @@ Using an alias, you can skip everything behind the first letter **if this is eno
 $ wireshell f:cr {name}
 ```
 
-You can not use `$ wireshell f:c` for this command, because it's ambiguous (`field:create`, `field:clone`).
+You can't use `$ wireshell f:c` for this command, because it's ambiguous (`field:create`, `field:clone`).
 This will lead to an exception.
 
 ```sh
@@ -25,6 +25,8 @@ $ wireshell f:c {name}
  [InvalidArgumentException]
  Command "f:c" is ambiguous (field:create, field:clone).
 ```
+
+---
 
 > "I use MAMP PRO for Mac and get the error message 'Error: Exception: SQLSTATE[HY000] [2002]...'"
 
