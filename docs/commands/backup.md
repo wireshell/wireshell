@@ -5,7 +5,7 @@
 ## Database
 
 Connects a to MySQL database and dumps its complete content into a sql file in the PW installation's root folder.
-Defaults to a date-and-time based filename when no file name is provided.
+Defaults to a date-and-time based file name when no file name is provided.
 
 ```sh
 $ wireshell backup:db

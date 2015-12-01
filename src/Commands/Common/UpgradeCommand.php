@@ -68,8 +68,8 @@ class UpgradeCommand extends PwConnector
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
             ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
             ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
-            ->addOption('just-check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
-            ->addOption('just-download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
+            ->addOption('check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
+            ->addOption('download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
     }
 
     /**
@@ -85,7 +85,7 @@ class UpgradeCommand extends PwConnector
         $this->output = $output;
         $this->root = wire('config')->paths->root;
 
-        if ($check['upgrade'] && $input->getOption('just-check') === false) {
+        if ($check['upgrade'] && $input->getOption('check') === false) {
             if (!extension_loaded('pdo_mysql')) {
                 $this->output->writeln("<error>Your PHP is not compiled with PDO support. PDO is required by ProcessWire 2.4+.</error>");
             }  elseif (!class_exists('ZipArchive')) {
@@ -105,7 +105,7 @@ class UpgradeCommand extends PwConnector
                         ->extract()
                         ->move()
                         ->cleanup()
-                        ->replace($input->getOption('just-download'), $input, $output);
+                        ->replace($input->getOption('download'), $input, $output);
                 } catch (Exception $e) {
                 }
             }
