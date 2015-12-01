@@ -49,7 +49,7 @@ Custom profile ProcessWire installation.
 $ wireshell new /path/where/to/install --profile=/path/to/myprofile.zip
 ```
 
-Predefined profile `languages`.
+Use predefined profile `languages`.
 
 ```sh
 $ wireshell new /path/where/to/install --profile=languages
@@ -78,6 +78,10 @@ $ wireshell new /path/where/to/install --sha=cffb682836517065d7dd7acf187545a4a80
 ## Upgrade
 
 Updates ProcessWire to latest stable release.
+If you don't provide any option, defaults to `master` (latest stable) branch. ** Unless**:
+
+- if your local installation is greater than master, uses `dev` branch
+- if your local installation is greater than dev, uses `devns` branch automatically
 
 ```sh
 $ wireshell upgrade
@@ -240,7 +244,7 @@ Display help for a  given command.
 $ wireshell --help {command}
 ```
 
-## Examples
+### Examples
 
 ```sh
 $ wireshell --help page:create
