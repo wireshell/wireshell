@@ -48,7 +48,7 @@ UNTAGGED
 (7 in set)
 ```
 
-List all fields including system/permanent fields which are not shoen by default.
+List all fields including system/permanent fields which are not shown by default.
 
 ```sh
 $ wireshell field:list --all
@@ -80,7 +80,7 @@ UNTAGGED
 (10 in set)
 ```
 
-List all fields of type `TextLanguage` which belog to the template `basic_page`.
+List all fields of type `TextLanguage` which belong to the template `basic_page`.
 
 ```sh
 $ wireshell field:list --type=TextLanguage --template=basic_page
@@ -157,12 +157,13 @@ $ wireshell field:clone {field}
 ### Available options:
 
 ```sh
---name : new field name
+--name : provide a new field name for the cloned field
 ```
 
 ### Examples
 
-Clone field `headline`. Do not provide a name. The new name will be `headline_1`, if this name is already taken `headline_2` and so on.
+If you simply clone the field `headline` then the new field name will be `headline_1`. In case this name is already taken you'll get `headline_2` and so on.
+You can provide a new field name for the cloned field by using the `--name` option (see example below).
 
 ```sh
 $ wireshell field:clone headline
