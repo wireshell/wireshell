@@ -12,7 +12,7 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 - Extends `field:create` command, allow custom field types
 - Extends `new` command: adds ability to specify version of ProcessWire `--dev, --devns, --sha=`
 - Extends `upgrade` command: adds ability to specify version of ProcessWire `--dev, --devns, --sha=`
-- Removes unnecessary checks of empty
+- Removes unnecessary empty state checks
 - Removes command aliases for better list overview #36
 - Fixes wrong iso format
 - Improves changelog format

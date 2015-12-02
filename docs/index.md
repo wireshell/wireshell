@@ -8,6 +8,12 @@ A command-line interface for CMS/CMF [ProcessWire](https://processwire.com) base
 Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great [API](https://processwire.com/api/) and
 Symfony Console's [modular command approach](http://symfony.com/doc/current/components/console/introduction%20%20%20%20%20%20.html).
 
+## Usage example
+
+Here's a short demonstration of wireshell. Of course it covers only a small portion of it's functionality, so please have a look at the [list of available commands](commands/backup.md) to see what's possible.
+
+![Wireshell Example](/assets/img/wireshell.gif)
+
 ## Contributors & Thanks
 
 ### Core

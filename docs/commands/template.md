@@ -1,4 +1,4 @@
-[Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Template**
+![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Template**
 
 ---
 
@@ -13,7 +13,7 @@ $ wireshell template:list
 ### Available options:
 
 ```sh
---advanced : Show system templates; by default, system/internal templates are not shown
+--advanced : Show system templates as well; by default, system/internal templates are not shown
 ```
 
 ### Examples
@@ -136,7 +136,7 @@ $ wireshell template:fields {template}
 Assign existing fields to template.
 
 ```sh
-$ wireshell template:fields basic_page --fields=images,headline,body
+$ wireshell template:fields basic-page --fields=images,headline,body
 ```
 
 ---
