@@ -50,9 +50,10 @@ $ wireshell log:tail {selector}
 ```
 
 \* You can use all integers and strings that are accepted by DateTime constructor. For example: 
-* -2days
-* 2015-11-27
-* 1448617151
+
+- -2days
+- 2015-11-27
+- 1448617151
 
 ### Examples
 
