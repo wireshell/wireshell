@@ -13,6 +13,10 @@ use Wireshell\Commands\Template\TemplateDeleteCommand;
 use Wireshell\Commands\Template\TemplateListCommand;
 use Wireshell\Commands\Field\FieldCreateCommand;
 use Wireshell\Commands\Field\FieldCloneCommand;
+use Wireshell\Commands\Field\FieldDeleteCommand;
+use Wireshell\Commands\Field\FieldTagCommand;
+use Wireshell\Commands\Field\FieldTypesCommand;
+use Wireshell\Commands\Field\FieldListCommand;
 use Wireshell\Commands\Module\ModuleDownloadCommand;
 use Wireshell\Commands\Module\ModuleEnableCommand;
 use Wireshell\Commands\Module\ModuleDisableCommand;
@@ -27,6 +31,8 @@ use Wireshell\Commands\Page\PageCreateCommand;
 use Wireshell\Commands\Page\PageListCommand;
 use Wireshell\Commands\Page\PageDeleteCommand;
 use Wireshell\Commands\Page\PageEmptyTrashCommand;
+use Wireshell\Commands\Logs\LogTailCommand;
+use Wireshell\Commands\Logs\LogListCommand;
 
 if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../../../autoload.php';
@@ -34,7 +40,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Application('wireshell - An extendable ProcessWire CLI', '0.5.0');
+$app = new Application('wireshell - An extendable ProcessWire CLI', '0.5.1');
 
 $app->add(new UserCreateCommand());
 $app->add(new UserUpdateCommand());
@@ -47,6 +53,10 @@ $app->add(new TemplateDeleteCommand());
 $app->add(new TemplateListCommand());
 $app->add(new FieldCreateCommand());
 $app->add(new FieldCloneCommand());
+$app->add(new FieldDeleteCommand());
+$app->add(new FieldTagCommand());
+$app->add(new FieldTypesCommand());
+$app->add(new FieldListCommand());
 $app->add(new ModuleDownloadCommand());
 $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());
@@ -61,5 +71,7 @@ $app->add(new PageCreateCommand());
 $app->add(new PageListCommand());
 $app->add(new PageDeleteCommand());
 $app->add(new PageEmptyTrashCommand());
+$app->add(new LogTailCommand());
+$app->add(new LogListCommand());
 
 $app->run();

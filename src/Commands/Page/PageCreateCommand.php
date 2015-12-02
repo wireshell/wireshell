@@ -25,7 +25,6 @@ class PageCreateCommand extends PwUserTools
     {
         $this
             ->setName('page:create')
-            ->setAliases(['p:c'])
             ->setDescription('Creates a ProcessWire page')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('template', null, InputOption::VALUE_REQUIRED, 'Template')
@@ -60,6 +59,8 @@ class PageCreateCommand extends PwUserTools
             $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
             $p->save();
+
+            $output->writeln("<info>Page `{$name}` has been successfully created.</info>");
         }
     }
 
@@ -79,12 +80,12 @@ class PageCreateCommand extends PwUserTools
         }
 
         $template = wire('templates')->get($templateName);
-        if (empty($template)) {
+        if (!$template) {
             $output->writeln("<error>Template '{$templateName}' doesn't exist!</error>");
             exit(1);
         }
 
-        if (!empty($template->noParents)) {
+        if ($template->noParents) {
             $output->writeln("<error>Template '{$templateName}' is not allowed to be used for new pages!</error>");
             exit(1);
         }

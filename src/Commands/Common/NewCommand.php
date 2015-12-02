@@ -32,6 +32,7 @@ use Symfony\Component\Process\Process;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\Installer;
+use Wireshell\Helpers\PwConnector;
 
 /**
  * Class NewCommand
@@ -46,6 +47,7 @@ use Wireshell\Helpers\Installer;
  * @author Philipp Urlich
  * @author Marcus Herrmann
  * @author Hari KT
+ * @author Tabea David
  *
  */
 class NewCommand extends Command
@@ -68,10 +70,6 @@ class NewCommand extends Command
 
     private $installer;
 
-    private $master = 'https://github.com/ryancramerdesign/ProcessWire/archive/master.zip';
-
-    private $dev = 'https://github.com/ryancramerdesign/ProcessWire/archive/dev.zip';
-
     /**
      * @var OutputInterface
      */
@@ -82,25 +80,27 @@ class NewCommand extends Command
         $this
             ->setName('new')
             ->setDescription('Creates a new ProcessWire project')
-            ->addArgument('directory', InputArgument::REQUIRED, 'Directory where the new project will be created.')
-            ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user.')
-            ->addOption('dbName', null, InputOption::VALUE_REQUIRED, 'Database name.')
-            ->addOption('dbPass', null, InputOption::VALUE_REQUIRED, 'Database password.')
-            ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host.')
-            ->addOption('dbPort', null, InputOption::VALUE_REQUIRED, 'Database port.')
-            ->addOption('dbEngine', null, InputOption::VALUE_REQUIRED, 'Database engine.')
-            ->addOption('dbCharset', null, InputOption::VALUE_REQUIRED, 'Database characterset.')
-            ->addOption('timezone', null, InputOption::VALUE_REQUIRED, 'Timezone.')
-            ->addOption('chmodDir', null, InputOption::VALUE_REQUIRED, 'Directory mode. Defaults 755.')
-            ->addOption('chmodFile', null, InputOption::VALUE_REQUIRED, 'File mode. Defaults 644')
-            ->addOption('httpHosts', null, InputOption::VALUE_REQUIRED, 'Hostname without www part.')
-            ->addOption('adminUrl', null, InputOption::VALUE_REQUIRED, 'Admin url.')
-            ->addOption('username', null, InputOption::VALUE_REQUIRED, 'Admin username.')
-            ->addOption('userpass', null, InputOption::VALUE_REQUIRED, 'Admin password.')
-            ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address.')
-            ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile.')
+            ->addArgument('directory', InputArgument::REQUIRED, 'Directory where the new project will be created')
+            ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user')
+            ->addOption('dbPass', null, InputOption::VALUE_REQUIRED, 'Database password')
+            ->addOption('dbName', null, InputOption::VALUE_REQUIRED, 'Database name')
+            ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host, default: `localhost`')
+            ->addOption('dbPort', null, InputOption::VALUE_REQUIRED, 'Database port, default: `3306`')
+            ->addOption('dbEngine', null, InputOption::VALUE_REQUIRED, 'Database engine, default: `MyISAM`')
+            ->addOption('dbCharset', null, InputOption::VALUE_REQUIRED, 'Database characterset, default: `utf8`')
+            ->addOption('timezone', null, InputOption::VALUE_REQUIRED, 'Timezone')
+            ->addOption('chmodDir', null, InputOption::VALUE_REQUIRED, 'Directory mode, default `755`')
+            ->addOption('chmodFile', null, InputOption::VALUE_REQUIRED, 'File mode, defaults `644`')
+            ->addOption('httpHosts', null, InputOption::VALUE_REQUIRED, 'Hostname without `www` part')
+            ->addOption('adminUrl', null, InputOption::VALUE_REQUIRED, 'Admin url')
+            ->addOption('username', null, InputOption::VALUE_REQUIRED, 'Admin username')
+            ->addOption('userpass', null, InputOption::VALUE_REQUIRED, 'Admin password')
+            ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address')
+            ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');;
+            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+            ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
+            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -118,7 +118,7 @@ class NewCommand extends Command
         $this->output = $output;
 
         $profile = $input->getOption('profile');
-        $branch = ($input->getOption('dev')) ? $this->dev : $this->master;
+        $branch = $this->getZipURL($input);
 
         try {
             $this
@@ -132,31 +132,25 @@ class NewCommand extends Command
         try {
             $install = ($input->getOption('no-install')) ? false : true;
             if ($install) {
-                $this
-                    ->extractProfile($profile)
-                    ->checkProcessWireRequirements();
+                $profile = $this->extractProfile($profile);
+                $this->installer->getSiteFolder($profile);
+                $this->checkProcessWireRequirements();
 
                 $helper = $this->getHelper('question');
 
                 $post = array(
-                    'dbUser' => '',
                     'dbName' => '',
+                    'dbUser' => '',
                     'dbPass' => '',
                     'dbHost' => 'localhost',
                     'dbPort' => '3306',
                     'dbEngine' => 'MyISAM',
                     'dbCharset' => 'utf8',
-                    'timezone' => "366",
+                    'timezone' => '',
                     'chmodDir' => '755',
                     'chmodFile' => '644',
                     'httpHosts' => ''
                 );
-                $dbUser = $input->getOption('dbUser');
-                if (!$dbUser) {
-                    $question = new Question('Please enter the database user name : ', 'dbUser');
-                    $dbUser = $helper->ask($input, $output, $question);
-                }
-                $post['dbUser'] = $dbUser;
 
                 $dbName = $input->getOption('dbName');
                 if (!$dbName) {
@@ -164,6 +158,13 @@ class NewCommand extends Command
                     $dbName = $helper->ask($input, $output, $question);
                 }
                 $post['dbName'] = $dbName;
+
+                $dbUser = $input->getOption('dbUser');
+                if (!$dbUser) {
+                    $question = new Question('Please enter the database user name : ', 'dbUser');
+                    $dbUser = $helper->ask($input, $output, $question);
+                }
+                $post['dbUser'] = $dbUser;
 
                 $dbPass = $input->getOption('dbPass');
                 if (!$dbPass) {
@@ -194,10 +195,14 @@ class NewCommand extends Command
                     $post['dbCharset'] = $dbCharset;
                 }
 
+                $bundleNames = array('AcmeDemoBundle', 'AcmeBlogBundle', 'AcmeStoreBundle');
                 $timezone = $input->getOption('timezone');
-                if ($timezone) {
-                    $post['timezone'] = $timezone;
+                if (!$timezone) {
+                    $question = new Question('Please enter the timezone : ', 'timezone');
+                    $question->setAutocompleterValues(timezone_identifiers_list());
+                    $timezone = $helper->ask($input, $output, $question);
                 }
+                $post['timezone'] = $timezone;
 
                 $chmodDir = $input->getOption('chmodDir');
                 if ($chmodDir) {
@@ -253,13 +258,39 @@ class NewCommand extends Command
                     $useremail = $helper->ask($input, $output, $question);
                 }
                 $accountInfo['useremail'] = $useremail;
-                $this
-                    ->installProcessWire($post, $accountInfo);
+                $this->installProcessWire($post, $accountInfo);
+                $this->cleanUpInstallation();
             }
         } catch (\Exception $e) {
             $this->cleanUp();
             throw $e;
         }
+    }
+
+    private function getZipURL($input) {
+        if ($input->getOption('dev')) {
+            $targetBranch = PwConnector::BRANCH_DEV;
+        } elseif ($input->getOption('devns')) {
+            $targetBranch = PwConnector::BRANCH_DEVNS;
+        } elseif ($input->getOption('sha')) {
+            $targetBranch = $input->getOption('sha');
+        } else {
+            $targetBranch = PwConnector::BRANCH_MASTER;
+        }
+
+        $branch = str_replace('{branch}', $targetBranch, PwConnector::zipURL);
+        $check = str_replace('{branch}', $targetBranch, PwConnector::versionURL);
+        $ch = curl_init($check);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_exec($ch);
+        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ((int)$retcode !== 200) {
+            throw new \RuntimeException("Error loading sha `$targetBranch`.");
+        }
+
+        return $branch;
     }
 
     /**
@@ -463,6 +494,32 @@ class NewCommand extends Command
     }
 
     /**
+     * Removes all the temporary files and directories created to
+     * install the project and removes ProcessWire-related files that don't make
+     * sense in a running project.
+     *
+     * @return NewCommand
+     */
+    private function cleanUpInstallation()
+    {
+        $this->fs->remove(dirname($this->compressedFilePath));
+
+        try {
+            $siteDirs = glob($this->projectDir . '/site-*');
+            $installDir = array($this->projectDir . '/site/install');
+
+            $this->fs->remove(array_merge($siteDirs, $installDir));
+            $this->output->writeln("Remove ProcessWire-related files that don't make sense in a running project.");
+        } catch (\Exception $e) {
+            // don't throw an exception in case any of the ProcessWire-related files cannot
+            // be removed, because this is just an enhancement, not something mandatory
+            // for the project
+        }
+
+        return $this;
+    }
+
+    /**
      * Checks if environment meets ProcessWire requirements
      *
      * @return OneclickCommand
@@ -560,15 +617,22 @@ class NewCommand extends Command
 
     private function extractProfile($profile)
     {
-        if (!$profile) {
-            return $this;
-        }
+        if (!$profile || !preg_match('/^.*\.zip$/', $profile)) return $profile;
+
         $this->output->writeln(" Extracting profile...\n");
 
         try {
             $distill = new Distill();
             $extractPath = getcwd() . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pwprofile';
             $extractionSucceeded = $distill->extractWithoutRootDirectory($profile, $extractPath);
+
+            foreach (new \DirectoryIterator($extractPath) as $fileInfo) {
+                if ($fileInfo->isDir() && !$fileInfo->isDot()) {
+                  $dir = $fileInfo->getFilename();
+                  break;
+                }
+            }
+
             if ($extractionSucceeded) {
                 try {
                     $this->fs->mirror($extractPath, $this->projectDir . '/');
@@ -576,8 +640,9 @@ class NewCommand extends Command
                 }
                 // cleanup
                 $this->fs->remove($extractPath);
+
                 try {
-                    $process = new Process("cd $this->projectDir; composer install");
+                    $process = new Process("cd $this->projectDir;");
                     $process->run(function ($type, $buffer) {
                         if (Process::ERR === $type) {
                             echo ' ' . $buffer;
@@ -617,6 +682,6 @@ class NewCommand extends Command
             );
         }
 
-        return $this;
+        return $dir;
     }
 }

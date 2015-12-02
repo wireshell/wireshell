@@ -26,7 +26,6 @@ class UserDeleteCommand extends PwUserTools
     {
         $this
             ->setName('user:delete')
-            ->setAliases(['u:d'])
             ->setDescription('Deletes ProcessWire users')
             ->addArgument('name', InputArgument::REQUIRED);
     }

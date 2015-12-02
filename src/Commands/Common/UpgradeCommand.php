@@ -66,8 +66,10 @@ class UpgradeCommand extends PwConnector
             ->setName('upgrade')
             ->setDescription('Checks for core upgrades.')
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('just-check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
-            ->addOption('just-download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
+            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+            ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
+            ->addOption('check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
+            ->addOption('download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
     }
 
     /**
@@ -77,15 +79,13 @@ class UpgradeCommand extends PwConnector
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         parent::bootstrapProcessWire($output);
-        $dev = ($input->getOption('dev')) ? true : false;
 
-        $check = parent::checkForCoreUpgrades($output, $dev);
+        $check = parent::checkForCoreUpgrades($output, $input);
         $this->output = $output;
         $this->root = wire('config')->paths->root;
 
-        if ($check['upgrade'] && $input->getOption('just-check') === false) {
+        if ($check['upgrade'] && $input->getOption('check') === false) {
             if (!extension_loaded('pdo_mysql')) {
                 $this->output->writeln("<error>Your PHP is not compiled with PDO support. PDO is required by ProcessWire 2.4+.</error>");
             }  elseif (!class_exists('ZipArchive')) {
@@ -105,7 +105,7 @@ class UpgradeCommand extends PwConnector
                         ->extract()
                         ->move()
                         ->cleanup()
-                        ->replace($input->getOption('just-download'), $input, $output);
+                        ->replace($input->getOption('download'), $input, $output);
                 } catch (Exception $e) {
                 }
             }
@@ -364,13 +364,11 @@ class UpgradeCommand extends PwConnector
             }
 
             $this->output->writeln("<info>  Upgrade completed.</info>");
-
             $this->checkPermissions($input, $output);
-
             $this->output->writeln("  Now double check that everything works.");
 
             $files = is_array($manually) ? implode(', ', array_flip($manually)) : '';
-            if (!empty($files)) {
+            if ($files) {
                 $this->output->writeln("  You have to replace <fg=cyan;options=bold>$files</fg=cyan;options=bold> manually.");
             }
 

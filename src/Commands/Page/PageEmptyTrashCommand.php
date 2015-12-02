@@ -27,7 +27,6 @@ class PageEmptyTrashCommand extends PwUserTools
     {
         $this
             ->setName('page:emptytrash')
-            ->setAliases(['p:et'])
             ->setDescription('Empty Trash');
     }
 

@@ -33,11 +33,12 @@ abstract class WsTables
 
     /**
      * @param OutputInterface $output
-     * @param $tables
+     * @param array $tables
+     * @param boolean $nlBefore, default true
      */
-    public static function renderTables(OutputInterface $output, $tables)
+    public static function renderTables(OutputInterface $output, $tables, $nlBefore = true)
     {
-        $output->writeln("\n");
+        if ($nlBefore) $output->writeln("\n");
 
         foreach ($tables as $table)
         {

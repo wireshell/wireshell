@@ -24,7 +24,6 @@ class TemplateFieldsCommand extends PwConnector
     {
         $this
             ->setName('template:fields')
-            ->setAliases(['t:f'])
             ->setDescription('Assign given fields to a given template')
             ->addArgument('template', InputArgument::REQUIRED, 'Name of the template')
             ->addOption('fields', null, InputOption::VALUE_REQUIRED, 'Supply fields to assign to template');
