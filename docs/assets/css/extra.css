@@ -62,11 +62,11 @@ p {
 
 .question:after {
   position: absolute;
-  top: .375rem;
+  top: 2rem;
   right: 0;
   width: 16px;
   height: 8px;
-  background: url(../img/down.svg) -2164px -2075px no-repeat;
+  background: url(../img/down.svg) no-repeat;
   content: '';
 }
 
