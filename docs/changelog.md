@@ -2,7 +2,7 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-**0.5.1 (2015-xx-xx)** 
+**0.5.1 (2015-12-02)** 
 
 - Adds `log:tail` command including filters `--limit=, --text=, --from=, to=`
 - Adds `log:list` command
