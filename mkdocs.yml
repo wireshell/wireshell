@@ -7,6 +7,7 @@ repo_name: Github
 site_description: A command-line interface for CMS/CMF ProcessWire based on the Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
 site_favicon: favicon.ico
 theme: readthedocs
+theme_dir: ./docs/assets/theme/mkdocs/
 extra_javascript:
   - assets/js/extra.js
 extra_css: 
