@@ -13,7 +13,7 @@ extra_css:
   - assets/css/extra.css
 markdown_extensions:
   - extra
-include_search: true
+# include_search: true
 pages:
 - wireshell: index.md
 - General:
