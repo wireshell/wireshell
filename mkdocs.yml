@@ -1,9 +1,40 @@
-site_name: wireshell
+site_name: wireshell docs
+site_author: ""
 site_url: http://wireshell.pw/
 repo_url: https://github.com/wireshell/wireshell
+repo_name: wireshell
 repo_name: Github
-site_description: A command-line interface for CMS/CMF ProcessWire based on Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
+site_description: A command-line interface for CMS/CMF ProcessWire based on the Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
 site_favicon: favicon.ico
+theme: readthedocs
+theme_dir: ./docs/assets/theme/mkdocs/
+extra_javascript:
+  - assets/js/extra.js
+extra_css: 
+  - assets/css/extra.css
+markdown_extensions:
+  - extra
+# include_search: true
 pages:
-- ['index.md', 'Introduction']
-theme: slate
+- wireshell: index.md
+- General:
+  - Installation: install.md
+  - Updating: updating.md
+  - Extending: extending.md
+  - Changelog: changelog.md
+- Commands:
+  - Backup: commands/backup.md
+  - Common: commands/common.md
+  - Field: commands/field.md
+  - Log: commands/log.md
+  - Module: commands/module.md
+  - Page: commands/page.md
+  - Role: commands/role.md
+  - Template: commands/template.md
+  - User: commands/user.md
+- About: 
+  - FAQ: faq.md
+  - Licence: licence.md
+  - Contributors: contributors.md
+  - Code Of Conduct: code.md
+  - Support: support.md

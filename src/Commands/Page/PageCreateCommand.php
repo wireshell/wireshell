@@ -59,6 +59,8 @@ class PageCreateCommand extends PwUserTools
             $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
             $p->save();
+
+            $output->writeln("<info>Page `{$name}` has been successfully created.</info>");
         }
     }
 

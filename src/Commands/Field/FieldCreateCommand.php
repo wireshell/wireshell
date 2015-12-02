@@ -31,6 +31,7 @@ class FieldCreateCommand extends PwConnector
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Label')
             ->addOption('desc', null, InputOption::VALUE_REQUIRED, 'Description')
+            ->addOption('tag', null, InputOption::VALUE_REQUIRED, 'Tag')
             ->addOption('type', null, InputOption::VALUE_REQUIRED,
                 'Type of field: text|textarea|email|datetime|checkbox|file|float|image|integer|page|url');
     }
@@ -56,6 +57,7 @@ class FieldCreateCommand extends PwConnector
             $field->name = $name;
             $field->label = $label;
             $field->description = $input->getOption('desc');
+            if ($input->getOption('tag')) $field->tags = $input->getOption('tag');
             $field->save();
 
             $output->writeln("<info>Field '{$name}' ($type) created successfully!</info>");
