@@ -11,7 +11,7 @@ $ wireshell module:download {module-class},{module-class}
 ### Available options:
 
 ```sh
---github : Download module via github; use this option if the module isn't added to the ProcessWire module directory yet
+--github : Download module via github; use this option if the module is not added to the ProcessWire module directory yet
 --branch : Define specific branch to download from, if you use this option, --github is required
 ```
 
@@ -29,7 +29,7 @@ Download module via github.
 $ wireshell module:download ContinentsAndCountries --github=justonestep/processwire-countries
 ```
 
-Download `develop` branch, you have to provide the `--github` option as well.
+If you want to download a branch, you have to provide the --github option, too.
 
 ```sh
 $ wireshell module:download FlagPages --github=marcus-herrmann/ProcessWire-FlagPages --branch=develop
@@ -39,7 +39,7 @@ $ wireshell module:download FlagPages --github=marcus-herrmann/ProcessWire-FlagP
 
 ## Enable
 
-Enable and install a module. If the module is not found in the particular installation, wireshell downloads it.
+Enable and install a module. If the module is not found in the particular installation, wireshell downloads it first.
 
 ```sh
 $ wireshell module:enable {module-class},{module-class}
@@ -48,7 +48,7 @@ $ wireshell module:enable {module-class},{module-class}
 ### Available options:
 
 ```sh
---github : Download module via github; use this option if the module isn't added to the ProcessWire module directory yet
+--github : Download module via github; use this option if the module is not added to the ProcessWire module directory yet
 --branch : Define specific branch to download from, if you use this option, --github is required
 ```
 
@@ -123,8 +123,8 @@ $ wireshell module:generate {class-name}
 --type : Module type
 --extends : Module extends
 --implements : Module implements (Interface)
---require-pw : Module's ProcessWire version compatibility
---require-php : Module's PHP version compatibility
+--require-pw : ProcessWire version compatibility
+--require-php : PHP version compatibility
 --is-autoload : autoload = true
 --is-singular : singular = true
 --is-permanent : permanent = true
@@ -137,6 +137,6 @@ $ wireshell module:generate {class-name}
 
 ### Examples
 
-For more information on values and module authioring, visit the great generator [modules.pw](http://modules.pw/).
+For more information on values and module authoring, visit the great generator [modules.pw](http://modules.pw/).
 
 ---

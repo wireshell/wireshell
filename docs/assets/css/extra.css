@@ -53,3 +53,25 @@ p {
   font-weight: 600;
   margin-left: 0;
 }
+
+.question {
+  position: relative;
+  cursor: pointer;
+  padding: 1.5rem 1.5rem .75rem 0;
+}
+
+.question:after {
+  position: absolute;
+  top: .375rem;
+  right: 0;
+  width: 16px;
+  height: 8px;
+  background: url(../img/down.svg) -2164px -2075px no-repeat;
+  content: '';
+}
+
+.question--active:after {
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
