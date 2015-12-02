@@ -1,23 +1,19 @@
 $(document).ready(function() {
 
-  // === FAQ
   function manipulateHtml() {
-    var contentWrapper = document.getElementsByClassName('rst-content')[0];
-    var headlines = contentWrapper.getElementsByTagName('blockquote');
+    var $headlines = $('.rst-content').find('blockquote');
 
-    for (index = 0; index < headlines.length; ++index) {
-      var answer = $(headlines[index]).nextUntil('hr');
-      headlines[index].className = 'question';
-      headlines[index].insertAdjacentHTML('afterend', '<div class="answer"></div>');
+    $headlines.each(function() {
+      var $this = $(this);
+      var answer = $this.nextUntil('hr');
+      var $wrapper = $('<div class="answer">');
 
-      var wrapper = headlines[index].nextElementSibling;
+      $wrapper.append(answer);
+      $this.addClass('question');
+      $this.after($wrapper);
+    });
 
-      for (key = 0; key < answer.length; ++key) {
-        wrapper.appendChild(answer[key]);
-      }
-    }
-
-    toggleSlideState($(headlines));
+    toggleSlideState($headlines);
   }
 
   function toggleSlideState($headlines) {
@@ -28,12 +24,14 @@ $(document).ready(function() {
 
     $headlines.on('click', function() {
       var $this = $(this);
+
       $this.next().slideToggle();
       $this.toggleClass('question--active');
     });
 
   }
 
+  // === FAQ
   manipulateHtml();
 
 });

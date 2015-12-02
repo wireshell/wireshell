@@ -1,5 +1,7 @@
 ![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Module**
 
+---
+
 ## Download
 
 Downloads one or more ProcessWire modules.
