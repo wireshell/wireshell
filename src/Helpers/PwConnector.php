@@ -118,7 +118,7 @@ abstract class PwConnector extends SymfonyCommand
 
             if ($targetBranch === self::BRANCH_DEV) {
                 $new = version_compare($branches['dev']['version'], wire('config')->version);
-                if ($new > 0) $branch = $branches['dev'];
+                $branch = $branches['dev'];
             }
 
             // we will assume devns branch
@@ -126,7 +126,7 @@ abstract class PwConnector extends SymfonyCommand
 
             if ($targetBranch === self::BRANCH_DEVNS) {
                 $new = version_compare($branches['devns']['version'], wire('config')->version);
-                if ($new > 0) $branch = $branches['devns'];
+                $branch = $branches['devns'];
             }
 
             if ($new > 0) $upgrade = true;
