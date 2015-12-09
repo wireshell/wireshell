@@ -60,12 +60,7 @@
         <ul class="current">
           {% for nav_item in  nav %}
             {% if nav_item.title != "hidden" %}
-
-              {% if nav_item.children %}
-                <li>{% include "toc.html" %}<li>
-              {% else %}
-                {% include "toc.html" %}
-              {% endif %}
+              {% include "toc.html" %}
             {% endif %}
           {% endfor %}
         </ul>
