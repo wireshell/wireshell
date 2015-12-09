@@ -9,6 +9,7 @@ Can be easily extended through ProcessWire's ability of being bootstrapped into 
 Symfony Console's [modular command approach](http://symfony.com/doc/current/components/console/introduction%20%20%20%20%20%20.html).
 
 For more information see [wireshell.pw](http://wireshell.pw/).
+
 Shortlinks:
 
 - [Installation](http://wireshell.pw/#installation)

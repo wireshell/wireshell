@@ -31,7 +31,7 @@ h3, h4, h5, h6 {
 .wy-menu-vertical .subnav a {
   padding: 0.75em 2.427em;
   font-size: 14px;
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.9);
   font-weight: 500;
   margin-top: 0;
 }
@@ -57,7 +57,7 @@ h3, h4, h5, h6 {
 
 .wy-side-nav-search {
   text-align: left;
-  padding: 1rem 1.6rem;
+  padding: 1.25rem 1.6rem;
 }
 
 .wy-menu-vertical li.current ul {
@@ -237,4 +237,8 @@ p {
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg);
+}
+
+.rst-versions {
+  border: 0;
 }
