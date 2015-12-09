@@ -8,10 +8,10 @@ site_description: A command-line interface for CMS/CMF ProcessWire based on the 
 site_favicon: favicon.ico
 theme: readthedocs
 theme_dir: ./docs/assets/theme/mkdocs/
-extra_javascript:
-  - assets/js/extra.js
-extra_css: 
-  - assets/css/extra.css
+# extra_javascript:
+#   - assets/js/extra.js
+# extra_css: 
+#   - assets/css/extra.css
 markdown_extensions:
   - extra
 # include_search: true
