@@ -21,12 +21,31 @@ h3, h4, h5, h6 {
     padding: 0.4045em 1.618em;
     display: block;
     position: relative;
-    font-size: 90%;
-    color: #838383;
+    font-size: 16px;
+    color: #fff;
+    margin-top: 1.5rem;
+    font-weight: 600;
 }
 
 .wy-menu-vertical .subnav a {
     padding: 0.4045em 2.427em;
+    font-size: 14px;
+    color: rgba(255,255,255,.8);
+}
+
+.wy-menu-vertical li.current a {
+    font-size: 14px;
+    color: rgba(255,255,255,.8);
+    border: 0;
+    padding: 0.75em 2.427em;
+}
+
+.wy-menu-vertical li.current a:hover, .wy-menu-vertical li.current a:active {
+  color: rgb(59, 57, 57);
+}
+
+.wy-menu-vertical li.current ul {
+    background: rgb(59, 57, 57);
 }
 
 /*
