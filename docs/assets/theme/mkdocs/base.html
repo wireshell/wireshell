@@ -59,7 +59,8 @@
 
         <ul class="current">
           {% for nav_item in  nav %}
-            {% if nav_item.title != "hidden" and nav_item.title != '' %}
+          <li class="test">{{nav_item.title}} {{nav_item.url}}</li>
+            {% if nav_item.title != "hidden" and nav_item.title != "" %}
               <li>{% include "toc.html" %}<li>
             {% endif %}
           {% endfor %}
