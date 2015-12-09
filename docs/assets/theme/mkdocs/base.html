@@ -56,15 +56,16 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
         <ul class="current">
           {% for nav_item in  nav %}
-		{% if nav_item.title != "hidden" %}
-            <li>{% include "toc.html" %}<li>
-		{% endif %}
+            {% if nav_item.title != "hidden" and nav_item.title != '' %}
+              <li>{% include "toc.html" %}<li>
+            {% endif %}
           {% endfor %}
         </ul>
+
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
