@@ -14,22 +14,8 @@ Here's a short demonstration of wireshell. Of course it covers only a small port
 
 ![Wireshell Example](/assets/img/wireshell.gif)
 
-## Contributors & Thanks
-
-### Core
-
-- clsource (Camilo Castro) [(GitHub)](https://github.com/clsource)
-- justonestep (Bea Dav) [(GitHub)](https://github.com/justonestep)
-- marcus-herrmann [(GitHub)](https://github.com/marcus-herrmann)
-
-### Community
-
-- HariKT [(GitHub)](https://github.com/HariKT)
-- horst-n [(GitHub)](https://github.com/horst-n)
-- nicoknoll [(GitHub)](https://github.com/nicoknoll)
-
 ## Licence
 
-Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](licence.md)
+Unless stated differently in particular files, wireshell is licenced under MIT, see: [Licence](http://wireshell.pw/#licence)
 
 ![wireshell logo](/assets/img/logo.png)
