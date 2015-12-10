@@ -1,4 +1,5 @@
-![Wireshell Logo](/assets/img/favicon-16x16.png?raw=true){.logo} **Frequently Asked Questions**
+![Wireshell Logo](docs/assets/img/favicon-16x16.png?raw=true){.logo} **Frequently Asked Questions**
+![Wireshell Logo](/docs/assets/img/favicon-16x16.png?raw=true){.logo} **Frequently Asked Questions**
 
 > "What about aliases for commands?"
 
