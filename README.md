@@ -11,16 +11,16 @@ Symfony Console's [modular command approach](http://symfony.com/doc/current/comp
 
 Find more background, documentation and examples:
 
-- [Documentation latest](http://wireshell.readthedocs.org/en/latest/)
-- [Documentation develop](http://wireshell.readthedocs.org/en/develop/)
+- [Documentation latest](http://docs.wireshell.pw/)
+- [Documentation develop](http://docs.wireshell.pw/en/develop/)
 
 ## Changelog 
 
-- [Changelog latest](http://wireshell.readthedocs.org/en/latest/changelog/)
-- [Changelog develop](http://wireshell.readthedocs.org/en/develop/changelog/)
+- [Changelog latest](http://docs.wireshell.pw/en/latest/changelog/)
+- [Changelog develop](http://docs.wireshell.pw/en/develop/changelog/)
 
 ## Licence
 
 See: [LICENCE.md](/LICENCE.md)
 
-![wireshell logo](http://wireshell.pw/logo.png)
+![wireshell logo](/docs/assets/img/logo.png?raw=true)
