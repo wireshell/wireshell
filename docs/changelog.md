@@ -2,6 +2,10 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
+0.5.2 ()
+
+- Extends `page:create` command, enable importing field data from json file (thanks @samuell)
+
 **0.5.1 (2015-12-02)** 
 
 - Adds `log:tail` command including filters `--limit=, --text=, --from=, --to=`
