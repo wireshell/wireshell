@@ -3428,6 +3428,13 @@ nav.stickynav {
   font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
   z-index: 400; }
 
+@media screen and (min-width: 1100px) {
+  .rst-versions {
+    left: 50%;
+    transform: translateX(-180%);
+  }
+}
+
 .rst-versions a {
   color: #69b7ef;
   text-decoration: none; }
