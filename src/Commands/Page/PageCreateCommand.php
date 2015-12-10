@@ -29,7 +29,8 @@ class PageCreateCommand extends PwUserTools
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('template', null, InputOption::VALUE_REQUIRED, 'Template')
             ->addOption('parent', null, InputOption::VALUE_REQUIRED, 'Parent Page')
-            ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Title');
+            ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Title')
+            ->addOption('fielddatafile', null, InputOption::VALUE_OPTIONAL, 'Field data file (JSON)');
     }
 
     /**
@@ -53,14 +54,41 @@ class PageCreateCommand extends PwUserTools
                 continue;
             }
 
+          // Import field data, if a field data file is available
+		  $fielddatafile_path = $input->getOption('fielddatafile');
+		  if(!empty($fielddatafile_path)) {
+            $fielddata_json = file_get_contents($fielddatafile_path);
+            $fielddata = json_decode($fielddata_json);
+
+			// Create Page and populate it with the required details to save it a first time
             $p = new \Page();
             $p->template = $template;
             $p->parent = wire('pages')->get($parent);
             $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
+
+            // IMPORTANT: Save the page once, so that file-type fields can be added to it below!
+			//            (Required by processwire, for file-type fields, such as images)
+            $p->save();
+
+			// Populate any non-required fields before the second save
+            foreach ( $fielddata  as $fieldname => $fieldval ) {
+              $fieldname = strtolower( $fieldname );
+              if ($p->get($fieldname) !== Null) {
+                if ( $fieldname == 'name' ) {
+                  $fieldval = wire('sanitizer')->pageName($fieldval);
+                }
+                $p->$fieldname = $fieldval;
+              } else {
+                echo "Field specified in JSON did not exist in ProcessWire: $fieldname\n";
+              }
+            }
+
+            // Finally save the field data as well
             $p->save();
 
             $output->writeln("<info>Page `{$name}` has been successfully created.</info>");
+		  }
         }
     }
 
