@@ -227,7 +227,7 @@ abstract class PwConnector extends SymfonyCommand
         $content = $http->get($branch['versionURL']);
         if (!preg_match_all('/const\s+version(Major|Minor|Revision)\s*=\s*(\d+)/', $content, $matches)) {
             $branch['version'] = '?';
-            continue;
+            return;
         }
 
         $version = array();
