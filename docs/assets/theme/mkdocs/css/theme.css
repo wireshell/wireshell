@@ -26,10 +26,10 @@ html {
 body {
   margin: 0; }
 
-@media screen and (min-width: 1100px) {
+@media screen and (min-width: 1280px) {
   body {
     margin: 0 auto;
-    width: 1100px;
+    width: 1280px;
   }
 }
 
@@ -2631,7 +2631,7 @@ body {
   color: #404040;
   min-height: 100%;
   overflow-x: hidden;
-  background: #edf0f2; }
+  background: #fcfcfc; }
 
 .wy-text-left {
   text-align: left; }
@@ -3324,8 +3324,8 @@ div[class^='highlight'] pre {
   padding: 1.618em 3.236em;
   height: 100%;
   min-height: 100vh;
-  max-width: 800px;
-  margin: auto; }
+  max-width: 980px;
+  margin: 0; }
 
 .wy-body-mask {
   position: fixed;
@@ -3396,7 +3396,7 @@ footer p {
 
 @media screen and (min-width: 1400px) {
   .wy-nav-content-wrap {
-    background: rgba(0, 0, 0, 0.05); }
+    background: #fcfcfc; }
   .wy-nav-content {
     margin: 0;
     background: #fcfcfc; } }
@@ -3411,10 +3411,10 @@ nav.stickynav {
   position: fixed;
   top: 0; }
 
-@media screen and (min-width: 1100px) {
+@media screen and (min-width: 1280px) {
   nav.stickynav {
     left: 50%;
-    transform: translateX(-180%);
+    transform: translateX(-213%);
   }
 }
 
@@ -3429,10 +3429,10 @@ nav.stickynav {
   font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
   z-index: 400; }
 
-@media screen and (min-width: 1100px) {
+@media screen and (min-width: 1280px) {
   .rst-versions {
     left: 50%;
-    transform: translateX(-180%);
+    transform: translateX(-213%);
   }
 }
 
