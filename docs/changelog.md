@@ -2,9 +2,11 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-0.5.2 ()
+0.5.2 (2016-)
 
+- Extends `field:list` command, adds filter `--tag=tagname` and `--unused`
 - Extends `page:create` command, enable importing field data from json file (thanks @samuell)
+- Adds `field:edit` command
 
 **0.5.1 (2015-12-02)** 
 
