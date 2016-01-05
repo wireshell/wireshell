@@ -26,10 +26,10 @@ html {
 body {
   margin: 0; }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1281px) {
   body {
     margin: 0 auto;
-    width: 1280px;
+    width: 1281px;
   }
 }
 
@@ -3411,7 +3411,7 @@ nav.stickynav {
   position: fixed;
   top: 0; }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1281px) {
   nav.stickynav {
     left: 50%;
     transform: translateX(-213%);
@@ -3429,7 +3429,7 @@ nav.stickynav {
   font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
   z-index: 400; }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1281px) {
   .rst-versions {
     left: 50%;
     transform: translateX(-213%);
