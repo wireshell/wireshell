@@ -47,7 +47,7 @@ Role 'editor' created successfully!
 
 ## Delete
 
-Delete new role(s) with the given parameters.
+Delete role(s) with the given parameters.
 
 ```sh
 $ wireshell role:delete {role-name,role-name}
