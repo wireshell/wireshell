@@ -2,12 +2,35 @@
 
 ---
 
-## Create
+## List
 
-Create a new role with the given parameters.
+List available roles.
 
 ```sh
-$ wireshell role:create {role-name}
+$ wireshell role:list
+```
+
+### Examples
+
+List all roles.
+
+```sh
+$ wireshell role:list
+
+  - editor
+  - guest
+  - newsletter
+  - superuser
+```
+
+---
+
+## Create
+
+Create new role(s) with the given parameters.
+
+```sh
+$ wireshell role:create {role-name,role-name}
 ```
 
 ### Examples
@@ -18,6 +41,26 @@ Create a new role.
 $ wireshell role:create editor
 
 Role 'editor' created successfully!
+```
+
+---
+
+## Delete
+
+Delete new role(s) with the given parameters.
+
+```sh
+$ wireshell role:delete {role-name,role-name}
+```
+
+### Examples
+
+Delete a role.
+
+```sh
+$ wireshell role:delete editor
+
+Role 'editor' deleted successfully!
 ```
 
 ---
