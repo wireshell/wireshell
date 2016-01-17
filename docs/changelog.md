@@ -9,6 +9,7 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 - Adds `field:edit` command
 - Adds `role:delete` command
 - Adds `role:list` command
+- Extends `user:delete` command, adds filter `--role=rolename`
 
 **0.5.1 (2015-12-02)** 
 

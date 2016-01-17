@@ -7,8 +7,10 @@
 General ProcessWire installation.
 
 ```sh
-$ wireshell new {directory}
+$ wireshell new {directory}*
 ```
+
+\* This argument is optional, if you want to install into current directory just skip it.
 
 ### Available options:
 
@@ -38,6 +40,12 @@ $ wireshell new {directory}
 ### Examples
 
 Download and unzip ProcessWires master branch into current directory.
+
+```sh
+$ wireshell new --no-install
+```
+
+Download and unzip ProcessWires master branch into specific directory.
 
 ```sh
 $ wireshell new /path/where/to/install --no-install
