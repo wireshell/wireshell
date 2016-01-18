@@ -3401,6 +3401,13 @@ footer p {
     top: 0;
     height: 100%;
     overflow: hidden;
+} }
+
+@media screen and (min-width: 1400px) {
+  .wy-nav-content-wrap {
+    background: #fcfcfc; }
+  .wy-nav-content {
+    margin: 0;
     background:
     radial-gradient(#c6c6c6 10%, transparent 16%) 0 0,
     radial-gradient(#c6c6c6 10%, transparent 16%) 8px 8px,
@@ -3409,13 +3416,6 @@ footer p {
     background-color:#cccccc;
     background-size:16px 16px;
 } }
-
-@media screen and (min-width: 1400px) {
-  .wy-nav-content-wrap {
-    background: #fcfcfc; }
-  .wy-nav-content {
-    margin: 0;
-    background: #fcfcfc; } }
 
 @media print {
   .rst-versions, footer, .wy-nav-side {

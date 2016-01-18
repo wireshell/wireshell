@@ -2,14 +2,15 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-0.5.2 (2016-)
+0.5.2 (2016-01-18)
 
 - Extends `field:list` command, adds filter `--tag=tagname` and `--unused`
-- Extends `page:create` command, enable importing field data from json file (thanks @samuell)
+- Extends `page:create` command, enables importing field data from json file (thanks @samuell)
 - Adds `field:edit` command
 - Adds `role:delete` command
 - Adds `role:list` command
 - Extends `user:delete` command, adds filter `--role=rolename`
+- Updates `new` command, optional filter `--directory=path`
 
 **0.5.1 (2015-12-02)** 
 
