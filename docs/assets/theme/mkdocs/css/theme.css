@@ -3405,9 +3405,7 @@ footer p {
 
 @media screen and (min-width: 1400px) {
   .wy-nav-content-wrap {
-    background: #fcfcfc; }
-  .wy-nav-content {
-    margin: 0;
+    background: #fcfcfc;
     background:
     radial-gradient(#c6c6c6 10%, transparent 16%) 0 0,
     radial-gradient(#c6c6c6 10%, transparent 16%) 8px 8px,
@@ -3415,6 +3413,10 @@ footer p {
     radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
     background-color:#cccccc;
     background-size:16px 16px;
+  }
+  .wy-nav-content {
+    margin: 0;
+    background: #fcfcfc; }
 } }
 
 @media print {

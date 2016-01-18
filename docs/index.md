@@ -6,7 +6,7 @@ Version 0.5.1
 
 A command-line interface for CMS/CMF [ProcessWire](https://processwire.com) based on the Symfony Console component.
 Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great [API](https://processwire.com/api/) and
-Symfony Console's [modular command approach](http://symfony.com/doc/current/components/console/introduction%20%20%20%20%20%20.html).
+Symfony Console's [modular command approach](http://symfony.com/doc/current/components/console/introduction.html).
 
 For more information see [wireshell.pw](http://wireshell.pw/).
 
