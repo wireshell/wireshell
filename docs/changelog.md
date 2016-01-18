@@ -2,9 +2,19 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
+0.5.2 (2016-01-18)
+
+- Extends `field:list` command, adds filter `--tag=tagname` and `--unused`
+- Extends `page:create` command, enables importing field data from json file (thanks @samuell)
+- Adds `field:edit` command
+- Adds `role:delete` command
+- Adds `role:list` command
+- Extends `user:delete` command, adds filter `--role=rolename`
+- Updates `new` command, optional filter `--directory=path`
+
 **0.5.1 (2015-12-02)** 
 
-- Adds `log:tail` command including filters `--limit=, --text=, --from=, to=`
+- Adds `log:tail` command including filters `--limit=, --text=, --from=, --to=`
 - Adds `log:list` command
 - Improves `new` command, support for site profiles (`path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`), autocompletion for timezone
 - Adds `field:list` command including filters `--all, --template=, --type=`

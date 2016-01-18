@@ -14,23 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PwUserTools extends PwConnector
 {
     /**
-     * @param $name
-     * @return \Page
-     */
-    public function createRole($name, $roleContainer)
-    {
-        $user = new \Page();
-        $user->template = 'role';
-        $user->setOutputFormatting(false);
-
-        $user->parent = $roleContainer;
-        $user->name = $name;
-        $user->title = $name;
-
-        return $user;
-    }
-
-    /**
      * @param $email
      * @param $name
      * @param $userContainer

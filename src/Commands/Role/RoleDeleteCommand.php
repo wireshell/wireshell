@@ -6,14 +6,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
 
 /**
- * Class RoleCreateCommand
+ * Class RoleDeleteCommand
  *
- * Creating ProcessWire user roles
+ * Deleting ProcessWire user roles
  *
  * @package Wireshell
- * @author Marcus Herrmann
+ * @author Tabea David
  */
-class RoleCreateCommand extends PwUserTools
+class RoleDeleteCommand extends PwUserTools
 {
 
     /**
@@ -22,8 +22,8 @@ class RoleCreateCommand extends PwUserTools
     public function configure()
     {
         $this
-            ->setName('role:create')
-            ->setDescription('Creates a ProcessWire role')
+            ->setName('role:delete')
+            ->setDescription('Deletes ProcessWire role(s)')
             ->addArgument('name', InputArgument::REQUIRED, 'comma-separated list');
     }
 
@@ -36,16 +36,18 @@ class RoleCreateCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
         $names = explode(',', preg_replace('/\s+/', '', $input->getArgument('name')));
+        $roles = wire('roles');
 
         foreach ($names as $name) {
-            if (!wire('roles')->get($name) instanceof \NullPage) {
-                $output->writeln("<error>Role '{$name}' already exists!</error>");
+            if ($roles->get($name) instanceof \NullPage) {
+                $output->writeln("<error>Role '{$name}' does not exist.</error>");
                 exit(1);
             }
 
-            wire('roles')->add($name);
-            $output->writeln("<info>Role '{$name}' created successfully!</info>");
+            $roles->delete($roles->get($name));
+            $output->writeln("<info>Role '{$name}' deleted successfully!</info>");
         }
     }
 
 }
+

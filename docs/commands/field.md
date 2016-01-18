@@ -14,8 +14,10 @@ $ wireshell field:list
 
 ```sh
 --all : Show built-in fields; by default system/permanent fields are not shown
+--unused : Show unused fields
 --template : Filter by template; when selected, only the fields from a specific template will be shown
 --type : Filter by field type; when specified, only fields of the selected type will be shown
+--tag : Filter by tag; when selected, only the fields with a specific tag will be shown
 ```
 
 ### Examples
@@ -173,6 +175,31 @@ Provide a new field name.
 
 ```sh
 $ wireshell field:clone headline --name=header
+```
+
+---
+
+## Edit
+
+Edit a field. Change name and/or label.
+
+```sh
+$ wireshell field:edit {fieldname}
+```
+
+### Available options:
+
+```sh
+--name : change field name
+--label : change field label
+```
+
+### Examples
+
+Edit a text field, change name and label.
+
+```sh
+$ wireshell field:edit headline --name=header --label=Header
 ```
 
 ---

@@ -67,7 +67,7 @@ class ModuleDisableCommand extends PwConnector
             exit(1);
         }
 
-        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true)) && $remove === false) {
+        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true)) && $remove === false) {
             $output->writeln("<info>Module '{$module}' is not installed!</info>");
             exit(1);
         }

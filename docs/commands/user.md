@@ -92,10 +92,18 @@ Please enter a password :
 
 ## Delete
 
-Delete an user or multiple users at once.
+Delete an user or multiple users at once (by name or role).
 
 ```sh
-$ wireshell user:delete {user-name},{user-name}
+$ wireshell user:delete {user-name},{user-name}*
+```
+
+\* This argument is optional. If you want to delete users by role instead, just skip it.
+
+### Available options:
+
+```sh
+--role : role name
 ```
 
 ### Examples
@@ -110,6 +118,12 @@ Delete multiple users.
 
 ```sh
 $ wireshell user:delete pwadmin,pwguest
+```
+
+Delete users by given role.
+
+```sh
+$ wireshell user:delete --role=editor
 ```
 
 ---

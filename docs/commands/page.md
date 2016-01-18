@@ -104,6 +104,7 @@ $ wireshell page:create
 --template : template for new page
 --parent : parent page name
 --title : page title
+--file : field data file (json)
 ```
 
 ### Examples
@@ -126,6 +127,12 @@ Create new page, ask for template.
 $ wireshell page:create newpage --title="Child page example 3"
 
 Please enter the template : basic-page
+```
+
+Create a new page and import field data from valid json file.
+
+```sh
+$ wireshell page:create example --template=basic-page --parent=home --title="Example Page" --file=import.json
 ```
 
 ---
