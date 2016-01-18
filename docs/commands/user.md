@@ -98,7 +98,7 @@ Delete an user or multiple users at once (by name or role).
 $ wireshell user:delete {user-name},{user-name}*
 ```
 
-\* This argument is optional, if you want to delete users by role instead skip it.
+\* This argument is optional. If you want to delete users by role instead, just skip it.
 
 ### Available options:
 

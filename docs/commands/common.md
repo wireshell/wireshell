@@ -10,7 +10,7 @@ General ProcessWire installation.
 $ wireshell new {directory}*
 ```
 
-\* This argument is optional, if you want to install into current directory just skip it.
+\* This argument is optional. If you want to install into the current directory, just skip it.
 
 ### Available options:
 

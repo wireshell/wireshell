@@ -2623,7 +2623,15 @@ a:visited {
 
 html {
   height: 100%;
-  overflow-x: hidden; }
+  overflow-x: hidden;
+  background:
+  radial-gradient(#c6c6c6 10%, transparent 16%) 0 0,
+  radial-gradient(#c6c6c6 10%, transparent 16%) 8px 8px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#cccccc;
+  background-size:16px 16px;
+}
 
 body {
   font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
@@ -3392,7 +3400,15 @@ footer p {
     left: 85%;
     top: 0;
     height: 100%;
-    overflow: hidden; } }
+    overflow: hidden;
+    background:
+    radial-gradient(#c6c6c6 10%, transparent 16%) 0 0,
+    radial-gradient(#c6c6c6 10%, transparent 16%) 8px 8px,
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+    background-color:#cccccc;
+    background-size:16px 16px;
+} }
 
 @media screen and (min-width: 1400px) {
   .wy-nav-content-wrap {
