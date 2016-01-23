@@ -24,7 +24,6 @@ class ModuleEnableCommand extends PwConnector
     {
         $this
             ->setName('module:enable')
-            ->setAliases(['m:e'])
             ->setDescription('Enables provided module(s)')
             ->addArgument('modules', InputOption::VALUE_REQUIRED,
                 'Provide one or more module class name, comma separated: Foo,Bar')
@@ -47,7 +46,7 @@ class ModuleEnableCommand extends PwConnector
 
         foreach ($modules as $module) {
             $this->checkIfModuleExistsLocally($module, $output, $input);
-            if (wire('modules')->getModule($module, array('noPermissionCheck' => true))) {
+            if (wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
                 $output->writeln("<info>Module {$module} installed successfully.</info>");
             }
         }

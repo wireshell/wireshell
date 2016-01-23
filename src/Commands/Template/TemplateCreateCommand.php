@@ -24,7 +24,6 @@ class TemplateCreateCommand extends PwConnector
     {
         $this
             ->setName('template:create')
-            ->setAliases(['t:c'])
             ->setDescription('Creates a ProcessWire template')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('fields', null, InputOption::VALUE_REQUIRED,

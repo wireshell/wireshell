@@ -46,7 +46,6 @@ class ModuleDownloadCommand extends PwModuleTools
     {
         $this
             ->setName('module:download')
-            ->setAliases(['m:dl'])
             ->setDescription('Downloads ProcessWire module(s).')
             ->addArgument('modules', InputOption::VALUE_REQUIRED,
                 'Provide one or more module class name, comma separated: Foo,Bar')
@@ -78,12 +77,11 @@ class ModuleDownloadCommand extends PwModuleTools
             // check if module directory is writeable
             $this->output->writeln('Make sure your /site/modules directory is writeable by PHP.');
         } else {
-
             $github = $input->getOption('github');
             $branch =$input->getOption('branch');
 
-            if (!empty($github)) {
-                $branch = (!empty($branch)) ? $input->getOption('branch') : 'master';
+            if ($github) {
+                $branch = ($branch) ? $input->getOption('branch') : 'master';
                 $github = 'https://github.com/' . $input->getOption('github') . '/archive/' . $branch . '.zip';
             }
 

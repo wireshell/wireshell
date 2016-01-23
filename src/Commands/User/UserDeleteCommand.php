@@ -26,9 +26,9 @@ class UserDeleteCommand extends PwUserTools
     {
         $this
             ->setName('user:delete')
-            ->setAliases(['u:d'])
             ->setDescription('Deletes ProcessWire users')
-            ->addArgument('name', InputArgument::REQUIRED);
+            ->addArgument('name', InputArgument::OPTIONAL)
+            ->addOption('role', null, InputOption::VALUE_REQUIRED, 'Delete user(s) by role');
     }
 
     /**
@@ -40,16 +40,27 @@ class UserDeleteCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
 
-        $users = explode(',', $input->getArgument('name'));
-        foreach ($users as $name) {
-          if (wire('users')->get($name) instanceof \NullPage) {
-              $output->writeln("<error>User '{$name}' doesn't exists!</error>");
-          } else {
-            $user = wire('users')->get($name);
-            wire('users')->delete($user);
-            $output->writeln("<info>User '{$name}' deleted successfully!</info>");
-          }
+        if ($role = $input->getOption('role')) {
+            $users = wire('users')->find("roles=$role");
+
+            foreach ($users as $user) {
+                wire('users')->delete($user);
+            }
+            $output->writeln("<info>Deleted {$users->count()} users successfully!</info>");
+        } else {
+            $users = explode(',', $input->getArgument('name'));
+
+            foreach ($users as $name) {
+                if (wire('users')->get($name) instanceof \NullPage) {
+                    $output->writeln("<error>User '{$name}' doesn't exists!</error>");
+                } else {
+                    $user = wire('users')->get($name);
+                    wire('users')->delete($user);
+                    $output->writeln("<info>User '{$name}' deleted successfully!</info>");
+                }
+            }
         }
+
     }
 
 

@@ -28,7 +28,6 @@ class UserListCommand extends PwUserTools
     {
         $this
             ->setName('user:list')
-            ->setAliases(['u:l'])
             ->setDescription('Lists ProcessWire users')
             ->addOption('role', null, InputOption::VALUE_REQUIRED, 'Find user by role');
     }
@@ -59,10 +58,9 @@ class UserListCommand extends PwUserTools
      * @param InputInterface $input
      */
     private function getUsers($input) {
-
         $role = $input->getOption('role');
 
-        if (!empty($role)) {
+        if ($role) {
             $users = wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
         } else {
             $users = wire('users')->find('start=0')->sort('name');

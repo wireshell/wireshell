@@ -96,15 +96,4 @@ $coreFiles = getCommandFilesInDir($srcDir);
 $app = loadCommandsInFilesForApp($coreFiles, $app, '\\Wireshell\\Commands\\');
 
 
-
-/**
- * Initialize module provided commands
- */
-
-$moduleDir = getcwd() . '/site/modules';
-
-$moduleFiles = getCommandFilesInDir($moduleDir);
-
-$app = loadCommandsInFilesForApp($moduleFiles, $app, '');
-
 $app->run();

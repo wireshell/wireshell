@@ -23,7 +23,6 @@ class ModuleDisableCommand extends PwConnector
     {
         $this
             ->setName('module:disable')
-            ->setAliases(['m:dis'])
             ->setDescription('Disable provided module(s)')
             ->addArgument('modules', InputOption::VALUE_REQUIRED,
                 'Provide one or more module class name, comma separated: Foo,Bar')
@@ -68,7 +67,7 @@ class ModuleDisableCommand extends PwConnector
             exit(1);
         }
 
-        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true)) && $remove === false) {
+        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true)) && $remove === false) {
             $output->writeln("<info>Module '{$module}' is not installed!</info>");
             exit(1);
         }

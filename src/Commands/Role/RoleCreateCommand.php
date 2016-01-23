@@ -23,9 +23,8 @@ class RoleCreateCommand extends PwUserTools
     {
         $this
             ->setName('role:create')
-            ->setAliases(['r:c'])
             ->setDescription('Creates a ProcessWire role')
-            ->addArgument('name', InputArgument::REQUIRED);
+            ->addArgument('name', InputArgument::REQUIRED, 'comma-separated list');
     }
 
     /**
@@ -36,21 +35,17 @@ class RoleCreateCommand extends PwUserTools
     public function execute(InputInterface $input, OutputInterface $output)
     {
         parent::bootstrapProcessWire($output);
+        $names = explode(',', preg_replace('/\s+/', '', $input->getArgument('name')));
 
-        $name = $input->getArgument('name');
+        foreach ($names as $name) {
+            if (!wire('roles')->get($name) instanceof \NullPage) {
+                $output->writeln("<error>Role '{$name}' already exists!</error>");
+                exit(1);
+            }
 
-        if (!wire("pages")->get("name={$name}") instanceof \NullPage) {
-
-            $output->writeln("<error>Role '{$name}' already exists!</error>");
-            exit(1);
+            wire('roles')->add($name);
+            $output->writeln("<info>Role '{$name}' created successfully!</info>");
         }
-
-        $user = $this->createRole($name, $this->roleContainer);
-
-        $user->save();
-
-        $output->writeln("<info>Role '{$name}' created successfully!</info>");
-
     }
 
 }

@@ -25,7 +25,6 @@ class TemplateListCommand extends PwConnector
     {
         $this
             ->setName('template:list')
-            ->setAliases(['t:l'])
             ->setDescription('Lists ProcessWire templates')
             ->addOption('advanced', null, InputOption::VALUE_NONE, 'Show system templates. By default, system/internal templates are not shown.');
           ;
@@ -57,7 +56,7 @@ class TemplateListCommand extends PwConnector
     private function getTemplateData($advanced) {
         $content = array();
         $advanced = wire('config')->advanced || $advanced;
-        foreach(wire('templates') as $t) {
+        foreach (wire('templates') as $t) {
             if (!$advanced && ($t->flags & \Template::flagSystem)) continue;
 
             $content[] = array(

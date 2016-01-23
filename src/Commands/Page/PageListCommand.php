@@ -41,7 +41,6 @@ class PageListCommand extends PwUserTools
     {
         $this
             ->setName('page:list')
-            ->setAliases(['p:l'])
             ->setDescription('Lists ProcessWire pages')
             ->addOption('start', null, InputOption::VALUE_REQUIRED, 'Start Page')
             ->addOption('level', null, InputOption::VALUE_REQUIRED, 'How many levels to show')

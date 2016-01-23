@@ -25,7 +25,6 @@ class UserUpdateCommand extends PwUserTools
     {
         $this
             ->setName('user:update')
-            ->setAliases(['u:u'])
             ->setDescription('Updates a ProcessWire user')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('newname', null, InputOption::VALUE_REQUIRED, 'Supply an user name')

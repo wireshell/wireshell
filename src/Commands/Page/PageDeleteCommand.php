@@ -25,7 +25,6 @@ class PageDeleteCommand extends PwUserTools
     {
         $this
             ->setName('page:delete')
-            ->setAliases(['p:d'])
             ->setDescription('Deletes ProcessWire pages')
             ->addArgument('selector', InputArgument::REQUIRED)
             ->addOption('rm', null, InputOption::VALUE_NONE, 'Force deletion, do not move page to trash');
@@ -43,19 +42,27 @@ class PageDeleteCommand extends PwUserTools
 
         foreach (explode(',', $input->getArgument('selector')) as $selector) {
             $select = (is_numeric($selector)) ? (int)$selector : "/{$selector}/";
-            $trashPage = $pages->get($select);
+            $trashPages = $pages->find($select);
+            if ($trashPages->count() === 0) $trashPages = $pages->find($selector);
 
-            if ($trashPage instanceof \NullPage) {
-                $output->writeln("<error>Page `{$selector}` doesn't exist.</error>");
-            } else {
-                $delete = $input->getOption('rm') === true ? true : false;
+            if ($trashPages->count() === 0) {
+                $output->writeln("<error>No pages were found using `{$selector}`.</error>");
+            }
 
-                if ($delete === true) {
-                    $pages->delete($pages->get($select), true);
-                    $output->writeln("<info>Page `{$selector}` was successfully deleted.</info>");
+            foreach ($trashPages as $trashPage) {
+                if ($trashPage instanceof \NullPage) {
+                    $output->writeln("<error>Page `{$selector}` doesn't exist.</error>");
                 } else {
-                    $pages->trash($pages->get($select), true);
-                    $output->writeln("<info>Page `{$selector}` has been successfully moved to the trash.</info>");
+                    $delete = $input->getOption('rm') === true ? true : false;
+                    $title = $trashPage->title;
+
+                    if ($delete === true) {
+                        $pages->delete($trashPage, true);
+                        $output->writeln("<info>Page `{$title}` was successfully deleted.</info>");
+                    } else {
+                        $pages->trash($trashPage, true);
+                        $output->writeln("<info>Page `{$title}` has been successfully moved to the trash.</info>");
+                    }
                 }
             }
         }

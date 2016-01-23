@@ -24,7 +24,6 @@ class TemplateDeleteCommand extends PwConnector
     {
         $this
             ->setName('template:delete')
-            ->setAliases(['t:d'])
             ->setDescription('Deletes ProcessWire template(s)')
             ->addArgument('name', InputArgument::REQUIRED)
             ->addOption('nofile', null, InputOption::VALUE_NONE, 'Prevents template file deletion');

@@ -14,30 +14,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PwUserTools extends PwConnector
 {
     /**
-     * @param $name
-     * @return \Page
-     */
-    public function createRole($name, $roleContainer)
-    {
-        $user = new \Page();
-        $user->template = 'role';
-        $user->setOutputFormatting(false);
-
-        $user->parent = $roleContainer;
-        $user->name = $name;
-        $user->title = $name;
-
-        return $user;
-    }
-
-    /**
-     * @param InputInterface $input
+     * @param $email
      * @param $name
      * @param $userContainer
      * @param $pass
      * @return \Page
      */
-    public function createUser(InputInterface $input, $name, $userContainer, $pass)
+    public function createUser($email, $name, $userContainer, $pass)
     {
         $user = new \Page();
         $user->template = 'user';
@@ -46,13 +29,8 @@ class PwUserTools extends PwConnector
         $user->parent = $userContainer;
         $user->name = $name;
         $user->title = $name;
-
-        if (!empty($pass)) $user->pass = $pass;
-
-        $email = $input->getOption('email');
-        if ($email) {
-            $user->email = $email;
-        }
+        $user->pass = $pass;
+        $user->email = $email;
 
         return $user;
     }

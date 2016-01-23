@@ -37,7 +37,6 @@ class ModuleGenerateCommand extends PwModuleTools
     {
         $this
             ->setName('module:generate')
-            ->setAliases(['m:g'])
             ->setDescription('Generates a boilerplate module')
             ->addArgument('name', InputOption::VALUE_REQUIRED, 'Provide a class name for the module')
             ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Module title')
