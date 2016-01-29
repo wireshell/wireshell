@@ -42,8 +42,8 @@ class PageDeleteCommand extends PwUserTools
 
         foreach (explode(',', $input->getArgument('selector')) as $selector) {
             $select = (is_numeric($selector)) ? (int)$selector : "/{$selector}/";
-            $trashPages = $pages->find($select);
-            if ($trashPages->count() === 0) $trashPages = $pages->find($selector);
+            $trashPages = $pages->find($select, array('include' => 'all'));
+            if ($trashPages->count() === 0) $trashPages = $pages->find($selector, array('include' => 'all'));
 
             if ($trashPages->count() === 0) {
                 $output->writeln("<error>No pages were found using `{$selector}`.</error>");
