@@ -112,6 +112,10 @@ class NewCommand extends Command
           $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
         } else {
           $directory = getcwd();
+          if (!$directory) {
+              $output->writeln("<error>No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.</error>");
+              return;
+          }
           chdir(dirname($directory));
         }
 
