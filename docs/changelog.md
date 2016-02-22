@@ -2,6 +2,10 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
+0.5.3 (2016--)
+
+- Updates `new` command, introduces `-v` to increase the verbosity of messages, more detailed error messages
+
 0.5.2 (2016-01-18)
 
 - Extends `field:list` command, adds filter `--tag=tagname` and `--unused`

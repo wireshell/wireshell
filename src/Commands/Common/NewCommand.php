@@ -297,11 +297,13 @@ class NewCommand extends Command
         $ch = curl_init($check);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_exec($ch);
-        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $retcode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if ((int)$retcode !== 200) {
-            throw new \RuntimeException("Error loading sha `$targetBranch`.");
+            throw new \RuntimeException(
+                "Error loading sha `$targetBranch`, curl request failed (status code: $retcode).\nTry `curl -I $check`\nThis should return `HTTP/x.x 200 OK`."
+            );
         }
 
         return $branch;
