@@ -294,7 +294,18 @@ class NewCommand extends Command
 
         $branch = str_replace('{branch}', $targetBranch, PwConnector::zipURL);
         $check = str_replace('{branch}', $targetBranch, PwConnector::versionURL);
-        $ch = curl_init($check);
+
+        try {
+            $ch = curl_init($check);
+        } catch (Exception $e) {
+            $messages = array(
+                'Curl request failed.',
+                'Please check whether the php curl extension is enabled, uncomment the following line in your php.ini:',
+                '`;extension=php_curl.dll` and restart the server. Check your phpinfo() to see whether curl has been properly enabled or not.'
+            );
+            throw new \RuntimeException(implode("\n", $messages));
+        }
+
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_exec($ch);
         $retcode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
