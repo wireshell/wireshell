@@ -100,21 +100,34 @@ class NewCommand extends Command
             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
             ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
             ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
-            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation');
+            ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation')
+            ->addOption('v', null, InputOption::VALUE_NONE, 'verbose');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->fs = new Filesystem();
-        $directory = rtrim(trim($input->getArgument('directory')), DIRECTORY_SEPARATOR);
+
+        if ($d = $input->getArgument('directory')) {
+          $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
+        } else {
+          $directory = getcwd();
+          if (!$directory) {
+              $output->writeln("<error>No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.</error>");
+              return;
+          }
+          chdir(dirname($directory));
+        }
+
         $this->projectDir = $this->fs->isAbsolutePath($directory) ? $directory : getcwd() . DIRECTORY_SEPARATOR . $directory;
-        $this->projectName = basename($directory);
+        $this->projectName = basename($this->projectDir);
+        $v = $input->getOption('v') ? true : false;
 
         $logger = new Logger('name');
         $logger->pushHandler(new StreamHandler("php://output"));
-        $this->installer = new Installer($logger, $this->projectDir);
+        $this->installer = new Installer($logger, $this->projectDir, $v);
 
-        $this->version = '2.4.0';
+        $this->version = '2.7.2';
         $this->output = $output;
 
         $profile = $input->getOption('profile');
@@ -260,6 +273,7 @@ class NewCommand extends Command
                 $accountInfo['useremail'] = $useremail;
                 $this->installProcessWire($post, $accountInfo);
                 $this->cleanUpInstallation();
+                $this->output->writeln("\n<info>Congratulations, ProcessWire has been successfully installed.</info>");
             }
         } catch (\Exception $e) {
             $this->cleanUp();
@@ -283,11 +297,14 @@ class NewCommand extends Command
         $ch = curl_init($check);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_exec($ch);
-        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $retcode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = (string)curl_error($ch)
         curl_close($ch);
 
         if ((int)$retcode !== 200) {
-            throw new \RuntimeException("Error loading sha `$targetBranch`.");
+            throw new \RuntimeException(
+                "Error loading sha `$targetBranch`, curl request failed (status code: $retcode).\nTry `curl -I $check`\nThis should return `HTTP/x.x 200 OK`.\n$curlError"
+            );
         }
 
         return $branch;
@@ -371,7 +388,7 @@ class NewCommand extends Command
         $client->getEmitter()->attach(new Progress(null, $downloadCallback));
 
         // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = getcwd() . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pw.' . pathinfo($pwArchiveFile,
+        $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pw.' . pathinfo($pwArchiveFile,
                 PATHINFO_EXTENSION);
 
         try {
@@ -439,7 +456,7 @@ class NewCommand extends Command
                 "permissions to uncompress and rename the package contents.\n" .
                 "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing ProcessWire again.\n%s",
-                getcwd(), $this->getExecutedCommand()
+                $this->projectDir, $this->getExecutedCommand()
             ));
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf(
@@ -448,7 +465,7 @@ class NewCommand extends Command
                 "rename the package contents.\n" .
                 "To solve this issue, check the permissions of the %s directory and\n" .
                 "try installing ProcessWire again.\n%s",
-                getcwd(), $this->getExecutedCommand()
+                $this->projectDir, $this->getExecutedCommand()
             ));
         }
 
@@ -509,7 +526,7 @@ class NewCommand extends Command
             $installDir = array($this->projectDir . '/site/install');
 
             $this->fs->remove(array_merge($siteDirs, $installDir));
-            $this->output->writeln("Remove ProcessWire-related files that don't make sense in a running project.");
+            if ($this->v) $this->output->writeln("Remove ProcessWire-related files that don't make sense in a running project.");
         } catch (\Exception $e) {
             // don't throw an exception in case any of the ProcessWire-related files cannot
             // be removed, because this is just an enhancement, not something mandatory
@@ -623,7 +640,7 @@ class NewCommand extends Command
 
         try {
             $distill = new Distill();
-            $extractPath = getcwd() . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pwprofile';
+            $extractPath = $this->projectDir . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pwprofile';
             $extractionSucceeded = $distill->extractWithoutRootDirectory($profile, $extractPath);
 
             foreach (new \DirectoryIterator($extractPath) as $fileInfo) {

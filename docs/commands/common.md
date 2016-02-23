@@ -35,6 +35,7 @@ $ wireshell new {directory}*
 --devns : Download devns branch (dev with namespace support)
 --sha : Download specific commit
 --no-install : Disable installation
+--v : Increase the verbosity of messages
 ```
 
 ### Examples
