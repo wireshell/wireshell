@@ -24,7 +24,6 @@ use Wireshell\Commands\Module\ModuleDownloadCommand;
 use Wireshell\Commands\Module\ModuleEnableCommand;
 use Wireshell\Commands\Module\ModuleDisableCommand;
 use Wireshell\Commands\Module\ModuleGenerateCommand;
-use Wireshell\Commands\Module\ModuleUpgradesCommand;
 use Wireshell\Commands\Module\ModuleUpgradeCommand;
 use Wireshell\Commands\Common\NewCommand;
 use Wireshell\Commands\Common\UpgradeCommand;
@@ -45,7 +44,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Application('wireshell - An extendable ProcessWire CLI', '0.5.2');
+$app = new Application('wireshell - An extendable ProcessWire CLI', '0.6.0');
 
 $app->add(new UserCreateCommand());
 $app->add(new UserUpdateCommand());
@@ -69,7 +68,6 @@ $app->add(new ModuleDownloadCommand());
 $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());
 $app->add(new ModuleGenerateCommand(new GuzzleHttp\Client()));
-$app->add(new ModuleUpgradesCommand());
 $app->add(new ModuleUpgradeCommand());
 $app->add(new NewCommand());
 $app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));

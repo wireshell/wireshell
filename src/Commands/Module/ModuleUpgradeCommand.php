@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Module;
 
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,9 +27,10 @@ class ModuleUpgradeCommand extends PwModuleTools {
     protected function configure() {
         $this
             ->setName('module:upgrade')
-            ->setDescription('Upgrades a given module')
-            ->addArgument('modules', InputOption::VALUE_REQUIRED,
-                'Provide one or more module class name, comma separated: Foo,Bar');
+            ->setDescription('Upgrades given module(s)')
+            ->addArgument('modules', InputArgument::OPTIONAL,
+              'Provide one or more module class name, comma separated: Foo,Bar')
+            ->addOption('check', null, InputOption::VALUE_NONE, 'Just check for module upgrades.');
     }
 
     /**
@@ -38,10 +40,31 @@ class ModuleUpgradeCommand extends PwModuleTools {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
-        if (!wire('config')->moduleServiceKey) $output->writeln("<error>No module service key was found.</error>");
+        if (!wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
 
-        $modules = explode(",", $input->getArgument('modules'));
+        // just check for module upgrades
+        if ($input->getOption('check')) {
+          wire('modules')->resetCache();
+          if ($moduleVersions = parent::getModuleVersions(true, $output)) {
+              $output->writeln("<info>An upgrade is available for:</info>");
+              foreach ($moduleVersions as $name => $info) $output->writeln("  - $name: {$info['local']} -> {$info['remote']}");
+          } else {
+              $output->writeln("<info>Your modules are up-to-date.</info>");
+          }
+        } else {
+          // upgrade specific modules
+          $modules = explode(",", $input->getArgument('modules'));
+          if ($modules) $this->upgradeModules($modules, $output);
+        }
+    }
 
+    /**
+     * Upgrade modules
+     *
+     * @param array $modules
+     * @param OutputInterface $output
+     */
+    private function upgradeModules($modules, $output) {
         foreach ($modules as $module) {
             // check whether module exists/is installed
             if (!$this->checkIfModuleExists($module)) {
