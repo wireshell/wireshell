@@ -181,7 +181,7 @@ class NewCommand extends Command
 
                 $dbPass = $input->getOption('dbPass');
                 if (!$dbPass) {
-                    $question = new Question('Please enter the database password : ', 'dbPass');
+                    $question = new Question('Please enter the database password : ', null);
                     $question->setHidden(true);
                     $question->setHiddenFallback(false);
                     $dbPass = $helper->ask($input, $output, $question);
