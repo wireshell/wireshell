@@ -106,6 +106,52 @@ $ wireshell module:disable FlagPages,ImageExtra --rm
 
 ---
 
+### Upgrade
+
+Upgrades given module(s)
+
+```sh
+$ wireshell module:upgrade {class-name}*
+```
+
+\* This argument is optional. If you want to check only for module updates, just skip it.
+
+### Available options:
+
+```sh
+--check : Just check for module upgrades.
+```
+
+### Examples
+
+Download and upgrade existing module `ImageExtra`.
+
+```sh
+$ wireshell module:upgrade ImageExtra
+
+An upgrade for ImageExtra is available: 0.0.3
+Downloading module ImageExtra...
+  840.40 KB/840.40 KB ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  100%
+
+ Preparing module...
+
+ Module ImageExtra downloaded successfully.
+
+Module `ImageExtra` was updated successfully.
+```
+
+Check if module upgrades are available.
+
+```sh
+$ wireshell module:upgrade --check
+
+An upgrade is available for:
+  - FlagPages: 0.0.8 -> 0.2.3
+  - ImageExtra: 0.0.1 -> 0.0.3
+```
+
+---
+
 ## Generate
 
 Generates a module via [modules.pw](http://modules.pw/).

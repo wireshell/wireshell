@@ -40,12 +40,16 @@ class UpgradeCommand extends PwConnector
         '2.4.0' => 'ae121ccc9c14a2cd5fa57e8786bdbb3f',
         '2.5.0' => '9b20ce2898be505608d54a1e0dd81215',
         '2.6.0' => '8890078f9d233b038e5110c1caee5a95',
+        '2.7.0' => '756b8a5685ce2b6b6e92062dcf040973',
+        '3.0.0' => '3a29d29b4ff7b2273b0739a82305ff71',
     );
 
     protected $htaccessHashes = array(
         '2.4.0' => '5114479740cb1e79a8004f3eddeecb54',
         '2.5.0' => 'f8229ef5e26221226844d461e1a4d8d2',
         '2.6.0' => '31a04ba76f50c94bcf1f848d334d62c5',
+        '2.7.0' => 'd659abbf6c035b462b735743c007b17a',
+        '3.0.0' => 'd659abbf6c035b462b735743c007b17a',
     );
 
     protected $filesToReplace = array('wire', 'htaccess.txt', 'index.php');
