@@ -1,7 +1,18 @@
 <?php namespace Wireshell\Helpers;
 
+use Distill\Distill;
+use Distill\Exception\IO\Input\FileCorruptedException;
+use Distill\Exception\IO\Input\FileEmptyException;
+use Distill\Exception\IO\Output\TargetDirectoryNotWritableException;
+use Distill\Strategy\MinimumSize;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Message\Response;
+use GuzzleHttp\Subscriber\Progress\Progress;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * PwModuleTools
@@ -12,8 +23,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Tabea David <td@kf-interactive.com>
  * @author Marcus Herrmann
  */
-class PwModuleTools extends PwConnector
-{
+class PwModuleTools extends PwConnector {
+   /**
+    * @var Filesystem
+    */
+    private $fs;
+
     const timeout = 4.5;
 
     /**
@@ -187,6 +202,188 @@ class PwModuleTools extends PwConnector
         if ($onlyNew && !$versions['remote']) $versions = array();
 
         return $versions;
+    }
+
+    /**
+     * Removes all the temporary files and directories created to
+     * download the project and removes ProcessWire-related files that don't make
+     * sense in a proprietary project.
+     *
+     * @param string $module
+     * @param OutputInterface $output
+     * @return NewCommand
+     */
+    public function cleanUpTmp($module, $output) {
+        $fs = new Filesystem();
+        $fs->remove(dirname($this->compressedFilePath));
+        $output->writeln("<info> Module {$module} downloaded successfully.</info>\n");
+    }
+
+    /**
+     * Extracts the compressed Symfony file (ZIP or TGZ) using the
+     * native operating system commands if available or PHP code otherwise.
+     *
+     * @param string $module
+     * @param OutputInterface $output
+     * @return NewCommand
+     *
+     * @throws \RuntimeException if the downloaded archive could not be extracted
+     */
+    public function extractModule($module, $output) {
+        $output->writeln(" Preparing module...\n");
+
+        try {
+            $distill = new Distill();
+            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath,
+                wire('config')->paths->siteModules . $module);
+            $dir = wire('config')->paths->siteModules . $module;
+            if (is_dir($dir)) {
+                chmod($dir, 0755);
+            }
+        } catch (FileCorruptedException $e) {
+            throw new \RuntimeException(
+                "This module can't be downloaded because the downloaded package is corrupted.\n" .
+                "To solve this issue, try installing the module again.\n"
+            );
+        } catch (FileEmptyException $e) {
+            throw new \RuntimeException(
+                "This module can't be downloaded because the downloaded package is empty.\n" .
+                "To solve this issue, try installing the module again.\n"
+            );
+        } catch (TargetDirectoryNotWritableException $e) {
+            throw new \RuntimeException(sprintf(
+                "This module can't be downloaded because the installer doesn't have enough\n" .
+                "permissions to uncompress and rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
+                "try installing this module again.\n",
+                getcwd()
+            ));
+        } catch (\Exception $e) {
+            throw new \RuntimeException(sprintf(
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
+                "or because the installer doesn't have enough permissions to uncompress and\n" .
+                "rename the package contents.\n" .
+                "To solve this issue, check the permissions of the %s directory and\n" .
+                "try installing this module again.\n",
+                getcwd()
+            ));
+        }
+
+        if (!$extractionSucceeded) {
+            throw new \RuntimeException(
+                "This module can't be downloaded because the downloaded package is corrupted\n" .
+                "or because the uncompress commands of your operating system didn't work."
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Utility method to show the number of bytes in a readable format.
+     *
+     * @param int $bytes The number of bytes to format
+     * @return string The human readable string of bytes (e.g. 4.32MB)
+     */
+    private function formatSize($bytes) {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        $bytes = max($bytes, 0);
+        $pow = $bytes ? floor(log($bytes, 1024)) : 0;
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return number_format($bytes, 2) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Chooses the best compressed file format to download (ZIP or TGZ) depending upon the
+     * available operating system uncompressing commands and the enabled PHP extensions
+     * and it downloads the file.
+     *
+     * @param string $url
+     * @param string $module
+     * @param OutputInterface $output
+     * @return NewCommand
+     *
+     * @throws \RuntimeException if the ProcessWire archive could not be downloaded
+     */
+    public function downloadModule($url, $module, $output) {
+        $output->writeln(" Downloading module $module...");
+
+        $distill = new Distill();
+        $pwArchiveFile = $distill
+            ->getChooser()
+            ->setStrategy(new MinimumSize())
+            ->addFile($url)
+            ->getPreferredFile();
+
+        /** @var ProgressBar|null $progressBar */
+        $progressBar = null;
+        $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar, &$output) {
+            // Don't initialize the progress bar for redirects as the size is much smaller
+            if ($response->getStatusCode() >= 300) {
+                return;
+            }
+
+            if (null === $progressBar) {
+                ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
+                    return $this->formatSize($bar->getMaxSteps());
+                });
+                ProgressBar::setPlaceholderFormatterDefinition('current', function (ProgressBar $bar) {
+                    return str_pad($this->formatSize($bar->getStep()), 11, ' ', STR_PAD_LEFT);
+                });
+
+                $progressBar = new ProgressBar($output, $size);
+                $progressBar->setFormat('%current%/%max% %bar%  %percent:3s%%');
+                $progressBar->setRedrawFrequency(max(1, floor($size / 1000)));
+                $progressBar->setBarWidth(60);
+
+                if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
+                    $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
+                    $progressBar->setProgressCharacter('');
+                    $progressBar->setBarCharacter('▓'); // dark shade character \u2593
+                }
+
+                $progressBar->start();
+            }
+
+            $progressBar->setProgress($downloaded);
+        };
+
+        $client = new Client();
+        $client->getEmitter()->attach(new Progress(null, $downloadCallback));
+
+        // store the file in a temporary hidden directory with a random name
+        $this->compressedFilePath = wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
+                PATHINFO_EXTENSION);
+
+        try {
+            $response = $client->get($pwArchiveFile);
+        } catch (ClientException $e) {
+            if ($e->getCode() === 403 || $e->getCode() === 404) {
+                throw new \RuntimeException(
+                    "The selected module $module cannot be downloaded because it does not exist.\n"
+                );
+            } else {
+                throw new \RuntimeException(sprintf(
+                    "The selected module (%s) couldn't be downloaded because of the following error:\n%s",
+                    $module,
+                    $e->getMessage()
+                ));
+            }
+        }
+
+        $fs = new Filesystem();
+        $fs->dumpFile($this->compressedFilePath, $response->getBody());
+
+        if (null !== $progressBar) {
+            $progressBar->finish();
+            $output->writeln("\n");
+        }
+
+        return $this;
     }
 
 }
