@@ -2,15 +2,16 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-0.6.0 (2016--)
+**0.6.0 (2016-02-26)**
 
 - Updates `new` command
-  - introduces `-v` to increase the verbosity of messages
-  - more detailed error messages
-  - makes it possible to use no password during installation
+  - Introduces `-v` to increase the verbosity of messages
+  - More detailed error messages
+  - Makes it possible to use no password during installation
+
 - Adds `module:upgrade` command
 
-0.5.2 (2016-01-18)
+**0.5.2 (2016-01-18)**
 
 - Extends `field:list` command, adds filter `--tag=tagname` and `--unused`
 - Extends `page:create` command, enables importing field data from json file (thanks @samuell)

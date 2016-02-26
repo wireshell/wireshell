@@ -19,7 +19,7 @@ $ wireshell module:download {module-class},{module-class}
 
 ### Examples
 
-Download two modules at once.
+Separate module names with commas to download two or more modules at once.
 
 ```sh
 $ wireshell module:download FlagPages,ImageExtra
@@ -56,7 +56,7 @@ $ wireshell module:enable {module-class},{module-class}
 
 ### Examples
 
-Enable two modules at once.
+Separate module names with commas to enable two or more modules at once.
 
 ```sh
 $ wireshell module:download FlagPages,ImageExtra
@@ -114,7 +114,7 @@ Upgrades given module(s).
 $ wireshell module:upgrade {class-name},{class-name}*
 ```
 
-\* This argument is optional. If you want to check  for module updates, just skip it.
+\* This argument is optional. If you want to check for module updates, just skip it.
 
 ### Available options:
 
