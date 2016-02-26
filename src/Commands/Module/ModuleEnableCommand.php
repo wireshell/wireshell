@@ -4,7 +4,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\PwModuleTools;
 
 /**
  * Class ModuleEnableCommand
@@ -14,14 +14,12 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-class ModuleEnableCommand extends PwConnector
-{
+class ModuleEnableCommand extends PwModuleTools {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('module:enable')
             ->setDescription('Enables provided module(s)')
@@ -38,33 +36,42 @@ class ModuleEnableCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
-
         $modules = explode(",", $input->getArgument('modules'));
 
         foreach ($modules as $module) {
-            $this->checkIfModuleExistsLocally($module, $output, $input);
+            // if module doesn't exist, download the module
+            if (!$this->checkIfModuleExists($module)) {
+                $output->writeln("<comment>Cannot find '{$module}' locally, trying to download...</comment>");
+                $this->passOnToModuleDownloadCommand($module, $output, $input);
+            }
+
+            // check whether module is already installed
+            if (wire('modules')->isInstalled($module)) {
+                $output->writeln("<info>Module `{$module}` is already installed.</info>");
+                exit(1);
+            }
+
+            // install module
             if (wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
-                $output->writeln("<info>Module {$module} installed successfully.</info>");
+                $output->writeln("<info>Module `{$module}` installed successfully.</info>");
+            } else {
+                $output->writeln("<error>Module `{$module}` does not exist.</error>");
             }
         }
 
     }
 
-    private function checkIfModuleExistsLocally($module, $output, $input)
-    {
-        if (!wire('modules')->get($module)) {
+    private function checkIfModuleExistsLocally($module, $output, $input) {
+        if (!$this->checkIfModuleExists($module)) {
             $output->writeln("<comment>Cannot find '{$module}' locally, trying to download...</comment>");
-
             $this->passOnToModuleDownloadCommand($module, $output, $input);
         }
 
     }
 
-    private function passOnToModuleDownloadCommand($module, $output, $input)
-    {
+    private function passOnToModuleDownloadCommand($module, $output, $input) {
         $command = $this->getApplication()->find('mod:download');
 
         $arguments = array(
@@ -75,7 +82,6 @@ class ModuleEnableCommand extends PwConnector
         );
 
         $passOnInput = new ArrayInput($arguments);
-
         $command->run($passOnInput, $output);
     }
 }

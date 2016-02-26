@@ -19,7 +19,7 @@ $ wireshell module:download {module-class},{module-class}
 
 ### Examples
 
-Download two modules at once.
+Separate module names with commas to download two or more modules at once.
 
 ```sh
 $ wireshell module:download FlagPages,ImageExtra
@@ -56,7 +56,7 @@ $ wireshell module:enable {module-class},{module-class}
 
 ### Examples
 
-Enable two modules at once.
+Separate module names with commas to enable two or more modules at once.
 
 ```sh
 $ wireshell module:download FlagPages,ImageExtra
@@ -102,6 +102,52 @@ Deinstall modules and remove files.
 
 ```sh
 $ wireshell module:disable FlagPages,ImageExtra --rm
+```
+
+---
+
+## Upgrade
+
+Upgrades given module(s).
+
+```sh
+$ wireshell module:upgrade {class-name},{class-name}*
+```
+
+\* This argument is optional. If you want to check for module updates, just skip it.
+
+### Available options:
+
+```sh
+--check : Just check for module upgrades.
+```
+
+### Examples
+
+Check if module upgrades are available.
+
+```sh
+$ wireshell module:upgrade --check
+
+An upgrade is available for:
+  - FlagPages: 0.0.8 -> 0.2.3
+  - ImageExtra: 0.0.1 -> 0.0.3
+```
+
+Download and upgrade existing module `ImageExtra`.
+
+```sh
+$ wireshell module:upgrade ImageExtra
+
+An upgrade for ImageExtra is available: 0.0.3
+Downloading module ImageExtra...
+  840.40 KB/840.40 KB ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  100%
+
+ Preparing module...
+
+ Module ImageExtra downloaded successfully.
+
+Module `ImageExtra` was updated successfully.
 ```
 
 ---
