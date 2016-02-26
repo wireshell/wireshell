@@ -4,11 +4,10 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
 **0.6.0 (2016-02-26)**
 
-- Updates `new` command
-  - Introduces `-v` to increase the verbosity of messages
-  - More detailed error messages
-  - Makes it possible to use no password during installation
-
+- Updates `new` command:
+  * Introduces `-v` to increase the verbosity of messages
+  * More detailed error messages
+  * Makes it possible to use no password during installation
 - Adds `module:upgrade` command
 
 **0.5.2 (2016-01-18)**
