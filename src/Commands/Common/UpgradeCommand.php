@@ -87,7 +87,7 @@ class UpgradeCommand extends PwConnector
 
         $check = parent::checkForCoreUpgrades($output, $input);
         $this->output = $output;
-        $this->root = wire('config')->paths->root;
+        $this->root = \ProcessWire\wire('config')->paths->root;
 
         if ($check['upgrade'] && $input->getOption('check') === false) {
             if (!extension_loaded('pdo_mysql')) {
@@ -289,7 +289,7 @@ class UpgradeCommand extends PwConnector
             $old = $this->uncompressedFilePath . '/' . $rename;
             $new = $this->root . $rename . '-' . $this->branch['version'];
 
-            if (file_exists($new)) wireRmdir($new, true);
+            if (file_exists($new)) \ProcessWire\wireRmdir($new, true);
             rename($old, $new);
         }
 
@@ -300,7 +300,7 @@ class UpgradeCommand extends PwConnector
      * Cleanup
      */
     private function cleanup() {
-        wireRmdir($this->uncompressedFilePath, true);
+        \ProcessWire\wireRmdir($this->uncompressedFilePath, true);
         $this->output->writeln('  Upgrade files copied.');
         return $this;
     }
@@ -361,7 +361,7 @@ class UpgradeCommand extends PwConnector
                 $old = $this->root . $rename . '-' . $this->branch['version'];
                 $new = $this->root . $rename;
 
-                if (file_exists($new)) wireRmdir($new, true);
+                if (file_exists($new)) \ProcessWire\wireRmdir($new, true);
                 rename($old, $new);
 
                 if (array_key_exists($rename, $manually)) unset($manually[$rename]);

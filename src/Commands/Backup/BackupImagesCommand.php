@@ -1,6 +1,7 @@
 <?php namespace Wireshell\Commands\Backup;
 
-use Exception;
+use ProcessWire\Page;
+use ProcessWire\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,18 +39,18 @@ class BackupImagesCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         if ($input->getOption('target')) {
-            $path = wire('config')->paths->root . $input->getOption('target');
+            $path = \ProcessWire\wire('config')->paths->root . $input->getOption('target');
         } else {
-            $path = wire('config')->paths->root . 'dump-' . date('Y-m-d-H-i-s');
+            $path = \ProcessWire\wire('config')->paths->root . 'dump-' . date('Y-m-d-H-i-s');
         }
 
         if (!file_exists($path)) mkdir($path);
 
-        $pages = wire('pages');
+        $pages = \ProcessWire\wire('pages');
         if ($input->getOption('selector')) {
-            $pages = wire('pages')->find($input->getOption('selector'));
+            $pages = \ProcessWire\wire('pages')->find($input->getOption('selector'));
         } else {
-            $pages = wire('pages')->find("has_parent!=2,id!=2|7,status<" . \Page::statusTrash . ",include=all");
+            $pages = \ProcessWire\wire('pages')->find("has_parent!=2,id!=2|7,status<" . Page::statusTrash . ",include=all");
         }
 
         $fieldname = ($input->getOption('field')) ? $input->getOption('field') : 'images';

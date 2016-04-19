@@ -2,6 +2,10 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
+**1.0.0 (2016-04-19)
+
+- Prepares wireshell for ProcessWire 3.x
+
 **0.6.0 (2016-02-26)**
 
 - Updates `new` command: introduces `-v` to increase the verbosity of messages, more detailed error messages, makes it possible to use no password during installation

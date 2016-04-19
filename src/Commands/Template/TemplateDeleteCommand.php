@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Template;
 
+use ProcessWire\Template;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,8 +40,8 @@ class TemplateDeleteCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $names = explode(',', $input->getArgument('name'));
-        $templates = wire('templates');
-        $fieldgroups = wire('fieldgroups');
+        $templates = \ProcessWire\wire('templates');
+        $fieldgroups = \ProcessWire\wire('fieldgroups');
 
         foreach ($names as $name) {
             $template = $templates->get($name);
@@ -50,7 +51,7 @@ class TemplateDeleteCommand extends PwConnector
                     unlink($template->filename);
                 }
 
-                $template->flags = \Template::flagSystemOverride;
+                $template->flags = Template::flagSystemOverride;
                 $template->flags = 0; // all flags now removed, can be deleted
                 $templates->delete($template);
 

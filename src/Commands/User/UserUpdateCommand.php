@@ -46,8 +46,7 @@ class UserUpdateCommand extends PwUserTools
         $roles = explode(",", $input->getOption('roles'));
         $pass = $input->getOption('password');
 
-        if (wire("pages")->get("name={$name}") instanceof \NullPage) {
-
+        if (\ProcessWire\wire("pages")->get("name={$name}") instanceof \ProcessWire\NullPage) {
             $output->writeln("<error>User '{$name}' doesn't exists!</error>");
             exit(1);
         }
@@ -62,6 +61,4 @@ class UserUpdateCommand extends PwUserTools
         $output->writeln("<info>User '{$name}' updated successfully!</info>");
     }
 
-
 }
-

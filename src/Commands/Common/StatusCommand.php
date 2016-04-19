@@ -43,7 +43,6 @@ class StatusCommand extends PwConnector
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         parent::bootstrapProcessWire($output);
 
         $pwStatus = $this->getPWStatus();
@@ -74,43 +73,29 @@ class StatusCommand extends PwConnector
      */
     protected function getPWStatus()
     {
-
+        $config = \ProcessWire\wire('config');
         $on = Tools::tint('On', Tools::kTintError);
-
         $off = Tools::tint('Off', Tools::kTintInfo);
-
         $none = Tools::tint('None', Tools::kTintInfo);
 
 
-        $version = wire('config')->version;
-
+        $version = $config->version;
         $adminUrl = $this->getAdminUrl();
+        $advancedMode = $config->advanced ? $on : $off;
+        $debugMode = $config->debug ? $on : $off;
+        $timezone = $config->timezone;
+        $hosts = implode(", ", $config->httpHosts);
+        $adminTheme = $config->defaultAdminTheme;
+        $dbHost = $config->dbHost;
+        $dbName = $config->dbName;
+        $dbUser = $config->dbUser;
+        $dbPass = $config->dbPass;
+        $dbPort = $config->dbPort;
 
-        $advancedMode = wire('config')->advanced ? $on : $off;
-
-        $debugMode = wire('config')->debug ? $on : $off;
-
-        $timezone = wire('config')->timezone;
-
-        $hosts = implode(", ", wire('config')->httpHosts);
-
-        $adminTheme = wire('config')->defaultAdminTheme;
-
-        $dbHost = wire('config')->dbHost;
-        $dbName = wire('config')->dbName;
-
-        $dbUser = wire('config')->dbUser;
-        $dbPass = wire('config')->dbPass;
-        $dbPort = wire('config')->dbPort;
-
-        $prepended = trim(wire('config')->prependTemplateFile);
-
-        $appended = trim(wire('config')->appendTemplateFile);
-
+        $prepended = trim($config->prependTemplateFile);
+        $appended = trim($config->appendTemplateFile);
         $prependedTemplateFile = $prepended != '' ? $prepended : $none;
-
         $appendedTemplateFile = $appended != '' ? $appended : $none;
-
 
         $installPath = getcwd();
 
@@ -172,11 +157,10 @@ class StatusCommand extends PwConnector
      */
     protected function getAdminUrl()
     {
-        $admin = wire('pages')->get('template=admin');
+        $admin = \ProcessWire\wire('pages')->get('template=admin');
+        $url = \ProcessWire\wire('config')->urls->admin;
 
-        $url = wire('config')->urls->admin;
-
-        if (!($admin instanceof \NullPage) && isset($admin->httpUrl)) {
+        if (!($admin instanceof \ProcessWire\NullPage) && isset($admin->httpUrl)) {
             $url = $admin->httpUrl;
         }
 

@@ -43,7 +43,7 @@ class LogTailCommand extends PwConnector
     {
         parent::bootstrapProcessWire($output);
 
-        $log = wire('log');
+        $log = \ProcessWire\wire('log');
         $availableLogs = $log->getLogs();
         $availableLogsString = implode(array_keys($availableLogs), ', ');
 

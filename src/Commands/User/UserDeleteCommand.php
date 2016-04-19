@@ -41,21 +41,21 @@ class UserDeleteCommand extends PwUserTools
         parent::bootstrapProcessWire($output);
 
         if ($role = $input->getOption('role')) {
-            $users = wire('users')->find("roles=$role");
+            $users = \ProcessWire\wire('users')->find("roles=$role");
 
             foreach ($users as $user) {
-                wire('users')->delete($user);
+                \ProcessWire\wire('users')->delete($user);
             }
             $output->writeln("<info>Deleted {$users->count()} users successfully!</info>");
         } else {
             $users = explode(',', $input->getArgument('name'));
 
             foreach ($users as $name) {
-                if (wire('users')->get($name) instanceof \NullPage) {
+                if (\ProcessWire\wire('users')->get($name) instanceof \ProcessWire\NullPage) {
                     $output->writeln("<error>User '{$name}' doesn't exists!</error>");
                 } else {
-                    $user = wire('users')->get($name);
-                    wire('users')->delete($user);
+                    $user = \ProcessWire\wire('users')->get($name);
+                    \ProcessWire\wire('users')->delete($user);
                     $output->writeln("<info>User '{$name}' deleted successfully!</info>");
                 }
             }

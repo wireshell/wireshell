@@ -51,7 +51,7 @@ class ModuleDownloadCommand extends PwModuleTools {
             // check if we have the rights to download files from other domains
             // using copy or file_get_contents
             $this->output->writeln('The php config `allow_url_fopen` is disabled on the server. Enable it then try again.');
-        } elseif (!is_writable(wire('config')->paths->siteModules)) {
+        } elseif (!is_writable(\ProcessWire\wire('config')->paths->siteModules)) {
             // check if module directory is writeable
             $this->output->writeln('Make sure your /site/modules directory is writeable by PHP.');
         } else {
@@ -70,7 +70,7 @@ class ModuleDownloadCommand extends PwModuleTools {
                     $this->output->writeln(" <error> Module '{$module}' already exists! </error>\n");
                 } else {
                     // reset PW modules cache
-                    wire('modules')->resetCache();
+                    \ProcessWire\wire('modules')->resetCache();
                     if (isset($github)) {
                         $this->downloadModuleByUrl($module, $github);
                     } else {
@@ -79,7 +79,7 @@ class ModuleDownloadCommand extends PwModuleTools {
                 }
             }
 
-            wire('modules')->resetCache();
+            \ProcessWire\wire('modules')->resetCache();
         }
     }
 
@@ -90,8 +90,8 @@ class ModuleDownloadCommand extends PwModuleTools {
      */
     public function downloadModuleIfExists($module) {
         $contents = file_get_contents(
-            wire('config')->moduleServiceURL .
-            '?apikey=' . wire('config')->moduleServiceKey .
+            \ProcessWire\wire('config')->moduleServiceURL .
+            '?apikey=' . \ProcessWire\wire('config')->moduleServiceKey .
             '&limit=1' . '&class_name=' . $module
         );
 

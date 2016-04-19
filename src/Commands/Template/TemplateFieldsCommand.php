@@ -39,7 +39,7 @@ class TemplateFieldsCommand extends PwConnector
 
         parent::bootstrapProcessWire($output);
 
-        $template = wire('templates')->get($input->getArgument('template'));
+        $template = \ProcessWire\wire('templates')->get($input->getArgument('template'));
 
         $fields = explode(",", $input->getOption('fields'));
 
@@ -48,7 +48,7 @@ class TemplateFieldsCommand extends PwConnector
             exit(1);
         }
 
-        if (!wire('templates')->get($template)) {
+        if (!\ProcessWire\wire('templates')->get($template)) {
             $output->writeln("<error>Template {$template} cannot be found!</error>");
             exit(1);
         }
@@ -84,7 +84,7 @@ class TemplateFieldsCommand extends PwConnector
      */
     private function checkIfFieldExists($field, $output)
     {
-        if (!wire("fields")->get("{$field}")) {
+        if (!\ProcessWire\wire("fields")->get("{$field}")) {
             $output->writeln("<error>Field '{$field}' does not exist!</error>");
 
             return false;

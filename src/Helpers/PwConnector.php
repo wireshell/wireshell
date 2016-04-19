@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
+use ProcessWire\WireHttp;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Kfi\LocalCoachBundle\Test\FunctionalTester;
 
@@ -62,15 +63,15 @@ abstract class PwConnector extends SymfonyCommand
     {
         $this->checkForProcessWire($output);
 
-        if (!function_exists('wire')) {
+        if (!function_exists('\ProcessWire\wire')) {
             include(getcwd() . '/index.php');
         }
 
-        $this->userContainer = wire('pages')->get('29');
-        $this->roleContainer = wire('pages')->get('30');
+        $this->userContainer = \ProcessWire\wire('pages')->get('29');
+        $this->roleContainer = \ProcessWire\wire('pages')->get('30');
 
-        $this->moduleServiceURL = wire('config')->moduleServiceURL;
-        $this->moduleServiceKey = wire('config')->moduleServiceKey;
+        $this->moduleServiceURL = \ProcessWire\wire('config')->moduleServiceURL;
+        $this->moduleServiceKey = \ProcessWire\wire('config')->moduleServiceKey;
 
     }
 
@@ -99,10 +100,11 @@ abstract class PwConnector extends SymfonyCommand
      * @return boolean
      */
     protected function checkForCoreUpgrades($output, $input) {
+        $config = \ProcessWire\wire('config');
         $targetBranch = $this->determineBranch($input);
         $branches = $this->getCoreBranches($targetBranch);
         $upgrade = false;
-        $new = version_compare($branches['master']['version'], wire('config')->version);
+        $new = version_compare($branches['master']['version'], $config->version);
 
         // branch does not exist - assume commit hash
         if (!array_key_exists($targetBranch, $branches)) {
@@ -117,7 +119,7 @@ abstract class PwConnector extends SymfonyCommand
             if ($targetBranch === self::BRANCH_MASTER) $targetBranch = self::BRANCH_DEV;
 
             if ($targetBranch === self::BRANCH_DEV) {
-                $new = version_compare($branches['dev']['version'], wire('config')->version);
+                $new = version_compare($branches['dev']['version'], $config->version);
                 $branch = $branches['dev'];
             }
 
@@ -125,7 +127,7 @@ abstract class PwConnector extends SymfonyCommand
             if ($new < 0) $targetBranch = self::BRANCH_DEVNS;
 
             if ($targetBranch === self::BRANCH_DEVNS) {
-                $new = version_compare($branches['devns']['version'], wire('config')->version);
+                $new = version_compare($branches['devns']['version'], $config->version);
                 $branch = $branches['devns'];
             }
 
@@ -149,7 +151,7 @@ abstract class PwConnector extends SymfonyCommand
      */
     protected function getCoreBranches($targetBranch = 'master') {
         $branches = array();
-        $http = new \WireHttp();
+        $http = new WireHttp();
         $http->setHeader('User-Agent', 'ProcessWireUpgrade');
         $json = $http->get(self::branchesURL);
 
@@ -175,7 +177,7 @@ abstract class PwConnector extends SymfonyCommand
 
         // branch does not exist - assume sha
         if (!array_key_exists($targetBranch, $branches)) {
-            $http = new \WireHttp();
+            $http = new WireHttp();
             $http->setHeader('User-Agent', 'ProcessWireUpgrade');
             $versionUrl = str_replace('{branch}', $targetBranch, self::versionURL);
             $json = $http->get($versionUrl);

@@ -35,7 +35,7 @@ class RoleListCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
 
-        foreach (wire('roles') as $role) {
+        foreach (\ProcessWire\wire('roles') as $role) {
             $output->writeln("  - {$role->name}");
         }
     }

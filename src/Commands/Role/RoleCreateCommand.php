@@ -38,12 +38,12 @@ class RoleCreateCommand extends PwUserTools
         $names = explode(',', preg_replace('/\s+/', '', $input->getArgument('name')));
 
         foreach ($names as $name) {
-            if (!wire('roles')->get($name) instanceof \NullPage) {
+            if (!\ProcessWire\wire('roles')->get($name) instanceof \ProcessWire\NullPage) {
                 $output->writeln("<error>Role '{$name}' already exists!</error>");
                 exit(1);
             }
 
-            wire('roles')->add($name);
+            \ProcessWire\wire('roles')->add($name);
             $output->writeln("<info>Role '{$name}' created successfully!</info>");
         }
     }

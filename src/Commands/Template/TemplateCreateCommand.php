@@ -1,5 +1,7 @@
 <?php namespace Wireshell\Commands\Template;
 
+use ProcessWire\Template;
+use ProcessWire\Fieldgroup;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,13 +46,13 @@ class TemplateCreateCommand extends PwConnector
         $fields = explode(",", $input->getOption('fields'));
 
 
-        if (wire("templates")->get("{$name}")) {
+        if (\ProcessWire\wire("templates")->get("{$name}")) {
 
             $output->writeln("<error>Template '{$name}' already exists!</error>");
             exit(1);
         }
 
-        $fieldgroup = new \Fieldgroup();
+        $fieldgroup = new Fieldgroup();
         $fieldgroup->name = $name;
         $fieldgroup->add("title");
 
@@ -64,7 +66,7 @@ class TemplateCreateCommand extends PwConnector
 
         $fieldgroup->save();
 
-        $template = new \Template();
+        $template = new Template();
         $template->name = $name;
         $template->fieldgroup = $fieldgroup;
         $template->save();
@@ -83,7 +85,7 @@ class TemplateCreateCommand extends PwConnector
     private function createTemplateFile($name)
     {
         if ($templateFile = fopen('site/templates/' . $name . '.php', 'w')) {
-            $content = "<?php \n/* Template {$name} */\n";
+            $content = "<?php namespace ProcessWire; \n/* Template {$name} */\n";
 
             fwrite($templateFile, $content, 1024);
             fclose($templateFile);
@@ -97,7 +99,7 @@ class TemplateCreateCommand extends PwConnector
      */
     private function checkIfFieldExists($field, $output)
     {
-        if (!wire("fields")->get("{$field}")) {
+        if (!\ProcessWire\wire("fields")->get("{$field}")) {
             $output->writeln("<comment>Field '{$field}' does not exist!</comment>");
 
             return false;

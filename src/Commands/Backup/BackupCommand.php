@@ -40,10 +40,11 @@ class BackupCommand extends PwConnector
     {
         parent::bootstrapProcessWire($output);
 
-        $database = wire('config')->dbName;
-        $host = wire('config')->dbHost;
-        $user = wire('config')->dbUser;
-        $pass = wire('config')->dbPass;
+        $config = \ProcessWire\wire('config');
+        $database = $config->dbName;
+        $host = $config->dbHost;
+        $user = $config->dbUser;
+        $pass = $config->dbPass;
 
         $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
         $target = $input->getOption('target') ? $input->getOption('target') : '';

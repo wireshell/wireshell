@@ -38,16 +38,16 @@ class LogListCommand extends PwConnector
     {
         parent::bootstrapProcessWire($output);
 
-        $logs = wire('log')->getLogs();
+        $logs = \ProcessWire\wire('log')->getLogs();
         $output->writeln(WsTools::tint(count($logs) . ' logs', 'comment'));
 
         $data = array();
         foreach ($logs as $log) {
             $data[] = array(
                 $log['name'],
-                wireRelativeTimeStr($log['modified']),
-                wire('log')->getTotalEntries($log['name']),
-                wireBytesStr($log['size'])
+                \ProcessWire\wireRelativeTimeStr($log['modified']),
+                \ProcessWire\wire('log')->getTotalEntries($log['name']),
+                \ProcessWire\wireBytesStr($log['size'])
             );
         }
 
