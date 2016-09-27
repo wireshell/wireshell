@@ -18,22 +18,22 @@ use Wireshell\Helpers\WsTools as Tools;
  * @package Wireshell
  * @author Marcus Herrmann
  * @author Camilo Castro
+ * @author Tabea David
  * @author netcarver
  * @author horst
  */
-class StatusCommand extends PwConnector
-{
+class StatusCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('status')
             ->setDescription('Returns versions, paths and environment info')
             ->addOption('image', null, InputOption::VALUE_NONE, 'get Diagnose for Imagehandling')
-            ->addOption('php', null, InputOption::VALUE_NONE, 'get Diagnose for PHP');
+            ->addOption('php', null, InputOption::VALUE_NONE, 'get Diagnose for PHP')
+            ->addOption('pass', null, InputOption::VALUE_NONE, 'display database password');
     }
 
     /**
@@ -41,18 +41,15 @@ class StatusCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
-        $pwStatus = $this->getPWStatus();
-
+        $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
 
         $tables = [];
         $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
         $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
-
 
         if ($input->getOption('php')) {
             $phpStatus = $this->getDiagnosePHP();
@@ -64,22 +61,25 @@ class StatusCommand extends PwConnector
             $tables[] = $this->buildTable($output, $phpStatus, 'Image Diagnostics');
         }
 
-
         $this->renderTables($output, $tables);
     }
 
     /**
      * @return array
      */
-    protected function getPWStatus()
-    {
+    protected function getPWStatus($showPass) {
         $config = \ProcessWire\wire('config');
         $on = Tools::tint('On', Tools::kTintError);
         $off = Tools::tint('Off', Tools::kTintInfo);
         $none = Tools::tint('None', Tools::kTintInfo);
 
-
         $version = $config->version;
+        $latestVersion = parent::getVersion();
+
+        if ($version !== $latestVersion) {
+            $version .= Tools::tint(" (upgrade available: $latestVersion)", Tools::kTintComment);
+        }
+
         $adminUrl = $this->getAdminUrl();
         $advancedMode = $config->advanced ? $on : $off;
         $debugMode = $config->debug ? $on : $off;
@@ -89,7 +89,7 @@ class StatusCommand extends PwConnector
         $dbHost = $config->dbHost;
         $dbName = $config->dbName;
         $dbUser = $config->dbUser;
-        $dbPass = $config->dbPass;
+        $dbPass = $showPass ? $config->dbPass : '*****';
         $dbPort = $config->dbPort;
 
         $prepended = trim($config->prependTemplateFile);
@@ -123,24 +123,15 @@ class StatusCommand extends PwConnector
     /**
      * @return array
      */
-    protected function getWsStatus()
-    {
-
-        $version = $this->getApplication()->getVersion();
-
-        $documentation = 'http://wireshell.pw';
-
-        $status = [
-            ['Version', $version],
-            ['Documentation', $documentation],
-            ['License', "MIT"]
-        ];
-
-        return $status;
+    protected function getWsStatus() {
+        return array(
+            array('Version', $this->getApplication()->getVersion()),
+            array('Documentation', 'http://wireshell.pw'),
+            array('License', 'MIT')
+        );
     }
 
-    protected function buildTable(OutputInterface $output, $statusArray, $label)
-    {
+    protected function buildTable(OutputInterface $output, $statusArray, $label) {
         $headers = [Tools::tint($label, Tools::kTintComment)];
 
         $tablePW = new Table($output);
@@ -155,8 +146,7 @@ class StatusCommand extends PwConnector
     /**
      * @return string
      */
-    protected function getAdminUrl()
-    {
+    protected function getAdminUrl() {
         $admin = \ProcessWire\wire('pages')->get('template=admin');
         $url = \ProcessWire\wire('config')->urls->admin;
 
@@ -171,8 +161,7 @@ class StatusCommand extends PwConnector
      * @param OutputInterface $output
      * @param $tables
      */
-    protected function renderTables(OutputInterface $output, $tables)
-    {
+    protected function renderTables(OutputInterface $output, $tables) {
         $output->writeln("\n");
 
         foreach ($tables as $table) {
@@ -181,12 +170,10 @@ class StatusCommand extends PwConnector
         }
     }
 
-
     /**
      * wrapper method for the Diagnose PHP submodule from @netcarver
      */
-    protected function getDiagnosePHP()
-    {
+    protected function getDiagnosePHP() {
         $sub = new DiagnosePhp();
         $rows = $sub->GetDiagnostics();
         $result = [];
@@ -198,12 +185,10 @@ class StatusCommand extends PwConnector
         return $result;
     }
 
-
     /**
      * wrapper method for the Diagnose Imagehandling submodule from @netcarver & @horst
      */
-    protected function getDiagnoseImagehandling()
-    {
+    protected function getDiagnoseImagehandling() {
         $sub = new DiagnoseImagehandling();
         $rows = $sub->GetDiagnostics();
         $result = [];
@@ -216,7 +201,3 @@ class StatusCommand extends PwConnector
     }
 
 }
-
-
-
-
