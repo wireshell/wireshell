@@ -48,13 +48,13 @@ class ModuleEnableCommand extends PwModuleTools {
             }
 
             // check whether module is already installed
-            if (wire('modules')->isInstalled($module)) {
+            if (\ProcessWire\wire('modules')->isInstalled($module)) {
                 $output->writeln("<info>Module `{$module}` is already installed.</info>");
                 exit(1);
             }
 
             // install module
-            if (wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
+            if (\ProcessWire\wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
                 $output->writeln("<info>Module `{$module}` installed successfully.</info>");
             } else {
                 $output->writeln("<error>Module `{$module}` does not exist.</error>");

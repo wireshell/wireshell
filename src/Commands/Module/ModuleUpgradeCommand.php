@@ -40,21 +40,20 @@ class ModuleUpgradeCommand extends PwModuleTools {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
-        if (!wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
+        if (!\ProcessWire\wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
 
-        // just check for module upgrades
-        if ($input->getOption('check')) {
-          wire('modules')->resetCache();
+        if ($input->getArgument('modules') && !$input->getOption('check')) {
+            // upgrade specific modules
+            $modules = explode(",", $input->getArgument('modules'));
+            if ($modules) $this->upgradeModules($modules, $output);
+        } else {
+          \ProcessWire\wire('modules')->resetCache();
           if ($moduleVersions = parent::getModuleVersions(true, $output)) {
               $output->writeln("<info>An upgrade is available for:</info>");
               foreach ($moduleVersions as $name => $info) $output->writeln("  - $name: {$info['local']} -> {$info['remote']}");
           } else {
               $output->writeln("<info>Your modules are up-to-date.</info>");
           }
-        } else {
-          // upgrade specific modules
-          $modules = explode(",", $input->getArgument('modules'));
-          if ($modules) $this->upgradeModules($modules, $output);
         }
     }
 
@@ -88,8 +87,8 @@ class ModuleUpgradeCommand extends PwModuleTools {
             }
 
             // update module
-            $destinationDir = wire('config')->paths->siteModules . $module . '/';
-            wire('modules')->resetCache();
+            $destinationDir = \ProcessWire\wire('config')->paths->siteModules . $module . '/';
+            \ProcessWire\wire('modules')->resetCache();
             $this->output = $output;
 
             try {

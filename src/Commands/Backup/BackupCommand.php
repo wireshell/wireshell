@@ -28,7 +28,7 @@ class BackupCommand extends PwConnector
             ->setName('backup:db')
             ->setDescription('Performs database dump')
             ->addOption('filename', null, InputOption::VALUE_REQUIRED, 'Provide a file name for the dump')
-            ->addOption('target', null, InputOption::VALUE_REQUIRED, 'Provide a file path for the dump');
+            ->addOption('target', null, InputOption::VALUE_REQUIRED, 'Provide a file path for the dump (relative to ProcessWire root directory or absolute)');
     }
 
     /**
@@ -40,10 +40,11 @@ class BackupCommand extends PwConnector
     {
         parent::bootstrapProcessWire($output);
 
-        $database = wire('config')->dbName;
-        $host = wire('config')->dbHost;
-        $user = wire('config')->dbUser;
-        $pass = wire('config')->dbPass;
+        $config = \ProcessWire\wire('config');
+        $database = $config->dbName;
+        $host = $config->dbHost;
+        $user = $config->dbUser;
+        $pass = $config->dbPass;
 
         $filename = $input->getOption('filename') ? $input->getOption('filename') . '.sql' : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
         $target = $input->getOption('target') ? $input->getOption('target') : '';
@@ -60,7 +61,7 @@ class BackupCommand extends PwConnector
 
             new Export($dump);
         } catch (Exception $e) {
-            $output->writeln("<error>Export failed with message: {$e->getMessage()}</error>");
+            $output->writeln("<error>Export failed with message: {$e->getMessage()}. Please make sure that the provided target exists.</error>");
             exit(1);
         }
 

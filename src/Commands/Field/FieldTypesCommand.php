@@ -39,7 +39,7 @@ class FieldTypesCommand extends PwConnector
 
         // get available fieldtypes
         $fieldtypes = array();
-        foreach (wire('modules') as $module) {
+        foreach (\ProcessWire\wire('modules') as $module) {
             if (preg_match('/^Fieldtype/', $module->name)) {
                 $fieldtypes[] = $module->name;
             }

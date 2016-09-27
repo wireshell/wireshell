@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
+use ProcessWire\WireHttp;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Kfi\LocalCoachBundle\Test\FunctionalTester;
 
@@ -10,37 +11,33 @@ use Kfi\LocalCoachBundle\Test\FunctionalTester;
  *
  * @package Wireshell
  * @author Marcus Herrmann
+ * @author Tabea David
  */
-abstract class PwConnector extends SymfonyCommand
-{
+abstract class PwConnector extends SymfonyCommand {
 
-    const branchesURL = 'https://api.github.com/repos/ryancramerdesign/Processwire/branches';
-    const versionURL = 'https://raw.githubusercontent.com/ryancramerdesign/ProcessWire/{branch}/wire/core/ProcessWire.php';
-    const zipURL = 'https://github.com/ryancramerdesign/ProcessWire/archive/{branch}.zip';
-    const BRANCH_DEV = 'dev';
-    const BRANCH_DEVNS = 'devns';
+    const branchesURL = 'https://api.github.com/repos/processwire/processwire/branches';
+    const versionURL = 'https://raw.githubusercontent.com/processwire/processwire/{branch}/wire/core/ProcessWire.php';
+    const zipURL = 'https://github.com/processwire/processwire/archive/{branch}.zip';
     const BRANCH_MASTER = 'master';
+    const USER_PAGE_ID = '29';
+    const ROLE_PAGE_ID = '30';
 
     public $moduleServiceURL;
     public $moduleServiceKey;
     protected $userContainer;
     protected $roleContainer;
-    protected $modulePath = "/site/modules/";
+    protected $modulePath = '/site/modules/';
 
     /**
      * @param $output
      */
-    protected function checkForProcessWire($output)
-    {
-        if (!is_dir(getcwd() . "/wire")) {
-
+    protected function checkForProcessWire($output) {
+        if (!is_dir(getcwd() . '/wire')) {
             foreach (new \DirectoryIterator(getcwd()) as $fileInfo) {
-                if (is_dir($fileInfo->getPathname() . '/wire')) {
-                    chdir($fileInfo->getPathname());
-                }
+                if (is_dir($fileInfo->getPathname() . '/wire')) chdir($fileInfo->getPathname());
             }
 
-            if (!is_dir(getcwd() . "/wire")) {
+            if (!is_dir(getcwd() . '/wire')) {
                 chdir('..');
 
                 if (empty(pathinfo(getcwd())['basename'])) {
@@ -58,39 +55,24 @@ abstract class PwConnector extends SymfonyCommand
     /**
      * @param $output
      */
-    protected function bootstrapProcessWire($output)
-    {
+    protected function bootstrapProcessWire($output) {
         $this->checkForProcessWire($output);
 
-        if (!function_exists('wire')) {
-            include(getcwd() . '/index.php');
-        }
+        if (!function_exists('\ProcessWire\wire')) include(getcwd() . '/index.php');
 
-        $this->userContainer = wire('pages')->get('29');
-        $this->roleContainer = wire('pages')->get('30');
+        $this->userContainer = \ProcessWire\wire('pages')->get(self::USER_PAGE_ID);
+        $this->roleContainer = \ProcessWire\wire('pages')->get(self::ROLE_PAGE_ID);
 
-        $this->moduleServiceURL = wire('config')->moduleServiceURL;
-        $this->moduleServiceKey = wire('config')->moduleServiceKey;
-
+        $this->moduleServiceURL = \ProcessWire\wire('config')->moduleServiceURL;
+        $this->moduleServiceKey = \ProcessWire\wire('config')->moduleServiceKey;
     }
 
-    protected function getModuleDirectory()
-    {
+    protected function getModuleDirectory() {
         return $this->modulePath;
     }
 
     protected function determineBranch($input) {
-        if ($input->getOption('dev')) {
-            $branch = self::BRANCH_DEV;
-        } elseif ($input->getOption('devns')) {
-            $branch = self::BRANCH_DEVNS;
-        } elseif ($input->getOption('sha')) {
-            $branch = $input->getOption('sha');
-        } else {
-            $branch = self::BRANCH_MASTER;
-        }
-
-        return $branch;
+        return $input->getOption('sha') ? $input->getOption('sha') : self::BRANCH_MASTER;
     }
 
     /**
@@ -99,10 +81,11 @@ abstract class PwConnector extends SymfonyCommand
      * @return boolean
      */
     protected function checkForCoreUpgrades($output, $input) {
+        $config = \ProcessWire\wire('config');
         $targetBranch = $this->determineBranch($input);
         $branches = $this->getCoreBranches($targetBranch);
         $upgrade = false;
-        $new = version_compare($branches['master']['version'], wire('config')->version);
+        $new = version_compare($branches['master']['version'], $config->version);
 
         // branch does not exist - assume commit hash
         if (!array_key_exists($targetBranch, $branches)) {
@@ -112,24 +95,6 @@ abstract class PwConnector extends SymfonyCommand
             // master is newer than current
             $branch = $branches['master'];
             $upgrade = true;
-        } else {
-            // we will assume dev branch
-            if ($targetBranch === self::BRANCH_MASTER) $targetBranch = self::BRANCH_DEV;
-
-            if ($targetBranch === self::BRANCH_DEV) {
-                $new = version_compare($branches['dev']['version'], wire('config')->version);
-                $branch = $branches['dev'];
-            }
-
-            // we will assume devns branch
-            if ($new < 0) $targetBranch = self::BRANCH_DEVNS;
-
-            if ($targetBranch === self::BRANCH_DEVNS) {
-                $new = version_compare($branches['devns']['version'], wire('config')->version);
-                $branch = $branches['devns'];
-            }
-
-            if ($new > 0) $upgrade = true;
         }
 
         $versionStr = "$branch[name] $branch[version]";
@@ -149,12 +114,12 @@ abstract class PwConnector extends SymfonyCommand
      */
     protected function getCoreBranches($targetBranch = 'master') {
         $branches = array();
-        $http = new \WireHttp();
+        $http = new WireHttp();
         $http->setHeader('User-Agent', 'ProcessWireUpgrade');
         $json = $http->get(self::branchesURL);
 
         if (!$json) {
-            $error = "Error loading GitHub branches " . self::branchesURL;
+            $error = 'Error loading GitHub branches ' . self::branchesURL;
             throw new \WireException($error);
             $this->error($error);
             return array();
@@ -162,7 +127,7 @@ abstract class PwConnector extends SymfonyCommand
 
         $data = json_decode($json, true);
         if (!$data) {
-            $error = "Error JSON decoding GitHub branches " . self::branchesURL;
+            $error = 'Error JSON decoding GitHub branches ' . self::branchesURL;
             throw new \WireException($error);
             $this->error($error);
             return array();
@@ -175,7 +140,7 @@ abstract class PwConnector extends SymfonyCommand
 
         // branch does not exist - assume sha
         if (!array_key_exists($targetBranch, $branches)) {
-            $http = new \WireHttp();
+            $http = new WireHttp();
             $http->setHeader('User-Agent', 'ProcessWireUpgrade');
             $versionUrl = str_replace('{branch}', $targetBranch, self::versionURL);
             $json = $http->get($versionUrl);
@@ -210,12 +175,6 @@ abstract class PwConnector extends SymfonyCommand
         );
 
         switch ($name) {
-            case 'dev':
-                $branch['title'] = 'Development';
-                break;
-            case 'devns':
-                $branch['title'] = 'Development with namespace support';
-                break;
             case 'master':
                 $branch['title'] = 'Stable/Master';
                 break;
@@ -225,6 +184,20 @@ abstract class PwConnector extends SymfonyCommand
         }
 
         $content = $http->get($branch['versionURL']);
+        $branch['version'] = $this->getVersion($content);
+
+        return $branch;
+    }
+
+    public static function getVersion($content = '') {
+        if (!$content) {
+            $ch = curl_init(str_replace('{branch}', 'master', PwConnector::versionURL));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'ProcessWireGetVersion');
+            $content = curl_exec($ch);
+            curl_close($ch);
+        }
+
         if (!preg_match_all('/const\s+version(Major|Minor|Revision)\s*=\s*(\d+)/', $content, $matches)) {
             $branch['version'] = '?';
             return;
@@ -235,10 +208,7 @@ abstract class PwConnector extends SymfonyCommand
             $version[$var] = (int) $matches[2][$key];
         }
 
-        $branch['version'] = "$version[Major].$version[Minor].$version[Revision]";
-
-        return $branch;
+        return "$version[Major].$version[Minor].$version[Revision]";
     }
-
 
 }

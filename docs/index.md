@@ -2,7 +2,7 @@
 
 **ProcessWire command-line companion**
 
-Version 0.6.0
+Version 1.0.0, compatibility: ProcessWire 3.x
 
 A command-line interface for CMS/CMF [ProcessWire](https://processwire.com) based on the Symfony Console component.
 Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great [API](https://processwire.com/api/) and

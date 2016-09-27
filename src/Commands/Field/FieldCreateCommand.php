@@ -1,6 +1,6 @@
 <?php namespace Wireshell\Commands\Field;
 
-use Field;
+use ProcessWire\Field;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -53,7 +53,7 @@ class FieldCreateCommand extends PwConnector
 
         if ($check === true) {
             $field = new Field();
-            $field->type = wire('modules')->get($type);
+            $field->type = \ProcessWire\wire('modules')->get($type);
             $field->name = $name;
             $field->label = $label;
             $field->description = $input->getOption('desc');
@@ -72,7 +72,7 @@ class FieldCreateCommand extends PwConnector
     protected function checkFieltype($type) {
         // get available fieldtypes
         $fieldtypes = array();
-        foreach (wire('modules') as $module) {
+        foreach (\ProcessWire\wire('modules') as $module) {
             if (preg_match('/^Fieldtype/', $module->name)) {
                 $fieldtypes[] = $module->name;
             }

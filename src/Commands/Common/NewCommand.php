@@ -50,24 +50,17 @@ use Wireshell\Helpers\PwConnector;
  * @author Tabea David
  *
  */
-class NewCommand extends Command
-{
+class NewCommand extends Command {
 
     /**
      * @var Filesystem
      */
     private $fs;
-
     private $projectName;
-
     private $projectDir;
-
     private $version;
-
     private $compressedFilePath;
-
     private $requirementsErrors = array();
-
     private $installer;
 
     /**
@@ -75,8 +68,7 @@ class NewCommand extends Command
      */
     private $output;
 
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('new')
             ->setDescription('Creates a new ProcessWire project')
@@ -97,48 +89,40 @@ class NewCommand extends Command
             ->addOption('userpass', null, InputOption::VALUE_REQUIRED, 'Admin password')
             ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address')
             ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`')
-            ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+            ->addOption('src', null, InputOption::VALUE_REQUIRED, 'Path to pre-downloaded folder, zip or tgz: `path/to/src`')
             ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
             ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation')
             ->addOption('v', null, InputOption::VALUE_NONE, 'verbose');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $this->fs = new Filesystem();
-
-        if ($d = $input->getArgument('directory')) {
-          $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
-        } else {
-          $directory = getcwd();
-          if (!$directory) {
-              $output->writeln("<error>No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.</error>");
-              return;
-          }
-          chdir(dirname($directory));
-        }
-
-        $this->projectDir = $this->fs->isAbsolutePath($directory) ? $directory : getcwd() . DIRECTORY_SEPARATOR . $directory;
+        $this->projectDir = $this->getDirectory($input);
         $this->projectName = basename($this->projectDir);
+        $this->src = $input->getOption('src') ? $this->getAbsolutePath($input->getOption('src')) : null;
+        $srcStatus = $this->checkExtractedSrc();
         $v = $input->getOption('v') ? true : false;
 
+        $this->output = $output;
+        $profile = $input->getOption('profile');
+        $branch = $this->getZipURL($input);
         $logger = new Logger('name');
         $logger->pushHandler(new StreamHandler("php://output"));
         $this->installer = new Installer($logger, $this->projectDir, $v);
-
-        $this->version = '2.7.2';
-        $this->output = $output;
-
-        $profile = $input->getOption('profile');
-        $branch = $this->getZipURL($input);
+        $this->version = PwConnector::getVersion();
 
         try {
-            $this
-                ->checkProjectName()
-                ->download($branch)
-                ->extract()
-                ->cleanUp();
+            if (!$this->checkAlreadyDownloaded() && $srcStatus !== 'extracted') {
+                if (!$srcStatus) {
+                    $this
+                        ->checkProjectName()
+                        ->download($branch);
+                }
+
+                $this->extract();
+            }
+
+            $this->cleanUp();
         } catch (Exception $e) {
         }
 
@@ -189,24 +173,16 @@ class NewCommand extends Command
                 $post['dbPass'] = $dbPass;
 
                 $dbHost = $input->getOption('dbHost');
-                if ($dbHost) {
-                    $post['dbHost'] = $dbHost;
-                }
+                if ($dbHost) $post['dbHost'] = $dbHost;
 
                 $dbPort = $input->getOption('dbPort');
-                if ($dbPort) {
-                    $post['dbPort'] = $dbPort;
-                }
+                if ($dbPort) $post['dbPort'] = $dbPort;
 
                 $dbEngine = $input->getOption('dbEngine');
-                if ($dbEngine) {
-                    $post['dbEngine'] = $dbEngine;
-                }
+                if ($dbEngine) $post['dbEngine'] = $dbEngine;
 
                 $dbCharset = $input->getOption('dbCharset');
-                if ($dbCharset) {
-                    $post['dbCharset'] = $dbCharset;
-                }
+                if ($dbCharset) $post['dbCharset'] = $dbCharset;
 
                 $bundleNames = array('AcmeDemoBundle', 'AcmeBlogBundle', 'AcmeStoreBundle');
                 $timezone = $input->getOption('timezone');
@@ -281,12 +257,50 @@ class NewCommand extends Command
         }
     }
 
+    private function getAbsolutePath($path) {
+        return $this->fs->isAbsolutePath($path) ? $path : getcwd() . DIRECTORY_SEPARATOR . $path;
+    }
+
+    private function checkExtractedSrc() {
+        $status = null;
+
+        if ($this->src && $this->fs->exists($this->src)) {
+            switch(filetype($this->src)) {
+                case 'dir':
+                    // copy extracted src files to projectDir
+                    $this->fs->mirror($this->src, $this->projectDir);
+                    $status = 'extracted';
+                    break;
+                case 'file':
+                    // check for zip or tgz filetype
+                    if (in_array(pathinfo($this->src)['extension'], array('zip', 'tgz'))) {
+                        $status = 'compressed';
+                    }
+                    break;
+            }
+        }
+
+        return $status;
+    }
+
+    private function getDirectory($input) {
+        $directory = getcwd();
+
+        if ($d = $input->getArgument('directory')) {
+          $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
+        } else {
+          if (!$directory) {
+              $output->writeln("<error>No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.</error>");
+              return;
+          }
+          chdir(dirname($directory));
+        }
+
+        return $this->getAbsolutePath($directory);
+    }
+
     private function getZipURL($input) {
-        if ($input->getOption('dev')) {
-            $targetBranch = PwConnector::BRANCH_DEV;
-        } elseif ($input->getOption('devns')) {
-            $targetBranch = PwConnector::BRANCH_DEVNS;
-        } elseif ($input->getOption('sha')) {
+        if ($input->getOption('sha')) {
             $targetBranch = $input->getOption('sha');
         } else {
             $targetBranch = PwConnector::BRANCH_MASTER;
@@ -329,8 +343,7 @@ class NewCommand extends Command
      *
      * @throws \RuntimeException if a project with the same does already exist
      */
-    private function checkProjectName()
-    {
+    private function checkProjectName() {
         if (is_dir($this->projectDir) && !$this->isEmptyDirectory($this->projectDir)) {
             throw new \RuntimeException(sprintf(
                 "There is already a '%s' project in this directory (%s).\n" .
@@ -342,6 +355,10 @@ class NewCommand extends Command
         return $this;
     }
 
+    private function checkAlreadyDownloaded() {
+        return file_exists($this->projectDir . '/site/install') ? true : false;
+    }
+
     /**
      * Chooses the best compressed file format to download (ZIP or TGZ) depending upon the
      * available operating system uncompressing commands and the enabled PHP extensions
@@ -351,8 +368,7 @@ class NewCommand extends Command
      *
      * @throws \RuntimeException if the ProcessWire archive could not be downloaded
      */
-    private function download($branch)
-    {
+    private function download($branch) {
         $this->output->writeln("\n Downloading ProcessWire...");
 
         $distill = new Distill();
@@ -442,13 +458,13 @@ class NewCommand extends Command
      *
      * @throws \RuntimeException if the downloaded archive could not be extracted
      */
-    private function extract()
-    {
+    private function extract() {
         $this->output->writeln(" Preparing project...\n");
+        $cfp = $this->src ? $this->src : $this->compressedFilePath;
 
         try {
             $distill = new Distill();
-            $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath, $this->projectDir);
+            $extractionSucceeded = $distill->extractWithoutRootDirectory($cfp, $this->projectDir);
         } catch (FileCorruptedException $e) {
             throw new \RuntimeException(sprintf(
                 "ProcessWire can't be installed because the downloaded package is corrupted.\n" .
@@ -497,8 +513,7 @@ class NewCommand extends Command
      *
      * @return NewCommand
      */
-    private function cleanUp()
-    {
+    private function cleanUp() {
         $this->fs->remove(dirname($this->compressedFilePath));
 
         try {
@@ -528,15 +543,15 @@ class NewCommand extends Command
      *
      * @return NewCommand
      */
-    private function cleanUpInstallation()
-    {
+    private function cleanUpInstallation() {
         $this->fs->remove(dirname($this->compressedFilePath));
 
         try {
             $siteDirs = glob($this->projectDir . '/site-*');
             $installDir = array($this->projectDir . '/site/install');
+            $installFile = array($this->projectDir . '/install.php');
 
-            $this->fs->remove(array_merge($siteDirs, $installDir));
+            $this->fs->remove(array_merge($siteDirs, $installDir, $installFile));
             if ($this->v) $this->output->writeln("Remove ProcessWire-related files that don't make sense in a running project.");
         } catch (\Exception $e) {
             // don't throw an exception in case any of the ProcessWire-related files cannot
@@ -552,15 +567,13 @@ class NewCommand extends Command
      *
      * @return OneclickCommand
      */
-    private function checkProcessWireRequirements()
-    {
+    private function checkProcessWireRequirements() {
         $this->installer->compatibilityCheck();
 
         return $this;
     }
 
-    private function installProcessWire($post, $accountInfo)
-    {
+    private function installProcessWire($post, $accountInfo) {
         $this->installer->dbSaveConfig($post, $accountInfo);
 
         return $this;
@@ -573,8 +586,7 @@ class NewCommand extends Command
      *
      * @return string The human readable string of bytes (e.g. 4.32MB)
      */
-    private function formatSize($bytes)
-    {
+    private function formatSize($bytes) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
         $bytes = max($bytes, 0);
@@ -595,8 +607,7 @@ class NewCommand extends Command
      *
      * @return string
      */
-    private function getErrorMessage(\Requirement $requirement, $lineSize = 70)
-    {
+    private function getErrorMessage(\Requirement $requirement, $lineSize = 70) {
         if ($requirement->isFulfilled()) {
             return;
         }
@@ -612,20 +623,15 @@ class NewCommand extends Command
      *
      * @return string
      */
-    private function getExecutedCommand()
-    {
+    private function getExecutedCommand() {
         $version = '';
-        if ('latest' !== $this->version) {
-            $version = $this->version;
-        }
+        if ('latest' !== $this->version) $version = $this->version;
 
         $pathDirs = explode(PATH_SEPARATOR, $_SERVER['PATH']);
         $executedCommand = $_SERVER['PHP_SELF'];
         $executedCommandDir = dirname($executedCommand);
 
-        if (in_array($executedCommandDir, $pathDirs)) {
-            $executedCommand = basename($executedCommand);
-        }
+        if (in_array($executedCommandDir, $pathDirs)) $executedCommand = basename($executedCommand);
 
         return sprintf('%s new %s %s', $executedCommand, $this->projectName, $version);
     }
@@ -636,15 +642,13 @@ class NewCommand extends Command
      * @param  string $dir the path of the directory to check
      * @return bool
      */
-    private function isEmptyDirectory($dir)
-    {
+    private function isEmptyDirectory($dir) {
         // glob() cannot be used because it doesn't take into account hidden files
         // scandir() returns '.'  and '..'  for an empty dir
         return 2 === count(scandir($dir . '/'));
     }
 
-    private function extractProfile($profile)
-    {
+    private function extractProfile($profile) {
         if (!$profile || !preg_match('/^.*\.zip$/', $profile)) return $profile;
 
         $this->output->writeln(" Extracting profile...\n");

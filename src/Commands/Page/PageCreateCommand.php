@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Page;
 
+use ProcessWire\Page;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,21 +46,21 @@ class PageCreateCommand extends PwUserTools
         parent::bootstrapProcessWire($output);
 
         $names = explode(',', $input->getArgument('name'));
-        $pages = wire('pages');
+        $pages = \ProcessWire\wire('pages');
         $template = $this->getTemplate($input, $output);
         $parent = $this->getParent($input, $output);
 
         foreach ($names as $name) {
-            $sanitizedName = wire('sanitizer')->pageName($name);
-            if (!wire('pages')->get($parent . $sanitizedName . '/') instanceof \NullPage) {
+            $sanitizedName = \ProcessWire\wire('sanitizer')->pageName($name);
+            if (!\ProcessWire\wire('pages')->get($parent->url . $sanitizedName . '/') instanceof \ProcessWire\NullPage) {
                 $output->writeln("<error>The page name  '{$name}' is already taken.</error>");
                 continue;
             }
 
             // create page and populate it with the required details to save it a first time
-            $p = new \Page();
+            $p = new Page();
             $p->template = $template;
-            $p->parent = wire('pages')->get($parent);
+            $p->parent = $parent;
             $p->name = $sanitizedName; // give it a name used in the url for the page
             $p->title = $input->getOption('title') ? $input->getOption('title') : $name;
 
@@ -87,7 +88,7 @@ class PageCreateCommand extends PwUserTools
             $templateName = $helper->ask($input, $output, $question);
         }
 
-        $template = wire('templates')->get($templateName);
+        $template = \ProcessWire\wire('templates')->get($templateName);
         if (!$template) {
             $output->writeln("<error>Template '{$templateName}' doesn't exist!</error>");
             exit(1);
@@ -112,14 +113,15 @@ class PageCreateCommand extends PwUserTools
         $parent = '/';
 
         // parent page submitted and existing?
-        if (
-            $input->getOption('parent') &&
-            !wire('pages')->get('/' . $input->getOption('parent') . '/') instanceof \NullPage
-        ) {
-            $parent = '/' . $input->getOption('parent') . '/';
+        if ($input->getOption('parent')) {
+            if (!\ProcessWire\wire('pages')->get('/' . $input->getOption('parent') . '/') instanceof \ProcessWire\NullPage) {
+                $parent = '/' . $input->getOption('parent') . '/';
+            } elseif (!\ProcessWire\wire('pages')->get($input->getOption('parent')) instanceof \ProcessWire\NullPage) {
+                $parent = (int)$input->getOption('parent');
+            }
         }
 
-        $parentPage = wire('pages')->get($parent);
+        $parentPage = \ProcessWire\wire('pages')->get($parent);
         $parentTemplate = $parentPage->template;
 
         // may pages using this template have children?
@@ -148,7 +150,7 @@ class PageCreateCommand extends PwUserTools
             exit(1);
         }
 
-        return $parent;
+        return $parentPage;
     }
 
     /**
@@ -204,7 +206,7 @@ class PageCreateCommand extends PwUserTools
                 $fieldname = strtolower($fieldname);
 
                 if ($p->$fieldname) {
-                    if ($fieldname === 'name') $fieldval = wire('sanitizer')->pageName($fieldval);
+                    if ($fieldname === 'name') $fieldval = \ProcessWire\wire('sanitizer')->pageName($fieldval);
                     $p->$fieldname = $fieldval;
                 } else {
                     $output->writeln("<comment>For the chosen template field `$fieldname` does not exist.\n</comment>");

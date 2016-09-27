@@ -31,8 +31,7 @@ $ wireshell new {directory}*
 --userpass : Admin password
 --useremail : Admin email address
 --profile : Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`
---dev : Download dev branch
---devns : Download devns branch (dev with namespace support)
+--src : Path to pre-downloaded folder, zip or tgz: `path/to/src`
 --sha : Download specific commit
 --no-install : Disable installation
 --v : Increase the verbosity of messages
@@ -52,6 +51,12 @@ Download and unzip ProcessWires master branch into specific directory.
 $ wireshell new /path/where/to/install --no-install
 ```
 
+Use pre-downloaded source.
+
+```sh
+$ wireshell new /path/where/to/install --src=Downloads/ProcessWire
+```
+
 Custom profile ProcessWire installation.
 
 ```sh
@@ -62,18 +67,6 @@ Use predefined profile `languages`.
 
 ```sh
 $ wireshell new /path/where/to/install --profile=languages
-```
-
-Download and install `dev` branch.
-
-```sh
-$ wireshell new /path/where/to/install --dev
-```
-
-Download and install `devns` branch - ProcessWire 3.x with namespace support.
-
-```sh
-$ wireshell new /path/where/to/install --devns
 ```
 
 Download and install specific commit.
@@ -87,10 +80,7 @@ $ wireshell new /path/where/to/install --sha=cffb682836517065d7dd7acf187545a4a80
 ## Upgrade
 
 Updates ProcessWire to latest stable release.
-If you don't provide any option, defaults to `master` (latest stable) branch. ** Unless**:
-
-- if your local installation is greater than master, uses `dev` branch
-- if your local installation is greater than dev, uses `devns` branch automatically
+If you don't provide any option, defaults to `master` (latest stable) branch.
 
 ```sh
 $ wireshell upgrade
@@ -99,8 +89,6 @@ $ wireshell upgrade
 ### Available options:
 
 ```sh
---dev : Download dev branch
---devns : Download devns branch (dev with namespace support)
 --sha : Download specific commit
 --check : Just check for core upgrades.
 --download : Just download core upgrades.
@@ -108,17 +96,11 @@ $ wireshell upgrade
 
 ### Examples
 
-Download and install `dev` branch.
-
-```sh
-$ wireshell upgrade --dev
-```
-
 Check if an update is available.
 
 ```sh
 $ wireshell upgrade --check
-A ProcessWire core upgrade is available: dev 2.7.2
+A ProcessWire core upgrade is available: dev 3.0.34
 ```
 
 Just download update, do not install.
@@ -143,6 +125,7 @@ $ wireshell status
 ```sh
 --image : get image diagnostics
 --php : get diagnose about PHP versions and paths
+--pass : display database password
 ```
 
 ### Examples
@@ -155,7 +138,7 @@ $ wireshell status --php --image
  ========================= ===============================
   ProcessWire
  ========================= ===============================
-  Version                   2.7.1
+  Version                   3.0.33 (upgrade available: 3.0.34)
   Admin URL                 /processwire/
   Advanced mode             Off
   Debug mode                On
@@ -167,7 +150,7 @@ $ wireshell status --php --image
   Database host             localhost
   Database name             pw
   Database user             xxx
-  Database password         xxx
+  Database password         *****
   Database port             3306
   Installation path         /Users/xxx/pw
  ========================= ===============================
@@ -175,7 +158,7 @@ $ wireshell status --php --image
  =============== =====================
   wireshell
  =============== =====================
-  Version         0.5.1
+  Version         1.0.0
   Documentation   http://wireshell.pw
   License         MIT
  =============== =====================

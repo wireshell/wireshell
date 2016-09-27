@@ -1,9 +1,9 @@
 <?php namespace Wireshell\Commands\Field;
 
-use Field;
-use Fieldgroup;
-use InputfieldText;
-use InputfieldWrapper;
+use ProcessWire\Field;
+use ProcessWire\Fieldgroup;
+use ProcessWire\InputfieldText;
+use ProcessWire\InputfieldWrapper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -43,7 +43,7 @@ class FieldCloneCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $field = $input->getArgument('field');
-        $fields = wire('fields');
+        $fields = \ProcessWire\wire('fields');
         $fieldToClone = $fields->get($field);
 
         if (is_null($fieldToClone)) {

@@ -61,9 +61,9 @@ class UserListCommand extends PwUserTools
         $role = $input->getOption('role');
 
         if ($role) {
-            $users = wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
+            $users = \ProcessWire\wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
         } else {
-            $users = wire('users')->find('start=0')->sort('name');
+            $users = \ProcessWire\wire('users')->find('start=0')->sort('name');
         }
 
         return $users;
