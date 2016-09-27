@@ -2,9 +2,14 @@
 
 Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
-**1.0.0 (2016-04-19)
+**1.0.0** (2016-09-27)
 
-- Prepares wireshell for ProcessWire 3.x
+- Prepares wireshell for ProcessWire 3.x, adds namespace support, only supports ProcessWire 3.x
+- Updates Github Repository: [github.com/processwire/processwire](https://github.com/processwire/processwire)
+- Improves `module:upgrade` command, if no argument is provided just check for upgrades
+- Extends `new` command, adds option `--src=path/to/source` to be able to use a pre-downloaded tgz/zip/folder
+- Extends `status` command, only shows database password if `--pass` option is provided, shows if an upgrade is available
+- Updates `upgrade` command, removes options *dev* and *devns*
 
 **0.6.0 (2016-02-26)**
 
