@@ -9,8 +9,7 @@
  * @author Tabea David
  */
 
-class PwTools extends PwConnector
-{
+class PwTools extends PwConnector {
 
     /**
      * Method to get field type name
