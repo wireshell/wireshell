@@ -26,8 +26,7 @@ use Wireshell\Helpers\PwConnector;
  * @author Ryan Cramer https://github.com/ryancramerdesign/ProcessWireUpgrade
  * @author Tabea David <info@justonestep.de>
  */
-class UpgradeCommand extends PwConnector
-{
+class UpgradeCommand extends PwConnector {
 
     /**
      * @var OutputInterface
@@ -54,23 +53,18 @@ class UpgradeCommand extends PwConnector
 
     protected $filesToReplace = array('wire', 'htaccess.txt', 'index.php');
 
-    function __construct(Filesystem $fs)
-    {
+    function __construct(Filesystem $fs) {
         $this->fs = $fs;
         parent::__construct();
     }
 
-
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('upgrade')
             ->setDescription('Checks for core upgrades.')
-            ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
-            ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
             ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
             ->addOption('check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
             ->addOption('download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
@@ -81,8 +75,7 @@ class UpgradeCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         $check = parent::checkForCoreUpgrades($output, $input);
@@ -123,8 +116,7 @@ class UpgradeCommand extends PwConnector
      *
      * @throws \RuntimeException if the ProcessWire archive could not be downloaded
      */
-    private function download()
-    {
+    private function download() {
         $this->output->writeln("\n  Downloading ProcessWire Version " . $this->branch['version'] . "...");
 
         $distill = new Distill();
@@ -213,8 +205,7 @@ class UpgradeCommand extends PwConnector
      *
      * @return string The human readable string of bytes (e.g. 4.32MB)
      */
-    private function formatSize($bytes)
-    {
+    private function formatSize($bytes) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
         $bytes = max($bytes, 0);
@@ -232,8 +223,7 @@ class UpgradeCommand extends PwConnector
      *
      * @throws \RuntimeException if the downloaded archive could not be extracted
      */
-    private function extract()
-    {
+    private function extract() {
         $this->output->writeln("  Preparing new core version...\n");
         $this->uncompressedFilePath = dirname($this->compressedFilePath);
 
@@ -375,7 +365,6 @@ class UpgradeCommand extends PwConnector
             if ($files) {
                 $this->output->writeln("  You have to replace <fg=cyan;options=bold>$files</fg=cyan;options=bold> manually.");
             }
-
         }
     }
 
@@ -385,8 +374,7 @@ class UpgradeCommand extends PwConnector
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    private function checkPermissions(InputInterface $input, OutputInterface $output)
-    {
+    private function checkPermissions(InputInterface $input, OutputInterface $output) {
         $wireFolder = getcwd() . '/wire';
         $indexFile = getcwd() . '/index.php';
 
@@ -394,20 +382,15 @@ class UpgradeCommand extends PwConnector
         $indexFilePermissions = substr(sprintf('%o', fileperms($indexFile)), -4);
 
         if (($wireDirPermissions == '0700') && ($indexFilePermissions == '0644')) {
-
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion('  Change permissions on updated files and folders? Type y or n: ', false);
 
-            if (!$helper->ask($input, $output, $question)) {
-                return;
-            }
+            if (!$helper->ask($input, $output, $question)) return;
 
             $this->fs->chmod($indexFile, 0755);
             $this->fs->chmod($wireFolder, 0755, 0000, true);
 
             $this->output->writeln("<info>  Permissions changed.</info>");
-
         }
-
     }
 }
