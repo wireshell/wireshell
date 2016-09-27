@@ -15,7 +15,7 @@ $ wireshell backup:db
 
 ```sh
 --filename : Provide a file name for the dump
---target : Provide a file path for the dump
+--target : Provide a file path for the dump (relative to ProcessWire root directory or absolute)
 ```
 
 ### Examples
@@ -33,7 +33,7 @@ Dump database into non-existing folder.
 ```sh
 $ wireshell backup:db --filename=ymd-bak --target=nonexisting
 
-Export failed with message: Unable to move the temporary file.
+Export failed with message: Unable to move the temporary file. Please make sure that the provided target exists.
 ```
 
 You can use absolute as well as relative paths.
