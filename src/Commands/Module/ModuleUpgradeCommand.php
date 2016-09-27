@@ -42,8 +42,11 @@ class ModuleUpgradeCommand extends PwModuleTools {
         parent::bootstrapProcessWire($output);
         if (!\ProcessWire\wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
 
-        // just check for module upgrades
-        if ($input->getOption('check')) {
+        if ($input->getArgument('modules') && !$input->getOption('check')) {
+            // upgrade specific modules
+            $modules = explode(",", $input->getArgument('modules'));
+            if ($modules) $this->upgradeModules($modules, $output);
+        } else {
           \ProcessWire\wire('modules')->resetCache();
           if ($moduleVersions = parent::getModuleVersions(true, $output)) {
               $output->writeln("<info>An upgrade is available for:</info>");
@@ -51,10 +54,6 @@ class ModuleUpgradeCommand extends PwModuleTools {
           } else {
               $output->writeln("<info>Your modules are up-to-date.</info>");
           }
-        } else {
-          // upgrade specific modules
-          $modules = explode(",", $input->getArgument('modules'));
-          if ($modules) $this->upgradeModules($modules, $output);
         }
     }
 
