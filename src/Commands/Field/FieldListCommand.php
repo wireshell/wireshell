@@ -1,6 +1,6 @@
 <?php namespace Wireshell\Commands\Field;
 
-use Field;
+use ProcessWire\Field;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,7 +47,7 @@ class FieldListCommand extends PwConnector
 
         // get available fields
         $fieldtypes = array();
-        foreach (wire('modules') as $module) {
+        foreach (\ProcessWire\wire('modules') as $module) {
             if (preg_match('/^Fieldtype/', $module->name)) {
                 $fieldtypes[] = $module->name;
             }
@@ -92,7 +92,7 @@ class FieldListCommand extends PwConnector
         $content = array();
         $count = 0;
 
-        foreach (wire('fields') as $field) {
+        foreach (\ProcessWire\wire('fields') as $field) {
             // no filter, exclude built-in fields except title
             if ($filter->all === false && ($field->flags & Field::flagSystem || $field->flags & Field::flagPermanent)) {
                 if ($field->name != 'title') continue;

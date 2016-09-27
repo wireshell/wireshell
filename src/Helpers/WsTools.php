@@ -7,10 +7,10 @@
  *
  * @package Wireshell
  * @author Camilo Castro
+ * @author Tabea David
  */
 
-abstract class WsTools
-{
+abstract class WsTools {
     const kTintError = "error";
     const kTintInfo = "info";
     const kTintComment = "comment";
@@ -22,8 +22,7 @@ abstract class WsTools
      * @param $type
      * @return tinted string
      */
-    public static function tint($string, $type)
-    {
+    public static function tint($string, $type) {
         return "<{$type}>{$string}</{$type}>";
     }
 

@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Template;
 
+use ProcessWire\Template;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,16 +56,16 @@ class TemplateListCommand extends PwConnector
      */
     private function getTemplateData($advanced) {
         $content = array();
-        $advanced = wire('config')->advanced || $advanced;
-        foreach (wire('templates') as $t) {
-            if (!$advanced && ($t->flags & \Template::flagSystem)) continue;
+        $advanced = \ProcessWire\wire('config')->advanced || $advanced;
+        foreach (\ProcessWire\wire('templates') as $t) {
+            if (!$advanced && ($t->flags & Template::flagSystem)) continue;
 
             $content[] = array(
                 $t->name,
                 count($t->fieldgroup),
                 $t->getNumPages(),
-                wireRelativeTimeStr($t->modified),
-                $t->flags & \Template::flagSystem ? '✖' : ''
+                \ProcessWire\wireRelativeTimeStr($t->modified),
+                $t->flags & Template::flagSystem ? '✖' : ''
             );
         }
 

@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
+use ProcessWire\Page;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -18,11 +19,11 @@ class PwUserTools extends PwConnector
      * @param $name
      * @param $userContainer
      * @param $pass
-     * @return \Page
+     * @return Page
      */
     public function createUser($email, $name, $userContainer, $pass)
     {
-        $user = new \Page();
+        $user = new Page();
         $user->template = 'user';
         $user->setOutputFormatting(false);
 
@@ -43,14 +44,14 @@ class PwUserTools extends PwConnector
      */
     public function updateUser(InputInterface $input, $name, $pass)
     {
-        $user = wire('users')->get($name);
+        $user = \ProcessWire\wire('users')->get($name);
         $user->setOutputFormatting(false);
 
         $newname = $input->getOption('newname');
         $email = $input->getOption('email');
 
         if (!empty($newname)) {
-          $name = wire('sanitizer')->username($input->getOption('newname'));
+          $name = \ProcessWire\wire('sanitizer')->username($input->getOption('newname'));
           $user->name = $name;
           $user->title = $name;
         }
@@ -58,7 +59,7 @@ class PwUserTools extends PwConnector
         if (!empty($pass)) $user->pass = $pass;
 
         if (!empty($email)) {
-          $email = wire('sanitizer')->email($input->getOption('email'));
+          $email = \ProcessWire\wire('sanitizer')->email($input->getOption('email'));
           if ($email) $user->email = $email;
         }
 
@@ -74,7 +75,7 @@ class PwUserTools extends PwConnector
      */
     public function attachRolesToUser($user, $roles, $output, $reset = false)
     {
-        $editedUser = wire('users')->get($user);
+        $editedUser = \ProcessWire\wire('users')->get($user);
 
         // remove existing roles
         if ($reset === true) {
@@ -85,6 +86,7 @@ class PwUserTools extends PwConnector
 
         // add roles
         foreach ($roles as $role) {
+            if ($role === 'guest') continue;
             $this->checkIfRoleExists($role, $output);
 
             $editedUser->addRole($role);
@@ -101,7 +103,7 @@ class PwUserTools extends PwConnector
      */
     private function checkIfRoleExists($role, $output)
     {
-        if (wire("pages")->get("name={$role}") instanceof \NullPage) {
+        if (\ProcessWire\wire("pages")->get("name={$role}") instanceof \ProcessWire\NullPage) {
             $output->writeln("<comment>Role '{$role}' does not exist!</comment>");
 
             return false;

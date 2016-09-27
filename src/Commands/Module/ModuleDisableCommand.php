@@ -44,13 +44,13 @@ class ModuleDisableCommand extends PwConnector
         foreach ($modules as $module) {
             $this->checkIfModuleExists($module, $output, $remove);
 
-            if (wire('modules')->uninstall($module)) {
+            if (\ProcessWire\wire('modules')->uninstall($module)) {
                 $output->writeln("Module {$module} <comment>uninstalled</comment> successfully.");
             }
 
             // remove module
-            if ($remove === true && is_dir(wire('config')->paths->$module)) {
-                if ($this->recurseRmdir(wire('config')->paths->$module)) {
+            if ($remove === true && is_dir(\ProcessWire\wire('config')->paths->$module)) {
+                if ($this->recurseRmdir(\ProcessWire\wire('config')->paths->$module)) {
                     $output->writeln("Module {$module} was <comment>removed</comment> successfully.");
                 } else {
                     $output->writeln("Module {$module} could not be removed <fg=red>could not be removed</fg=red>.");
@@ -62,12 +62,12 @@ class ModuleDisableCommand extends PwConnector
 
     private function checkIfModuleExists($module, $output, $remove)
     {
-        if (!is_dir(wire('config')->paths->siteModules . $module)) {
+        if (!is_dir(\ProcessWire\wire('config')->paths->siteModules . $module)) {
             $output->writeln("<error>Module '{$module}' does not exist!</error>");
             exit(1);
         }
 
-        if (!wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true)) && $remove === false) {
+        if (!\ProcessWire\wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true)) && $remove === false) {
             $output->writeln("<info>Module '{$module}' is not installed!</info>");
             exit(1);
         }

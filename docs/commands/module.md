@@ -127,7 +127,7 @@ $ wireshell module:upgrade {class-name},{class-name}*
 Check if module upgrades are available.
 
 ```sh
-$ wireshell module:upgrade --check
+$ wireshell module:upgrade
 
 An upgrade is available for:
   - FlagPages: 0.0.8 -> 0.2.3

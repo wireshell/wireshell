@@ -1,8 +1,8 @@
 <?php namespace Wireshell\Commands\Field;
 
-use Field;
-use Fieldgroup;
-use InputfieldText;
+use ProcessWire\Field;
+use ProcessWire\Fieldgroup;
+use ProcessWire\InputfieldText;
 use InputfieldWrapper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,7 +44,7 @@ class FieldTagCommand extends PwConnector
         parent::bootstrapProcessWire($output);
 
         $inputFields = explode(',', $input->getArgument('field'));
-        $fields = wire('fields');
+        $fields = \ProcessWire\wire('fields');
 
         if ($input->getOption('tag')) {
             $tag = $input->getOption('tag');

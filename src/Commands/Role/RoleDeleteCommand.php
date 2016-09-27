@@ -36,10 +36,10 @@ class RoleDeleteCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
         $names = explode(',', preg_replace('/\s+/', '', $input->getArgument('name')));
-        $roles = wire('roles');
+        $roles = \ProcessWire\wire('roles');
 
         foreach ($names as $name) {
-            if ($roles->get($name) instanceof \NullPage) {
+            if ($roles->get($name) instanceof \ProcessWire\NullPage) {
                 $output->writeln("<error>Role '{$name}' does not exist.</error>");
                 exit(1);
             }

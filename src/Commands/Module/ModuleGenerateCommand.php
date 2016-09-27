@@ -71,7 +71,7 @@ class ModuleGenerateCommand extends PwModuleTools
     {
         parent::bootstrapProcessWire($output);
 
-        $modName = wire('sanitizer')->name($input->getArgument('name'));
+        $modName = \ProcessWire\wire('sanitizer')->name($input->getArgument('name'));
 
         $request = $this->createRequest($modName, $output, $input);
 
@@ -99,7 +99,7 @@ class ModuleGenerateCommand extends PwModuleTools
     {
         return [
             'version' => '0.0.1',
-            'requirePw' => wire('config')->version,
+            'requirePw' => \ProcessWire\wire('config')->version,
             'requirePhp' => PHP_VERSION
         ];
     }

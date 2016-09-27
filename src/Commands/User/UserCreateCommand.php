@@ -59,7 +59,7 @@ class UserCreateCommand extends PwUserTools
             $pass = $helper->ask($input, $output, $question);
         }
 
-        if (!wire("pages")->get("name={$name}") instanceof \NullPage) {
+        if (!\ProcessWire\wire("pages")->get("name={$name}") instanceof \ProcessWire\NullPage) {
             $output->writeln("<error>User '{$name}' already exists!</error>");
             exit(1);
         }

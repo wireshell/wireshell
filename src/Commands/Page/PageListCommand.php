@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Page;
 
+use ProcessWire\Page;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -57,7 +58,7 @@ class PageListCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
 
-        $pages = wire('pages');
+        $pages = \ProcessWire\wire('pages');
         $this->output = $output;
         $this->indent = 0;
 
@@ -103,7 +104,7 @@ class PageListCommand extends PwUserTools
      * @param $start
      */
     private function setSelector($input, $start) {
-        $config = wire('config');
+        $config = \ProcessWire\wire('config');
         $inclAll = $input->getOption('all') === true ? true : false;
         $inclTrashed = $input->getOption('trash') === true ? true : false;
 
@@ -114,7 +115,7 @@ class PageListCommand extends PwUserTools
         } elseif ($inclAll === true) {
             $select = "has_parent!={$config->adminRootPageID},";
             $select .= "id!={$config->adminRootPageID}|{$config->trashPageID},";
-            $select .= "status<" . \Page::statusTrash . ",include=all";
+            $select .= "status<" . Page::statusTrash . ",include=all";
         } elseif ($inclTrashed === true) {
             $select = "include=all";
             $start = $config->trashPageID;
@@ -136,7 +137,7 @@ class PageListCommand extends PwUserTools
             $startPage = $input->getOption('start');
             $startPage = (is_numeric($startPage)) ? (int)$startPage : "/{$startPage}/";
 
-            if (!wire('pages')->get($startPage) instanceof \NullPage) {
+            if (!\ProcessWire\wire('pages')->get($startPage) instanceof \ProcessWire\NullPage) {
                 $start = $startPage;
             } else {
                 $this->output->writeln("<error>Startpage `{$startPage}` could not be found, using root page instead.</error>\n");

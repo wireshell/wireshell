@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Commands\Page;
 
+use ProcessWire\Page;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,11 +40,11 @@ class PageEmptyTrashCommand extends PwUserTools
     {
         parent::bootstrapProcessWire($output);
 
-        $pages = wire('pages');
-        $config = wire('config');
+        $pages = \ProcessWire\wire('pages');
+        $config = \ProcessWire\wire('config');
 
         $trashed = "parent_id={$config->trashPageID},limit={$this->maxItems},";
-        $trashed .= "status<" . \Page::statusMax . ",include=all";
+        $trashed .= "status<" . Page::statusMax . ",include=all";
 
         $trashPages = $pages->find($trashed);
 

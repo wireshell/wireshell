@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
+use ProcessWire\WireHttp;
 use Distill\Distill;
 use Distill\Exception\IO\Input\FileCorruptedException;
 use Distill\Exception\IO\Input\FileEmptyException;
@@ -39,8 +40,8 @@ class PwModuleTools extends PwConnector {
      */
     public function checkIfModuleExists($module)
     {
-        $moduleDir = wire('config')->paths->siteModules . $module;
-        if (wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
+        $moduleDir = \ProcessWire\wire('config')->paths->siteModules . $module;
+        if (\ProcessWire\wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
             $return = true;
         }
 
@@ -82,8 +83,8 @@ class PwModuleTools extends PwConnector {
      *
      */
     public function getModuleVersions($onlyNew = false, $output) {
-        $url = wire('config')->moduleServiceURL .
-            "?apikey=" . wire('config')->moduleServiceKey .
+        $url = \ProcessWire\wire('config')->moduleServiceURL .
+            "?apikey=" . \ProcessWire\wire('config')->moduleServiceKey .
             "&limit=100" .
             "&field=module_version,version,requires_versions" .
             "&class_name=";
@@ -91,14 +92,14 @@ class PwModuleTools extends PwConnector {
         $names = array();
         $versions = array();
 
-        foreach (wire('modules') as $module) {
+        foreach (\ProcessWire\wire('modules') as $module) {
             $name = $module->className();
-            $info = wire('modules')->getModuleInfoVerbose($name);
+            $info = \ProcessWire\wire('modules')->getModuleInfoVerbose($name);
             if ($info['core']) continue;
             $names[] = $name;
             $versions[$name] = array(
                 'title' => $info['title'],
-                'local' => wire('modules')->formatVersion($info['version']),
+                'local' => \ProcessWire\wire('modules')->formatVersion($info['version']),
                 'remote' => false,
                 'new' => 0,
                 'requiresVersions' => $info['requiresVersions']
@@ -108,7 +109,7 @@ class PwModuleTools extends PwConnector {
         if (!count($names)) return array();
         $url .= implode(',', $names);
 
-        $http = new \WireHttp();
+        $http = new WireHttp();
         $http->setTimeout(self::timeout);
         $data = $http->getJSON($url);
 
@@ -159,18 +160,18 @@ class PwModuleTools extends PwConnector {
      */
     public function getModuleVersion($onlyNew = false, $output, $module) {
         // get current module data
-        $info = wire('modules')->getModuleInfoVerbose($module);
+        $info = \ProcessWire\wire('modules')->getModuleInfoVerbose($module);
         $versions = array(
             'title' => $info['title'],
-            'local' => wire('modules')->formatVersion($info['version']),
+            'local' => \ProcessWire\wire('modules')->formatVersion($info['version']),
             'remote' => false,
             'new' => 0,
             'requiresVersions' => $info['requiresVersions']
         );
 
         // get latest module data
-        $url = trim(wire('config')->moduleServiceURL, '/') . "/$module/?apikey=" . wire('sanitizer')->name(wire('config')->moduleServiceKey);
-        $http = new \WireHttp();
+        $url = trim(\ProcessWire\wire('config')->moduleServiceURL, '/') . "/$module/?apikey=" . \ProcessWire\wire('sanitizer')->name(\ProcessWire\wire('config')->moduleServiceKey);
+        $http = new WireHttp();
         $data = $http->getJSON($url);
 
         if (!$data || !is_array($data)) {
@@ -179,7 +180,7 @@ class PwModuleTools extends PwConnector {
         }
 
         if ($data['status'] !== 'success') {
-            $error = wire('sanitizer')->entities($data['error']);
+            $error = \ProcessWire\wire('sanitizer')->entities($data['error']);
             $output->writeln("<error>Error reported by web service: $error</error>");
             return array();
         }
@@ -235,8 +236,8 @@ class PwModuleTools extends PwConnector {
         try {
             $distill = new Distill();
             $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath,
-                wire('config')->paths->siteModules . $module);
-            $dir = wire('config')->paths->siteModules . $module;
+                \ProcessWire\wire('config')->paths->siteModules . $module);
+            $dir = \ProcessWire\wire('config')->paths->siteModules . $module;
             if (is_dir($dir)) {
                 chmod($dir, 0755);
             }
@@ -356,7 +357,7 @@ class PwModuleTools extends PwConnector {
         $client->getEmitter()->attach(new Progress(null, $downloadCallback));
 
         // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
+        $this->compressedFilePath = \ProcessWire\wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
                 PATHINFO_EXTENSION);
 
         try {

@@ -38,7 +38,7 @@ class PageDeleteCommand extends PwUserTools
     public function execute(InputInterface $input, OutputInterface $output)
     {
         parent::bootstrapProcessWire($output);
-        $pages = wire('pages');
+        $pages = \ProcessWire\wire('pages');
 
         foreach (explode(',', $input->getArgument('selector')) as $selector) {
             $select = (is_numeric($selector)) ? (int)$selector : "/{$selector}/";
@@ -50,7 +50,7 @@ class PageDeleteCommand extends PwUserTools
             }
 
             foreach ($trashPages as $trashPage) {
-                if ($trashPage instanceof \NullPage) {
+                if ($trashPage instanceof \ProcessWire\NullPage) {
                     $output->writeln("<error>Page `{$selector}` doesn't exist.</error>");
                 } else {
                     $delete = $input->getOption('rm') === true ? true : false;

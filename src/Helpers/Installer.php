@@ -4,7 +4,7 @@ namespace Wireshell\Helpers;
 use Psr\Log\LoggerInterface;
 use PDO;
 use Exception;
-use WireDatabaseBackup;
+use \ProcessWire\WireDatabaseBackup;
 use DirectoryIterator;
 
 /**
