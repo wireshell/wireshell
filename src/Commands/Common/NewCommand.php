@@ -33,7 +33,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\Installer;
 use Wireshell\Helpers\PwConnector;
-use Wireshell\Helpers\WsTools;
+use Wireshell\Helpers\WsTools as Tools;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class NewCommand
@@ -63,12 +64,40 @@ class NewCommand extends Command {
     private $compressedFilePath;
     private $requirementsErrors = array();
     private $installer;
+    private $tools;
+    private $tables;
+
+    /**
+     * @field array default config values
+     */
+    protected $defaults = array(
+        'dbName' => '',
+        'dbUser' => '',
+        'dbPass' => '',
+        'dbHost' => 'localhost',
+        'dbPort' => '3306',
+        'dbEngine' => 'MyISAM',
+        'dbCharset' => 'utf8',
+        'timezone' => '',
+        'chmodDir' => '755',
+        'chmodFile' => '644',
+        'httpHosts' => '',
+        'admin_name' => 'processwire',
+        'username' => '',
+        'userpass' => '',
+        'userpass_confirm' => '',
+        'useremail' => '',
+        'color' => 'classic',
+    );
 
     /**
      * @var OutputInterface
      */
     private $output;
 
+    /**
+     * Configures the current command.
+     */
     protected function configure() {
         $this
             ->setName('new')
@@ -96,30 +125,40 @@ class NewCommand extends Command {
             ->addOption('v', null, InputOption::VALUE_NONE, 'verbose');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        $this->input = $input;
+        $this->output = $output;
         $this->fs = new Filesystem();
-        $this->projectDir = $this->getDirectory($input);
+        $this->projectDir = $this->getDirectory();
         $this->projectName = basename($this->projectDir);
         $this->src = $input->getOption('src') ? $this->getAbsolutePath($input->getOption('src')) : null;
         $srcStatus = $this->checkExtractedSrc();
         $v = $input->getOption('v') ? true : false;
 
-        $this->output = $output;
         $profile = $input->getOption('profile');
-        $branch = $this->getZipURL($input);
+        $branch = $this->getZipURL();
         $logger = new Logger('name');
         $logger->pushHandler(new StreamHandler("php://output"));
         $this->installer = new Installer($logger, $this->projectDir, $v);
+        $this->tools = new Tools();
+        $this->tables = new Tables();
         $this->version = PwConnector::getVersion();
+        $this->helper = $this->getHelper('question');
+        $formatter = $this->getHelper('formatter');
 
         try {
+            $this->tools->writeSection($output, $formatter, 'Welcome to the wireshell ProcessWire generator');
+
             if (!$this->checkAlreadyDownloaded() && $srcStatus !== 'extracted') {
                 if (!$srcStatus) {
-                    $this
-                        ->checkProjectName()
-                        ->download($branch);
+                    $this->checkProjectName();
+                    $this->download($branch);
                 }
-
                 $this->extract();
             }
 
@@ -128,135 +167,39 @@ class NewCommand extends Command {
         }
 
         try {
-            $install = ($input->getOption('no-install')) ? false : true;
-            if ($install) {
+            if (!$input->getOption('no-install')) {
                 $profile = $this->extractProfile($profile);
                 $this->installer->getSiteFolder($profile);
                 $this->checkProcessWireRequirements();
 
-                $helper = $this->getHelper('question');
+                // use defaults it not set
+                $doNotAsk = array('dbHost', 'dbPort', 'dbEngine', 'dbCharset', 'chmodDir', 'chmodFile', 'adminUrl');
+                foreach ($doNotAsk as $item) if ($input->getOption($item)) $this->defaults[$item] = $input->getOption($item);
 
-                $post = array(
-                    'dbName' => '',
-                    'dbUser' => '',
-                    'dbPass' => '',
-                    'dbHost' => 'localhost',
-                    'dbPort' => '3306',
-                    'dbEngine' => 'MyISAM',
-                    'dbCharset' => 'utf8',
-                    'timezone' => '',
-                    'chmodDir' => '755',
-                    'chmodFile' => '644',
-                    'httpHosts' => ''
-                );
+                // ask
+                $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
+                $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', 'root');
+                $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
 
-                $dbName = $input->getOption('dbName');
-                if (!$dbName) {
-                    $question = new Question(WsTools::getQuestion(
-                        'Please enter the database name', 'pw'
-                    ));
-                    $dbName = $helper->ask($input, $output, $question);
-                }
-                $post['dbName'] = $dbName;
-
-                $dbUser = $input->getOption('dbUser');
-                if (!$dbUser) {
-                    $question = new Question(WsTools::getQuestion(
-                        'Please enter the database user name', 'root'
-                    ));
-                    $dbUser = $helper->ask($input, $output, $question);
-                }
-                $post['dbUser'] = $dbUser;
-
-                $dbPass = $input->getOption('dbPass');
-                if (!$dbPass) {
-                    $question = new Question(WsTools::getQuestion(
-                        'Please enter the database password', null
-                    ));
-                    $question->setHidden(true);
-                    $question->setHiddenFallback(false);
-                    $dbPass = $helper->ask($input, $output, $question);
-                }
-                $post['dbPass'] = $dbPass;
-
-                $dbHost = $input->getOption('dbHost');
-                if ($dbHost) $post['dbHost'] = $dbHost;
-
-                $dbPort = $input->getOption('dbPort');
-                if ($dbPort) $post['dbPort'] = $dbPort;
-
-                $dbEngine = $input->getOption('dbEngine');
-                if ($dbEngine) $post['dbEngine'] = $dbEngine;
-
-                $dbCharset = $input->getOption('dbCharset');
-                if ($dbCharset) $post['dbCharset'] = $dbCharset;
-
-                $bundleNames = array('AcmeDemoBundle', 'AcmeBlogBundle', 'AcmeStoreBundle');
-                $timezone = $input->getOption('timezone');
-                if (!$timezone) {
-                    $question = new Question('Please enter the timezone : ', 'timezone');
-                    $question->setAutocompleterValues(timezone_identifiers_list());
-                    $timezone = $helper->ask($input, $output, $question);
-                }
-                $post['timezone'] = $timezone;
-
-                $chmodDir = $input->getOption('chmodDir');
-                if ($chmodDir) {
-                    $post['chmodDir'] = $chmodDir;
+                while (is_null($this->installer->checkDatabaseConnection($this->defaults, false))) {
+                    $this->output->writeln("\n" . $this->tools->tint(' Database connection information did not work, please try again. ', Tools::kTintError));
+                    $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', $this->defaults['dbUser']);
+                    $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
                 }
 
-                $chmodFile = $input->getOption('chmodFile');
-                if ($chmodFile) {
-                    $post['chmodFile'] = $chmodFile;
-                }
+                $this->defaults['timezone'] = $this->ask('timezone', 'Please enter the timezone', 'Europe/Berlin', false, timezone_identifiers_list());
+                $httpHosts = $this->ask('httpHosts', 'Please enter the hostname without `www.`', 'pw.dev');
+                $this->defaults['httpHosts'] = $httpHosts . "\n" . "www." . $httpHosts;
+                $this->defaults['username'] = $this->ask('username', 'Please enter admin user name', 'admin');
+                $this->defaults['userpass'] = $this->ask('userpass', 'Please enter admin password', 'password', true);
+                $this->defaults['userpass_confirm'] = $this->defaults['userpass'];
+                $this->defaults['useremail'] = $this->ask('useremail', 'Please enter admin email address', null, false, null, 'email');
 
-                $httpHosts = $input->getOption('httpHosts');
-                if (!$httpHosts) {
-                    $question = new Question('Please enter the hostname without www. Eg: pw.dev : ', 'httpHosts');
-                    $httpHosts = $helper->ask($input, $output, $question);
-                }
-                $post['httpHosts'] = $httpHosts . "\n" . "www." . $httpHosts;
-
-                $accountInfo = array(
-                    'admin_name' => 'processwire',
-                    'username' => '',
-                    'userpass' => '',
-                    'userpass_confirm' => '',
-                    'useremail' => '',
-                    'color' => 'classic',
-                );
-
-                $adminUrl = $input->getOption('adminUrl');
-                if ($adminUrl) {
-                    $accountInfo['admin_name'] = $adminUrl;
-                }
-
-                $username = $input->getOption('username');
-                if (!$username) {
-                    $question = new Question('Please enter admin user name : ', 'username');
-                    $username = $helper->ask($input, $output, $question);
-                }
-                $accountInfo['username'] = $username;
-
-                $userpass = $input->getOption('userpass');
-                if (!$userpass) {
-                    $question = new Question('Please enter admin password : ', 'password');
-                    $question->setHidden(true);
-                    $question->setHiddenFallback(false);
-                    $userpass = $helper->ask($input, $output, $question);
-                }
-                $accountInfo['userpass'] = $userpass;
-                $accountInfo['userpass_confirm'] = $userpass;
-
-                $useremail = $input->getOption('useremail');
-                if (!$useremail) {
-                    $question = new Question('Please enter admin email address : ', 'useremail');
-                    $useremail = $helper->ask($input, $output, $question);
-                }
-                $accountInfo['useremail'] = $useremail;
-                $this->installProcessWire($post, $accountInfo);
+                // ... install!
+                $this->installer->dbSaveConfig($this->defaults);
                 $this->cleanUpInstallation();
-                $this->output->writeln("\n<info>Congratulations, ProcessWire has been successfully installed.</info>");
+                $this->tables->writeTable($output, 'ᕙ(✧‿✧)ᕗ Congratulations, ProcessWire has been successfully installed.');
+
             }
         } catch (\Exception $e) {
             $this->cleanUp();
@@ -264,10 +207,66 @@ class NewCommand extends Command {
         }
     }
 
+    /**
+     * Helper for symfony question helper
+     *
+     * @param string $name
+     * @param string $question
+     * @param string $default
+     * @param boolean $hidden
+     * @param array $autocomplete,
+     * @param string $validator
+     * @return string
+     */
+    private function ask($name,  $question, $default = null, $hidden = false, $autocomplete = null, $validator = null) {
+        $item = $this->input->getOption($name);
+        if (!$item) {
+            $question = new Question($this->tools->getQuestion($question, $default), $default);
+
+            if ($hidden) {
+                $question->setHidden(true);
+                $question->setHiddenFallback(false);
+            }
+
+            if ($autocomplete) {
+                $question->setAutocompleterValues($autocomplete);
+            }
+
+            if ($validator) {
+                switch ($validator) {
+                    case 'email':
+                        $question->setValidator(function ($answer) {
+                            if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+                                throw new \RuntimeException('Please enter a valid email address.');
+                            }
+                            return $answer;
+                        });
+                        break;
+                }
+            }
+
+            $item = $this->helper->ask($this->input, $this->output, $question);
+            $this->output->writeln("\r");
+        }
+
+        return $item;
+    }
+
+    /**
+     * Get absolute path
+     *
+     * @param $path
+     * @return string
+     */
     private function getAbsolutePath($path) {
         return $this->fs->isAbsolutePath($path) ? $path : getcwd() . DIRECTORY_SEPARATOR . $path;
     }
 
+    /**
+     * Check extracted source
+     *
+     * @return string
+     */
     private function checkExtractedSrc() {
         $status = null;
 
@@ -290,10 +289,15 @@ class NewCommand extends Command {
         return $status;
     }
 
-    private function getDirectory($input) {
+    /**
+     * Get directory
+     *
+     * @return string
+     */
+    private function getDirectory() {
         $directory = getcwd();
 
-        if ($d = $input->getArgument('directory')) {
+        if ($d = $this->input->getArgument('directory')) {
           $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
         } else {
           if (!$directory) {
@@ -306,13 +310,13 @@ class NewCommand extends Command {
         return $this->getAbsolutePath($directory);
     }
 
-    private function getZipURL($input) {
-        if ($input->getOption('sha')) {
-            $targetBranch = $input->getOption('sha');
-        } else {
-            $targetBranch = PwConnector::BRANCH_MASTER;
-        }
-
+    /**
+     * Get zip URL
+     *
+     * @return string
+     */
+    private function getZipURL() {
+        $targetBranch = $this->input->getOption('sha') ? $this->input->getOption('sha') : PwConnector::BRANCH_MASTER;
         $branch = str_replace('{branch}', $targetBranch, PwConnector::zipURL);
         $check = str_replace('{branch}', $targetBranch, PwConnector::versionURL);
 
@@ -362,6 +366,11 @@ class NewCommand extends Command {
         return $this;
     }
 
+    /**
+     * Check already downloaded
+     *
+     * @return boolean
+     */
     private function checkAlreadyDownloaded() {
         return file_exists($this->projectDir . '/site/install') ? true : false;
     }
@@ -580,12 +589,6 @@ class NewCommand extends Command {
         return $this;
     }
 
-    private function installProcessWire($post, $accountInfo) {
-        $this->installer->dbSaveConfig($post, $accountInfo);
-
-        return $this;
-    }
-
     /**
      * Utility method to show the number of bytes in a readable format.
      *
@@ -595,11 +598,9 @@ class NewCommand extends Command {
      */
     private function formatSize($bytes) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
         $bytes = max($bytes, 0);
         $pow = $bytes ? floor(log($bytes, 1024)) : 0;
         $pow = min($pow, count($units) - 1);
-
         $bytes /= pow(1024, $pow);
 
         return number_format($bytes, 2) . ' ' . $units[$pow];
@@ -615,10 +616,7 @@ class NewCommand extends Command {
      * @return string
      */
     private function getErrorMessage(\Requirement $requirement, $lineSize = 70) {
-        if ($requirement->isFulfilled()) {
-            return;
-        }
-
+        if ($requirement->isFulfilled()) return;
         $errorMessage = wordwrap($requirement->getTestMessage(), $lineSize - 3, PHP_EOL . '   ') . PHP_EOL;
         $errorMessage .= '   > ' . wordwrap($requirement->getHelpText(), $lineSize - 5, PHP_EOL . '   > ') . PHP_EOL;
 
@@ -655,6 +653,12 @@ class NewCommand extends Command {
         return 2 === count(scandir($dir . '/'));
     }
 
+    /**
+     * Extract profile
+     *
+     * @param  string $profile
+     * @return string
+     */
     private function extractProfile($profile) {
         if (!$profile || !preg_match('/^.*\.zip$/', $profile)) return $profile;
 

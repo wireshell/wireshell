@@ -1,5 +1,8 @@
 <?php namespace Wireshell\Helpers;
 
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper as BaseQuestionHelper;
+
 /**
  * Class WsTools
  *
@@ -10,10 +13,14 @@
  * @author Tabea David
  */
 
-abstract class WsTools {
-    const kTintError = "error";
-    const kTintInfo = "info";
-    const kTintComment = "comment";
+Class WsTools extends BaseQuestionHelper {
+    const kTintError = 'error';
+    const kTintInfo = 'info';
+    const kTintComment = 'comment';
+
+    /* const kTintSuccess = 'bg=green;fg=white;options=bold'; */
+    const kTintSuccess = 'bg=green;fg=white;options=bold';
+    const kTintHeader = 'bg=blue;fg=white';
 
     /**
      * Simple method for coloring output
@@ -22,7 +29,7 @@ abstract class WsTools {
      * @param $type
      * @return tinted string
      */
-    public static function tint($string, $type) {
+    public function tint($string, $type) {
         return "<{$type}>{$string}</{$type}>";
     }
 
@@ -34,7 +41,7 @@ abstract class WsTools {
      * @param array $items
      * @param OutputInterface $output
      */
-    public static function renderList($header, $items, $output) {
+    public function renderList($header, $items, $output) {
         $output->writeln('<fg=yellow;options=underscore>' . ucfirst($header) . "</>\n");
 
         if (count($items) > 0) {
@@ -46,11 +53,27 @@ abstract class WsTools {
         $output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
     }
 
-    public static function getQuestion($question, $default, $sep = ':') {
+    /**
+     * Get question green text, white brackets/semicolon, yellow default
+     *
+     * @param string $question
+     * @param string $default
+     * @param string $sep
+     * @return string
+     */
+    public function getQuestion($question, $default, $sep = ':') {
         $que = self::tint($question, self::kTintInfo);
         $def = ' [' . self::tint($default, self::kTintComment) . ']';
 
         return $default ? "{$que}{$def}{$sep}" : "{$que}{$sep}";
+    }
+
+    public function writeSection(OutputInterface $output, $formatter, $text, $style = self::kTintHeader) {
+        $output->writeln(array(
+            '',
+            $formatter->formatBlock($text, $style, true),
+            '',
+        ));
     }
 
 }

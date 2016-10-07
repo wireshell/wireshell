@@ -13,8 +13,7 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-class ModuleDisableCommand extends PwConnector
-{
+class ModuleDisableCommand extends PwConnector {
 
     /**
      * Configures the current command.

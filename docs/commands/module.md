@@ -28,7 +28,7 @@ $ wireshell module:download FlagPages,ImageExtra
 Download module via github.
 
 ```sh
-$ wireshell module:download ContinentsAndCountries --github=justonestep/processwire-countries
+$ wireshell module:download ContinentsAndCountries --github=justb3a/processwire-countries
 ```
 
 If you want to download a branch, you have to provide the --github option, too.
@@ -65,7 +65,7 @@ $ wireshell module:download FlagPages,ImageExtra
 Download and enable module via github.
 
 ```sh
-$ wireshell module:download ContinentsAndCountries --github=justonestep/processwire-countries
+$ wireshell module:download ContinentsAndCountries --github=justb3a/processwire-countries
 ```
 
 Download `develop` branch and enable module.

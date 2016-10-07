@@ -11,17 +11,14 @@ use Symfony\Component\Console\Helper\Table;
  * @package Wireshell
  * @author Tabea David
  */
-
-abstract class WsTables
-{
+class WsTables {
 
     /**
      * @param OutputInterface $output
      * @param array $content
      * @param array $headers
      */
-    public static function buildTable(OutputInterface $output, $content, $headers)
-    {
+    public function buildTable(OutputInterface $output, $content, $headers) {
         $tablePW = new Table($output);
         $tablePW
             ->setStyle('borderless')
@@ -36,14 +33,18 @@ abstract class WsTables
      * @param array $tables
      * @param boolean $nlBefore, default true
      */
-    public static function renderTables(OutputInterface $output, $tables, $nlBefore = true)
-    {
+    public function renderTables(OutputInterface $output, $tables, $nlBefore = true) {
         if ($nlBefore) $output->writeln("\n");
 
-        foreach ($tables as $table)
-        {
+        foreach ($tables as $table) {
             $table->render();
             $output->writeln("\n");
         }
+    }
+
+    public function writeTable(OutputInterface $output, $text) {
+        $table = new Table($output);
+        $table->setHeaders(array($text));
+        $table->render();
     }
 }

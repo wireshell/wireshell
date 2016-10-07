@@ -12,8 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Wireshell
  * @author Marcus Herrmann
  */
-class PwUserTools extends PwConnector
-{
+class PwUserTools extends PwConnector {
     /**
      * @param $email
      * @param $name

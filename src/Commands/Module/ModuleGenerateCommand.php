@@ -17,17 +17,14 @@ use ZipArchive;
  * @author Nico
  * @author Marcus Herrmann
  */
-class ModuleGenerateCommand extends PwModuleTools
-{
-
+class ModuleGenerateCommand extends PwModuleTools {
     protected $api = "http://modules.pw/api.php";
     protected $client;
 
     /**
      * @param ClientInterface $client
      */
-    function __construct(ClientInterface $client)
-    {
+    function __construct(ClientInterface $client) {
         $this->client = $client;
         parent::__construct();
     }
@@ -36,8 +33,7 @@ class ModuleGenerateCommand extends PwModuleTools
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('module:generate')
             ->setDescription('Generates a boilerplate module')

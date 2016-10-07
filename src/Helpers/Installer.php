@@ -10,7 +10,7 @@ use DirectoryIterator;
 /**
  * ProcessWire Installer
  *
- * Because this installer runs before PW2 is installed, it is largely self contained.
+ * Because this installer runs before PW3 is installed, it is largely self contained.
  * It's a quick-n-simple single purpose script that's designed to run once, and it should be deleted after installation.
  * This file self-executes using code found at the bottom of the file, under the Installer class.
  *
@@ -18,7 +18,7 @@ use DirectoryIterator;
  * If that file exists, the installer will not run. So if you need to re-run this installer for any
  * reason, then you'll want to delete that file. This was implemented just in case someone doesn't delete the installer.
  *
- * ProcessWire 2.x
+ * ProcessWire 3.x
  * Copyright (C) 2014 by Ryan Cramer
  * Licensed under GNU/GPL v2, see LICENSE.TXT
  *
@@ -26,8 +26,7 @@ use DirectoryIterator;
  *
  */
 
-class Installer
-{
+class Installer {
 
   /**
    * Whether or not we force installed files to be copied.
@@ -82,9 +81,7 @@ class Installer
    */
   protected $colors = array(
     'classic',
-    'warm',
-    'modern',
-    'futura'
+    'warm'
   );
 
   /**
@@ -94,8 +91,7 @@ class Installer
 
   protected $projectDir;
 
-  public function __construct(LoggerInterface $log, $projectDir, $v = true)
-  {
+  public function __construct(LoggerInterface $log, $projectDir, $v = true) {
       $this->log = $log;
       $this->projectDir = $projectDir;
       $this->v = $v;
@@ -231,7 +227,7 @@ class Installer
    * Step 3: Save database configuration, then begin profile import
    *
    */
-  public function dbSaveConfig($post, $accountInfo) {
+  public function dbSaveConfig($post) {
     $fields = array('dbUser', 'dbName', 'dbPass', 'dbHost', 'dbPort');
     $values = array();
 
@@ -248,18 +244,8 @@ class Installer
 
     error_reporting(1);
 
-    $dsn = "mysql:dbname=$values[dbName];host=$values[dbHost];port=$values[dbPort]";
-    $driver_options = array(
-      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    );
-    try {
-      $database = new PDO($dsn, $values['dbUser'], $values['dbPass'], $driver_options);
-    } catch(Exception $e) {
-      $this->error("Database connection information did not work.");
-      $this->error($e->getMessage());
-      return;
-    }
+    $database = $this->checkDatabaseConnection($values);
+    if (is_null($database)) return;
 
     // file permissions
     $fields = array('chmodDir', 'chmodFile');
@@ -301,11 +287,32 @@ class Installer
 
     if ($this->dbSaveConfigFile($values)) {
         $this->profileImport($database);
-        $this->adminAccountSave($accountInfo);
+        $this->adminAccountSave($post);
     } else {
         $this->error("Error saving config file :( ");
     }
   }
+
+    public function checkDatabaseConnection($values, $out = true) {
+        $database = null;
+        $dsn = "mysql:dbname=$values[dbName];host=$values[dbHost];port=$values[dbPort]";
+        $driver_options = array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        );
+        
+        try {
+            $database = new PDO($dsn, $values['dbUser'], $values['dbPass'], $driver_options);
+            $success = true;
+        } catch(Exception $e) {
+            if ($out) {
+                $this->error("Database connection information did not work.");
+                $this->error($e->getMessage());
+            }
+        }
+
+        return $database;
+    }
 
   /**
    * Save configuration to /site/config.php
@@ -375,7 +382,6 @@ class Installer
    *
    */
   protected function profileImport($database) {
-
     $profile = $this->projectDir . "/site/install/";
     if (!is_file("{$profile}install.sql")) die("No installation profile found in {$profile}");
 
