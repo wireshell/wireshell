@@ -33,6 +33,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\Installer;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTools;
 
 /**
  * Class NewCommand
@@ -151,21 +152,27 @@ class NewCommand extends Command {
 
                 $dbName = $input->getOption('dbName');
                 if (!$dbName) {
-                    $question = new Question('Please enter the database name : ', 'dbName');
+                    $question = new Question(WsTools::getQuestion(
+                        'Please enter the database name', 'pw'
+                    ));
                     $dbName = $helper->ask($input, $output, $question);
                 }
                 $post['dbName'] = $dbName;
 
                 $dbUser = $input->getOption('dbUser');
                 if (!$dbUser) {
-                    $question = new Question('Please enter the database user name : ', 'dbUser');
+                    $question = new Question(WsTools::getQuestion(
+                        'Please enter the database user name', 'root'
+                    ));
                     $dbUser = $helper->ask($input, $output, $question);
                 }
                 $post['dbUser'] = $dbUser;
 
                 $dbPass = $input->getOption('dbPass');
                 if (!$dbPass) {
-                    $question = new Question('Please enter the database password : ', null);
+                    $question = new Question(WsTools::getQuestion(
+                        'Please enter the database password', null
+                    ));
                     $question->setHidden(true);
                     $question->setHiddenFallback(false);
                     $dbPass = $helper->ask($input, $output, $question);

@@ -46,4 +46,11 @@ abstract class WsTools {
         $output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
     }
 
+    public static function getQuestion($question, $default, $sep = ':') {
+        $que = self::tint($question, self::kTintInfo);
+        $def = ' [' . self::tint($default, self::kTintComment) . ']';
+
+        return $default ? "{$que}{$def}{$sep}" : "{$que}{$sep}";
+    }
+
 }
