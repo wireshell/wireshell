@@ -1,7 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\QuestionHelper as BaseQuestionHelper;
 
 /**
  * Class WsTools
@@ -13,12 +12,11 @@ use Symfony\Component\Console\Helper\QuestionHelper as BaseQuestionHelper;
  * @author Tabea David
  */
 
-Class WsTools extends BaseQuestionHelper {
+Class WsTools {
     const kTintError = 'error';
     const kTintInfo = 'info';
     const kTintComment = 'comment';
 
-    /* const kTintSuccess = 'bg=green;fg=white;options=bold'; */
     const kTintSuccess = 'bg=green;fg=white;options=bold';
     const kTintHeader = 'bg=blue;fg=white';
 
@@ -65,7 +63,7 @@ Class WsTools extends BaseQuestionHelper {
         $que = self::tint($question, self::kTintInfo);
         $def = ' [' . self::tint($default, self::kTintComment) . ']';
 
-        return $default ? "{$que}{$def}{$sep}" : "{$que}{$sep}";
+        return $default ? "{$que}{$def}{$sep} " : "{$que}{$sep} ";
     }
 
     public function writeSection(OutputInterface $output, $formatter, $text, $style = self::kTintHeader) {

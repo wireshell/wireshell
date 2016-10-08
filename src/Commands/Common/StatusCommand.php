@@ -44,6 +44,7 @@ class StatusCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
+        $this->tools = new Tools();
         $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
 
@@ -69,15 +70,15 @@ class StatusCommand extends PwConnector {
      */
     protected function getPWStatus($showPass) {
         $config = \ProcessWire\wire('config');
-        $on = Tools::tint('On', Tools::kTintError);
-        $off = Tools::tint('Off', Tools::kTintInfo);
-        $none = Tools::tint('None', Tools::kTintInfo);
+        $on = $this->tools->tint('On', Tools::kTintError);
+        $off = $this->tools->tint('Off', Tools::kTintInfo);
+        $none = $this->tools->tint('None', Tools::kTintInfo);
 
         $version = $config->version;
         $latestVersion = parent::getVersion();
 
         if ($version !== $latestVersion) {
-            $version .= Tools::tint(" (upgrade available: $latestVersion)", Tools::kTintComment);
+            $version .= $this->tools->tint(" (upgrade available: $latestVersion)", Tools::kTintComment);
         }
 
         $adminUrl = $this->getAdminUrl();
@@ -132,7 +133,7 @@ class StatusCommand extends PwConnector {
     }
 
     protected function buildTable(OutputInterface $output, $statusArray, $label) {
-        $headers = [Tools::tint($label, Tools::kTintComment)];
+        $headers = [$this->tools->tint($label, Tools::kTintComment)];
 
         $tablePW = new Table($output);
         $tablePW

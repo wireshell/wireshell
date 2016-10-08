@@ -5,7 +5,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
-use Wireshell\Helpers\WsTools;
+use Wireshell\Helpers\WsTools as Tools;
 use Wireshell\Helpers\WsTables;
 
 /**
@@ -16,14 +16,12 @@ use Wireshell\Helpers\WsTables;
  * @package Wireshell
  * @author Tabea David
  */
-class LogListCommand extends PwConnector
-{
+class LogListCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('log:list')
             ->setDescription('List available log files');
@@ -34,12 +32,12 @@ class LogListCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
+        $tools = new Tools();
         $logs = \ProcessWire\wire('log')->getLogs();
-        $output->writeln(WsTools::tint(count($logs) . ' logs', 'comment'));
+        $output->writeln($tools->tint(count($logs) . ' logs', Tools::kTintComment));
 
         $data = array();
         foreach ($logs as $log) {

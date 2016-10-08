@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\PwTools;
 use Wireshell\Helpers\WsTables;
-use Wireshell\Helpers\WsTools;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class FieldListCommand
@@ -18,14 +18,12 @@ use Wireshell\Helpers\WsTools;
  * @package Wireshell
  * @author Tabea David
  */
-class FieldListCommand extends PwConnector
-{
+class FieldListCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('field:list')
             ->setDescription('Lists all available fields.')
@@ -41,8 +39,7 @@ class FieldListCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         // get available fields
@@ -64,7 +61,8 @@ class FieldListCommand extends PwConnector
             }
         }
 
-        $output->writeln(WsTools::tint("($data->count in set)", 'comment'));
+        $tools = new Tools();
+        $output->writeln($tools->tint("($data->count in set)", Tools::kTintComment));
     }
 
     /**

@@ -5,7 +5,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
-use Wireshell\Helpers\WsTools as Tools;
 use Wireshell\Helpers\WsTables as WsTables;
 
 /**
@@ -18,14 +17,12 @@ use Wireshell\Helpers\WsTables as WsTables;
  * @author Tabea David <info@justonestep.de>
  */
 
-class UserListCommand extends PwUserTools
-{
+class UserListCommand extends PwUserTools {
 
     /**
      * Configures the current command.
      */
-    public function configure()
-    {
+    public function configure() {
         $this
             ->setName('user:list')
             ->setDescription('Lists ProcessWire users')
@@ -37,8 +34,7 @@ class UserListCommand extends PwUserTools
      * @param OutputInterface $output
      * @return int|null|void
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         $users = $this->getUsers($input);

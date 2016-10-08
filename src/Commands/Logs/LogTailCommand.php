@@ -5,7 +5,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
-use Wireshell\Helpers\WsTools;
+use Wireshell\Helpers\WsTools as Tools;
 use Wireshell\Helpers\WsTables;
 
 /**
@@ -16,14 +16,12 @@ use Wireshell\Helpers\WsTables;
  * @package Wireshell
  * @author Tabea David
  */
-class LogTailCommand extends PwConnector
-{
+class LogTailCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('log:tail')
             ->setDescription('Log Output')
@@ -39,8 +37,7 @@ class LogTailCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         $log = \ProcessWire\wire('log');
@@ -53,7 +50,8 @@ class LogTailCommand extends PwConnector
             return;
         }
 
-        $output->writeln(WsTools::tint("Log $name", 'comment'));
+        $tools = new Tools();
+        $output->writeln($tools->tint("Log $name", Tools::kTintComment));
 
         $options = array(
             'limit' => $input->getOption('limit') ? $input->getOption('limit') : 10,
@@ -70,6 +68,6 @@ class LogTailCommand extends PwConnector
 
         $count = count($data);
         $total = $log->getTotalEntries($name);
-        $output->writeln(WsTools::tint("($count in set, total: $total)", 'comment'));
+        $output->writeln($tools->tint("($count in set, total: $total)", Tools::kTintComment));
     }
 }
