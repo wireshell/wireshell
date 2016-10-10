@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\PwTools;
-use Wireshell\Helpers\WsTables;
+use Wireshell\Helpers\WsTables as Tables;
 use Wireshell\Helpers\WsTools as Tools;
 
 /**
@@ -56,8 +56,9 @@ class FieldListCommand extends PwConnector {
         if (count($data->count) > 0) {
             foreach ($data->content as $tag => $c) {
                 $output->writeln('<fg=yellow;options=bold> ' . strtoupper($tag) . "</>");
-                $tables = array(WsTables::buildTable($output, $c, $headers));
-                WsTables::renderTables($output, $tables, false);
+                $tables = new Tables();
+                $fieldTables = array($tables->buildTable($output, $c, $headers));
+                $tables->renderTables($output, $fieldTables, false);
             }
         }
 

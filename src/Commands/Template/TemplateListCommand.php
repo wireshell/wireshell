@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
-use Wireshell\Helpers\WsTables as WsTables;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class TemplateListCommand
@@ -16,19 +16,16 @@ use Wireshell\Helpers\WsTables as WsTables;
  * @package Wireshell
  * @author Tabea David
  */
-class TemplateListCommand extends PwConnector
-{
+class TemplateListCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    public function configure()
-    {
+    public function configure() {
         $this
             ->setName('template:list')
             ->setDescription('Lists ProcessWire templates')
             ->addOption('advanced', null, InputOption::VALUE_NONE, 'Show system templates. By default, system/internal templates are not shown.');
-          ;
     }
 
     /**
@@ -36,16 +33,16 @@ class TemplateListCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         $advanced = $input->getOption('advanced') ? true : false;
 
         $content = $this->getTemplateData($advanced);
         $headers = array('Template', 'Fields', 'Pages', 'Modified', 'Access');
-        $tables = array(WsTables::buildTable($output, $content, $headers));
-        WsTables::renderTables($output, $tables);
+        $tables = new Tables();
+        $templateTables = array($tables->buildTable($output, $content, $headers));
+        $tables->renderTables($output, $templateTables);
     }
 
     /**

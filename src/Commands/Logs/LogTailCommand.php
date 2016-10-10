@@ -4,9 +4,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
-use Wireshell\Helpers\WsTables;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class LogTailCommand
@@ -25,7 +26,7 @@ class LogTailCommand extends PwConnector {
         $this
             ->setName('log:tail')
             ->setDescription('Log Output')
-            ->addArgument('name', InputArgument::REQUIRED)
+            ->addArgument('name', InputArgument::OPTIONAL, 'Name of the log file.')
             ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Specify number of lines. Default: 10. (int)')
             ->addOption('text', null, InputOption::VALUE_REQUIRED, 'Text to find. (string)')
             ->addOption('from', null, InputOption::VALUE_REQUIRED, 'Oldest date to match entries. (int|string)')
@@ -40,18 +41,27 @@ class LogTailCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
+        $tools = new Tools();
+        $helper = $this->getHelper('question');
+        $formatter = $this->getHelper('formatter');
         $log = \ProcessWire\wire('log');
         $availableLogs = $log->getLogs();
-        $availableLogsString = implode(array_keys($availableLogs), ', ');
+
+        $question = new ChoiceQuestion(
+            $tools->getQuestion('Please choose one of', key($availableLogs)),
+            array_keys($availableLogs),
+            0
+        );
 
         $name = $input->getArgument('name');
-        if (!array_key_exists($name, $availableLogs)) {
-            $output->writeln("<error>Log '{$name}' does not exist, choose one of `$availableLogsString`</error>");
-            return;
+        if (!$name) {
+            $name = $helper->ask($input, $output, $question);
+        } else if (!array_key_exists($name, $availableLogs)) {
+            $output->writeln($tools->tint("<error> Log '{$name}' does not exist.</error>", Tools::kTintError) . "\n");
+            $name = $helper->ask($input, $output, $question);
         }
 
-        $tools = new Tools();
-        $output->writeln($tools->tint("Log $name", Tools::kTintComment));
+        $tools->writeSection($output, $formatter, 'Log ' . ucfirst($name));
 
         $options = array(
             'limit' => $input->getOption('limit') ? $input->getOption('limit') : 10,
@@ -63,8 +73,9 @@ class LogTailCommand extends PwConnector {
         $headers = array('Date', 'User', 'URL', 'Message');
         $data = $log->getEntries($name, $options);
 
-        $tables = array(WsTables::buildTable($output, $data, $headers));
-        WsTables::renderTables($output, $tables, false);
+        $tables = new Tables();
+        $logTables = array($tables->buildTable($output, $data, $headers));
+        $tables->renderTables($output, $logTables, false);
 
         $count = count($data);
         $total = $log->getTotalEntries($name);

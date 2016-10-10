@@ -5,7 +5,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
-use Wireshell\Helpers\WsTables as WsTables;
+use Wireshell\Helpers\WsTools as Tools;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class UserListCommand
@@ -36,16 +37,21 @@ class UserListCommand extends PwUserTools {
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
-
         $users = $this->getUsers($input);
-        $output->writeln("Users: " . $users->getTotal());
+        $formatter = $this->getHelper('formatter');
+        $tools = new Tools();
+        $tools->writeSection($output, $formatter, 'List Users');
 
         if ($users->getTotal() > 0) {
             $content = $this->getUserData($users);
             $headers = array('Username', 'E-Mail', 'Superuser', 'Roles');
-            $tables = array(WsTables::buildTable($output, $content, $headers));
-            WsTables::renderTables($output, $tables);
+
+            $tables = new Tables();
+            $userTables = array($tables->buildTable($output, $content, $headers));
+            $tables->renderTables($output, $userTables, false);
         }
+
+        $output->writeln($tools->tint("(Users: {$users->getTotal()})", Tools::kTintComment));
     }
 
     /**
@@ -88,37 +94,6 @@ class UserListCommand extends PwUserTools {
         }
 
         return $content;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param array $content
-     * @param array $headers
-     */
-    protected function buildTable(OutputInterface $output, $content, $headers)
-    {
-        $tablePW = new Table($output);
-        $tablePW
-            ->setStyle('borderless')
-            ->setHeaders($headers)
-            ->setRows($content);
-
-        return $tablePW;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param $tables
-     */
-    protected function renderTables(OutputInterface $output, $tables)
-    {
-        $output->writeln("\n");
-
-        foreach ($tables as $table)
-        {
-            $table->render();
-            $output->writeln("\n");
-        }
     }
 
 }

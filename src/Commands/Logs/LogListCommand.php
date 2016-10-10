@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
-use Wireshell\Helpers\WsTables;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class LogListCommand
@@ -50,7 +50,8 @@ class LogListCommand extends PwConnector {
         }
 
         $headers = array('Name', 'Modified', 'Entries', 'Size');
-        $tables = array(WsTables::buildTable($output, $data, $headers));
-        WsTables::renderTables($output, $tables, false);
+        $tables = new Tables();
+        $logTables = array($tables->buildTable($output, $data, $headers));
+        $tables->renderTables($output, $logTables, false);
     }
 }
