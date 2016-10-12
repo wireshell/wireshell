@@ -4,7 +4,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Wireshell\Helpers\PwModuleTools;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class ModuleUpgradeCommand
@@ -42,6 +44,7 @@ class ModuleUpgradeCommand extends PwModuleTools {
         parent::bootstrapProcessWire($output);
         if (!\ProcessWire\wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
 
+        $tools = new Tools();
         if ($input->getArgument('modules') && !$input->getOption('check')) {
             // upgrade specific modules
             $modules = explode(",", $input->getArgument('modules'));
@@ -49,8 +52,29 @@ class ModuleUpgradeCommand extends PwModuleTools {
         } else {
           \ProcessWire\wire('modules')->resetCache();
           if ($moduleVersions = parent::getModuleVersions(true, $output)) {
-              $output->writeln("<info>An upgrade is available for:</info>");
-              foreach ($moduleVersions as $name => $info) $output->writeln("  - $name: {$info['local']} -> {$info['remote']}");
+            $output->writeln($tools->tint('An upgrade is available for:', Tools::kTintInfo));
+            foreach ($moduleVersions as $name => $info) $output->writeln("  - $name: {$info['local']} -> {$info['remote']}");
+
+            // aks which module should be updated
+            if (!$input->getOption('check')) {
+                $helper = $this->getHelper('question');
+
+                $question = new ChoiceQuestion(
+                    $tools->getQuestion("\nPlease select which module(s) should be updated", 'None'),
+                    array_merge(array('None'), array_keys($moduleVersions)),
+                    '0'
+                );
+
+                $question->setMultiselect(true);
+                $modules = $helper->ask($input, $output, $question);
+
+                $selectedMessage = $tools->tint('You have selected:', Tools::kTintInfo);
+                $selectedModules = $tools->tint(implode(', ', $modules), Tools::kTintComment);
+                $output->writeln("\n$selectedMessage $selectedModules");
+
+                // if not `None` was selected, update modules
+                if (!in_array('None', $modules)) if ($modules) $this->upgradeModules($modules, $output);
+            }
           } else {
               $output->writeln("<info>Your modules are up-to-date.</info>");
           }

@@ -1,14 +1,12 @@
 <?php namespace Wireshell\Helpers\ProcessDiagnostics;
 
-class DiagnosePhp extends ProcessDiagnostics
-{
-    public function __constructor()
-    {
-        parent::__constructor();
+class DiagnosePhp extends ProcessDiagnostics {
+
+    public function __construct() {
+        parent::__construct();
     }
 
-    public function GetDiagnostics()
-    {
+    public function GetDiagnostics() {
         // PHP Version & System :: Version
         $fail_limit = '5.3.8';
         $status = ProcessDiagnostics::$ok;
@@ -59,7 +57,7 @@ class DiagnosePhp extends ProcessDiagnostics
         // build results array PHP Timezone
         $results[] = array(
             'title' => 'Timezone',
-            'value' => $this->wire->config->timezone,
+            'value' => ini_get('date.timezone'),
             'status' => ProcessDiagnostics::$ok,
             'action' => ''
         );

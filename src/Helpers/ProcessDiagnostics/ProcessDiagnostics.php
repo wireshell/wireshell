@@ -1,7 +1,6 @@
 <?php namespace Wireshell\Helpers\ProcessDiagnostics;
 
-class ProcessDiagnostics
-{
+class ProcessDiagnostics {
     public static $ok;
     public static $fail;
     public static $warn;
@@ -20,19 +19,17 @@ class ProcessDiagnostics
     const MEDIUM_VERBOSITY = 2;
     const HIGH_VERBOSITY   = 4;
 
+    public function __construct() {
+        self::$ok = 'OK';
+        self::$fail = 'Failure';
+        self::$warn = 'Warning';
 
-    public function __constructor()
-    {
-        self::$ok   = $this->_('OK');
-        self::$fail = $this->_('Failure');
-        self::$warn = $this->_('Warning');
-
-        self::$exists     = $this->_('Exists');
-        self::$not_exists = $this->_('Does not exist.');
-        self::$read       = $this->_('is readable');
-        self::$not_read   = $this->_('is not readable');
-        self::$write      = $this->_('is writable');
-        self::$not_write  = $this->_('is not writable');
+        self::$exists = 'Exists';
+        self::$not_exists = 'Does not exist.';
+        self::$read = 'is readable';
+        self::$not_read = 'is not readable';
+        self::$write = 'is writable';
+        self::$not_write  = 'is not writable';
 
         self::$verbosity = self::HIGH_VERBOSITY;
 

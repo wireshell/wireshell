@@ -2,4 +2,4 @@
 
 <?php
 
-require require __DIR__.'/app/wireshell.php';
+require __DIR__.'/app/wireshell.php';

@@ -1,11 +1,11 @@
 <?php namespace Wireshell\Helpers\ProcessDiagnostics;
 
-class DiagnoseImagehandling extends ProcessDiagnostics
-{
-    public function __constructor() { parent::__constructor(); }
+class DiagnoseImagehandling extends ProcessDiagnostics {
+    public function __construct() {
+        parent::__construct();
+    }
 
-    public function GetDiagnostics()
-    {
+    public function GetDiagnostics() {
         if(!function_exists('gd_info')) {
             $results[] = array(
                 'title'  => 'GD library',

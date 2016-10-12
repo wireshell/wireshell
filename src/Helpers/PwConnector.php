@@ -2,7 +2,7 @@
 
 use ProcessWire\WireHttp;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
-use Kfi\LocalCoachBundle\Test\FunctionalTester;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class PwConnector
@@ -47,7 +47,10 @@ abstract class PwConnector extends SymfonyCommand {
                     $this->checkForProcessWire($output);
                 }
             } else {
-                $output->writeln("<info>Working directory changed to `" . getcwd() . "`.</info>\n");
+                $tools = new Tools($output);
+                $directory = $tools->write('`' . getcwd() . '`', 'info', false);
+                $output->writeln("Working directory changed to $directory.");
+                $tools->nl();
             }
         }
     }

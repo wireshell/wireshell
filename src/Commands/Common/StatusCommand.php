@@ -43,8 +43,8 @@ class StatusCommand extends PwConnector {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $this->tools = new Tools($output);
 
-        $this->tools = new Tools();
         $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
 
@@ -70,18 +70,18 @@ class StatusCommand extends PwConnector {
      */
     protected function getPWStatus($showPass) {
         $config = \ProcessWire\wire('config');
-        $on = $this->tools->tint('On', Tools::kTintError);
-        $off = $this->tools->tint('Off', Tools::kTintInfo);
-        $none = $this->tools->tint('None', Tools::kTintInfo);
+        $on = $this->tools->writeInfo('On');
+        $off = $this->tools->writeComment('Off');
+        $none = $this->tools->writeComment('None');
 
         $version = $config->version;
         $latestVersion = parent::getVersion();
 
         if ($version !== $latestVersion) {
-            $version .= $this->tools->tint(" (upgrade available: $latestVersion)", Tools::kTintComment);
+            $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)");
         }
 
-        $adminUrl = $this->getAdminUrl();
+        $adminUrl = $this->tools->writeLink($this->getAdminUrl());
         $advancedMode = $config->advanced ? $on : $off;
         $debugMode = $config->debug ? $on : $off;
         $timezone = $config->timezone;
@@ -127,13 +127,13 @@ class StatusCommand extends PwConnector {
     protected function getWsStatus() {
         return array(
             array('Version', $this->getApplication()->getVersion()),
-            array('Documentation', 'http://wireshell.pw'),
+            array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw')),
             array('License', 'MIT')
         );
     }
 
     protected function buildTable(OutputInterface $output, $statusArray, $label) {
-        $headers = [$this->tools->tint($label, Tools::kTintComment)];
+        $headers = [$this->tools->writeHeader($label)];
 
         $tablePW = new Table($output);
         $tablePW
@@ -163,11 +163,10 @@ class StatusCommand extends PwConnector {
      * @param $tables
      */
     protected function renderTables(OutputInterface $output, $tables) {
-        $output->writeln("\n");
-
+        $this->tools->writeBlockCommand($this->getName());
         foreach ($tables as $table) {
             $table->render();
-            $output->writeln("\n");
+            $this->tools->nl();
         }
     }
 
