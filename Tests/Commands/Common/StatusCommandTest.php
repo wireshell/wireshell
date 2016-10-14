@@ -12,14 +12,18 @@ class StatusCommandTest extends \PHPUnit_Framework_TestCase {
         $command = $app->find('status');
         $commandTester = new CommandTester($command);
 
+        // @todo: cwd ~/Projects/wireshell change inside woring project directory for now
+        // working project: `phpunit -c ~/.composer/vendor/wireshell/wireshell`
+        // sqlite?
+
         $commandTester->execute(array(
             'command'  => $command->getName()
         ));
 
-
         // the output of the command in the console
         $output = $commandTester->getDisplay();
 
-        // $this->assertContains('Username: Wouter', $output);
+        $this->assertContains('Version', $output);
+        $this->assertContains('ProcessWire', $output);
     }
 }
