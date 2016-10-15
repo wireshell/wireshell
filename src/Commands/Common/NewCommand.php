@@ -144,15 +144,17 @@ class NewCommand extends Command {
         $branch = $this->getZipURL();
         $logger = new Logger('name');
         $logger->pushHandler(new StreamHandler("php://output"));
+        
         $this->installer = new Installer($logger, $this->projectDir, $v);
-        $this->tools = new Tools();
         $this->tables = new Tables();
         $this->version = PwConnector::getVersion();
         $this->helper = $this->getHelper('question');
+
         $formatter = $this->getHelper('formatter');
+        $this->tools = new Tools($output, $formatter);
 
         try {
-            $this->tools->writeSection($output, $formatter, 'Welcome to the wireshell ProcessWire generator');
+            $this->tools->writeHeader('Welcome to the wireshell ProcessWire generator');
 
             if (!$this->checkAlreadyDownloaded() && $srcStatus !== 'extracted') {
                 if (!$srcStatus) {
@@ -177,14 +179,26 @@ class NewCommand extends Command {
                 foreach ($doNotAsk as $item) if ($input->getOption($item)) $this->defaults[$item] = $input->getOption($item);
 
                 // ask
-                $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
-                $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', 'root');
-                $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
+                $askDBInfo = function() {
+
+                  $this->defaults['dbHost'] = $this->ask('dbHost', 'Please enter the database host', 'localhost');
+
+                  $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
+                  
+                  $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user', 'root');
+
+                  $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
+                };
+                
+                $askDBInfo();
 
                 while (is_null($this->installer->checkDatabaseConnection($this->defaults, false))) {
-                    $this->output->writeln("\n" . $this->tools->tint(' Database connection information did not work, please try again. ', Tools::kTintError));
-                    $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', $this->defaults['dbUser']);
-                    $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
+                    
+                    $this->tools->writeError("\nDatabase connection information did not work, please try again.");
+
+                    $this->tools->writeComment(print_r($this->defaults, true));
+                    
+                    $askDBInfo();
                 }
 
                 $this->defaults['timezone'] = $this->ask('timezone', 'Please enter the timezone', 'Europe/Berlin', false, timezone_identifiers_list());
@@ -246,7 +260,7 @@ class NewCommand extends Command {
             }
 
             $item = $this->helper->ask($this->input, $this->output, $question);
-            $this->output->writeln("\r");
+            $this->tools->writeCarriageReturn();
         }
 
         return $item;
@@ -301,7 +315,9 @@ class NewCommand extends Command {
           $directory = rtrim(trim($d), DIRECTORY_SEPARATOR);
         } else {
           if (!$directory) {
-              $output->writeln("<error>No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.</error>");
+              
+              $this->tools->writeError("No such file or directory,\nyou may have to refresh the current directory by executing for example `cd \$PWD`.");
+
               return;
           }
           chdir(dirname($directory));
@@ -385,7 +401,8 @@ class NewCommand extends Command {
      * @throws \RuntimeException if the ProcessWire archive could not be downloaded
      */
     private function download($branch) {
-        $this->output->writeln("\n Downloading ProcessWire...");
+        
+        $this->tools->writeInfo("\n Downloading ProcessWire...");
 
         $distill = new Distill();
         $pwArchiveFile = $distill
@@ -475,7 +492,9 @@ class NewCommand extends Command {
      * @throws \RuntimeException if the downloaded archive could not be extracted
      */
     private function extract() {
-        $this->output->writeln(" Preparing project...\n");
+        
+        $this->tools->writeInfo(" Preparing project...\n");
+
         $cfp = $this->src ? $this->src : $this->compressedFilePath;
 
         try {
@@ -547,6 +566,7 @@ class NewCommand extends Command {
             // don't throw an exception in case any of the ProcessWire-related files cannot
             // be removed, because this is just an enhancement, not something mandatory
             // for the project
+            $this->tools->writeComment("ProcessWire-related files could not be removed, it's OK. It's not something mandatory for the project to run.");
         }
 
         return $this;
@@ -568,11 +588,14 @@ class NewCommand extends Command {
             $installFile = array($this->projectDir . '/install.php');
 
             $this->fs->remove(array_merge($siteDirs, $installDir, $installFile));
-            if ($this->v) $this->output->writeln("Remove ProcessWire-related files that don't make sense in a running project.");
+            
+            if ($this->v) $this->tools->writeComment("Remove ProcessWire-related files that don't make sense in a running project.");
+
         } catch (\Exception $e) {
             // don't throw an exception in case any of the ProcessWire-related files cannot
             // be removed, because this is just an enhancement, not something mandatory
             // for the project
+            $this->tools->writeComment("ProcessWire-related files could not be removed, it's OK. It's not something mandatory for the project to run.");
         }
 
         return $this;
@@ -662,7 +685,7 @@ class NewCommand extends Command {
     private function extractProfile($profile) {
         if (!$profile || !preg_match('/^.*\.zip$/', $profile)) return $profile;
 
-        $this->output->writeln(" Extracting profile...\n");
+        $this->tools->writeInfo(" Extracting profile...\n");
 
         try {
             $distill = new Distill();
