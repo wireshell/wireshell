@@ -196,8 +196,6 @@ class NewCommand extends Command {
                     
                     $this->tools->writeError("\nDatabase connection information did not work, please try again.");
 
-                    $this->tools->writeComment(print_r($this->defaults, true));
-                    
                     $askDBInfo();
                 }
 
