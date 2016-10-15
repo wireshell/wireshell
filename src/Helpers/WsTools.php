@@ -19,11 +19,19 @@ Class WsTools {
     protected $output;
     protected $formatter;
 
-    protected static $types = array('error', 'success', 'info', 'comment', 'link', 'header', 'mark');
+    protected static $types = array('error', 'success', 'info', 'comment', 
+                                    'link', 'header', 'mark');
 
-    public function __construct(OutputInterface $output) {
+    public function __construct(OutputInterface $output, Formatter $formatter = null) {
+        
         $this->output = $output;
-        $this->formatter = new Formatter();
+
+        $this->formatter = $formatter;
+
+        if (is_null($formatter) || !($formatter instanceof Formatter)) {
+            $this->formatter = new Formatter();
+        }
+
 
         $style = new OutputFormatterStyle('cyan', null, array('bold', 'underscore'));
         $output->getFormatter()->setStyle('success', $style);
@@ -44,6 +52,26 @@ Class WsTools {
         $output->getFormatter()->setStyle('mark', $style);
     }
 
+
+    /**
+     * Simple method for coloring string
+     * Possible Types: 
+     * 'error', 'success', 'info', 'comment', 
+     * 'link', 'header', 'mark'
+     *
+     * @param string $string
+     * @param string $type
+     * @return tinted string
+     */
+    public static function tint($string, $type = 'info') {
+
+        if (in_array($type, self::$types)) {
+            $string = "<{$type}>{$string}</{$type}>";  
+        }
+
+        return $string;
+    }
+
     /**
      * Simple method for coloring output
      * Possible Types: error, info, comment, success, link
@@ -53,8 +81,10 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function write($string, $type = 'info', $write = false) {
-        if (in_array($type, self::$types)) $string = "<{$type}>{$string}</{$type}>";
+    public function write($string, $type = 'info', $write = true) {
+
+        $string = $this->tint($string, $type);
+
         if ($write) $this->output->writeln($string);
 
         return $string;
@@ -67,7 +97,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeLink($string, $write = false) {
+    public function writeLink($string, $write = true) {
         return $this->write($string, 'link', $write);
     }
 
@@ -78,7 +108,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeMark($string, $write = false) {
+    public function writeMark($string, $write = true) {
         return $this->write($string, 'mark', $write);
     }
 
@@ -89,7 +119,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeHeader($string, $write = false) {
+    public function writeHeader($string, $write = true) {
         return $this->write(' ' . ucfirst($string) . ' ', 'header', $write);
     }
 
@@ -100,7 +130,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeSuccess($string, $write = false) {
+    public function writeSuccess($string, $write = true) {
         return $this->write($string, 'success', $write);
     }
 
@@ -111,7 +141,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeError($string, $write = false) {
+    public function writeError($string, $write = true) {
         return $this->write($string, 'error', $write);
     }
 
@@ -122,7 +152,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeComment($string, $write = false) {
+    public function writeComment($string, $write = true) {
         return $this->write($string, 'comment', $write);
     }
 
@@ -133,7 +163,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeInfo($string, $write = false) {
+    public function writeInfo($string, $write = true) {
         return $this->write($string, 'info', $write);
     }
 
@@ -166,8 +196,8 @@ Class WsTools {
      * @return string
      */
     public function getQuestion($question, $default = null, $sep = ':') {
-        $que = self::tint($question, self::kTintInfo);
-        $def = ' [' . self::tint($default, self::kTintComment) . ']';
+        $que = $this->tint($question, 'info');
+        $def = ' [' . $this->tint($default, 'comment') . ']';
 
         return $default ? "{$que}{$def}{$sep} " : "{$que}{$sep} ";
     }
@@ -213,6 +243,29 @@ Class WsTools {
      */
     public function nl() {
         $this->output->writeln('');
+    }
+
+    /**
+     * Output new line / break
+     * Alias of nl
+     */
+    public function writeNewline() {
+        $this->nl();
+    }
+
+    /**
+    * Output \r (carriage return) char in a new line
+    */
+    public function r() {
+        $this->output->writeln("\r");
+    }
+
+    /**
+    * Output \r (carriage return) char in a new line
+    * Alias of r
+    */
+    public function writeCarriageReturn() {
+        $this->r();
     }
 
 }
