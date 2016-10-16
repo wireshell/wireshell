@@ -70,18 +70,18 @@ class StatusCommand extends PwConnector {
      */
     protected function getPWStatus($showPass) {
         $config = \ProcessWire\wire('config');
-        $on = $this->tools->writeInfo('On');
-        $off = $this->tools->writeComment('Off');
-        $none = $this->tools->writeComment('None');
+        $on = $this->tools->writeInfo('On', false);
+        $off = $this->tools->writeComment('Off', false);
+        $none = $this->tools->writeComment('None', false);
 
         $version = $config->version;
         $latestVersion = parent::getVersion();
 
         if ($version !== $latestVersion) {
-            $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)");
+            $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)", false);
         }
 
-        $adminUrl = $this->tools->writeLink($this->getAdminUrl());
+        $adminUrl = $this->tools->writeLink($this->getAdminUrl(), false);
         $advancedMode = $config->advanced ? $on : $off;
         $debugMode = $config->debug ? $on : $off;
         $timezone = $config->timezone;
@@ -127,13 +127,13 @@ class StatusCommand extends PwConnector {
     protected function getWsStatus() {
         return array(
             array('Version', $this->getApplication()->getVersion()),
-            array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw')),
+            array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw', false)),
             array('License', 'MIT')
         );
     }
 
     protected function buildTable(OutputInterface $output, $statusArray, $label) {
-        $headers = [$this->tools->writeHeader($label)];
+        $headers = [$this->tools->writeHeader($label, false)];
 
         $tablePW = new Table($output);
         $tablePW

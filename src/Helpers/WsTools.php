@@ -53,7 +53,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function write($string, $type = 'info', $write = false) {
+    public function write($string, $type = 'info', $write = true) {
         if (in_array($type, self::$types)) $string = "<{$type}>{$string}</{$type}>";
         if ($write) $this->output->writeln($string);
 
@@ -67,7 +67,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeLink($string, $write = false) {
+    public function writeLink($string, $write = true) {
         return $this->write($string, 'link', $write);
     }
 
@@ -78,7 +78,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeMark($string, $write = false) {
+    public function writeMark($string, $write = true) {
         return $this->write($string, 'mark', $write);
     }
 
@@ -89,7 +89,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeHeader($string, $write = false) {
+    public function writeHeader($string, $write = true) {
         return $this->write(' ' . ucfirst($string) . ' ', 'header', $write);
     }
 
@@ -100,7 +100,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeSuccess($string, $write = false) {
+    public function writeSuccess($string, $write = true) {
         return $this->write($string, 'success', $write);
     }
 
@@ -111,8 +111,8 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeError($string, $write = false) {
-        return $this->write($string, 'error', $write);
+    public function writeError($string, $write = true) {
+        return $this->write(" $string", 'error', $write);
     }
 
     /**
@@ -122,7 +122,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeComment($string, $write = false) {
+    public function writeComment($string, $write = true) {
         return $this->write($string, 'comment', $write);
     }
 
@@ -133,7 +133,7 @@ Class WsTools {
      * @param boolean $write
      * @return tinted string
      */
-    public function writeInfo($string, $write = false) {
+    public function writeInfo($string, $write = true) {
         return $this->write($string, 'info', $write);
     }
 
@@ -143,18 +143,17 @@ Class WsTools {
      *
      * @param string $header
      * @param array $items
-     * @param OutputInterface $output
      */
-    public function renderList($header, $items, $output) {
-        $output->writeln('<fg=yellow;options=underscore>' . ucfirst($header) . "</>\n");
+    public function renderList($header, $items) {
+        $this->output->writeln('<fg=yellow;options=underscore>' . ucfirst($header) . "</>");
 
         if (count($items) > 0) {
             foreach ($items as $item) {
-                $output->writeln(" - $item");
+                $this->output->writeln(" - $item");
             }
         }
 
-        $output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
+        $this->output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
     }
 
     /**
@@ -166,8 +165,8 @@ Class WsTools {
      * @return string
      */
     public function getQuestion($question, $default = null, $sep = ':') {
-        $que = self::tint($question, self::kTintInfo);
-        $def = ' [' . self::tint($default, self::kTintComment) . ']';
+        $que = $this->writeInfo($question, false);
+        $def = ' [' . $this->writeComment($default, false) . ']';
 
         return $default ? "{$que}{$def}{$sep} " : "{$que}{$sep} ";
     }
@@ -181,6 +180,18 @@ Class WsTools {
     public function writeBlock($text, $write = true) {
         $out = $this->formatter->formatBlock($text, 'bg=blue;fg=white', true);
         if ($write) $this->output->writeln(array($out, ''));
+        return $out;
+    }
+
+    /**
+     * Write block
+     *
+     * @param string $text
+     * @param boolean $write
+     */
+    public function writeBlockBasic($text, $write = true) {
+        $out = $this->writeInfo($text, false);
+        if ($write) $this->output->writeln(array('', $out, ''));
         return $out;
     }
 
@@ -209,10 +220,15 @@ Class WsTools {
 
     /**
      * Output new line / break
-     *
      */
     public function nl() {
         $this->output->writeln('');
     }
 
+    /**
+     * Output spacing
+     */
+    public function spacing() {
+        $this->output->write(PHP_EOL);
+    }
 }
