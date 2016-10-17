@@ -1,10 +1,14 @@
 <?php namespace Wireshell\Tests\Commands\Common;
 
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Question\Question;
+use Ofbeaton\Console\Tester\QuestionTester;
+use Ofbeaton\Console\Tester\UnhandledQuestionException;
 use Wireshell\Tests\BaseTestCase as Base;
 use Wireshell\Commands\Common\NewCommand;
 
 class NewCommandTest extends Base {
+   use QuestionTester;
 
     /**
      * @field array default config values
@@ -41,13 +45,60 @@ class NewCommandTest extends Base {
 
     public function testDownload() {
         $this->checkInstallation();
-        $this->tester->execute(array_merge($this->defaults, array('--no-install' => true)));
+        $options = array('--no-install' => true, '--src' => Base::INSTALLATION_ARCHIVE);
+        $this->tester->execute(array_merge($this->defaults, $options));
 
         $this->assertDirectoryExists(Base::INSTALLATION_FOLDER);
         $this->assertDirectoryExists(Base::INSTALLATION_FOLDER . '/wire');
         $this->assertDirectoryNotExists(Base::INSTALLATION_FOLDER . '/site');
+    }
 
-        // download zip file for later usage
+    /**
+      * @depends testDownload
+      * @expectedException RuntimeException
+      * @expectedExceptionMessageRegExp /(Database connection information did not work)./
+      */
+    public function testInstallWrongPassword() {
+        // check ProcessWire has not been installed yet
+        if ($this->fs->exists(Base::INSTALLATION_FOLDER . '/site/config.php')) return;
+
+        // return the input you want to answer the question with
+        $this->mockQuestionHelper($this->command, function($text, $order, Question $question) {
+            if (strpos($text, 'database user name') !== false) return 'whatever';
+            if (strpos($text, 'database password') !== false) return 'wrong';
+
+            throw new UnhandledQuestionException();
+        });
+
+        $options = array(
+            '--src' => Base::INSTALLATION_ARCHIVE,
+            '--dbPass' => 'wrong'
+        );
+
+        $this->tester->execute(array_merge($this->defaults, $options));
+    }
+
+    /**
+      * @depends testDownload
+      * @expectedExceptionMessageRegExp /(enter a valid email address)/
+      */
+    public function testInstallInvalidEmailAddress() {
+        // check ProcessWire has not been installed yet
+        if ($this->fs->exists(Base::INSTALLATION_FOLDER . '/site/config.php')) return;
+
+        // return the input you want to answer the question with
+        $this->mockQuestionHelper($this->command, function($text, $order, Question $question) {
+            if (strpos($text, 'admin email address') !== false) return 'whatever';
+
+            throw new UnhandledQuestionException();
+        });
+
+        $options = array(
+            '--src' => Base::INSTALLATION_ARCHIVE,
+            '--useremail' => 'invalid'
+        );
+
+        $this->tester->execute(array_merge($this->defaults, $options));
     }
 
     /**
@@ -56,16 +107,6 @@ class NewCommandTest extends Base {
     public function testInstall() {
         // check ProcessWire has not been installed yet
         if ($this->fs->exists(Base::INSTALLATION_FOLDER . '/site/config.php')) return;
-
-        var_dump(array_merge($this->defaults, array('--dbPass' => 'wrong')));
-
-        // @todo: check wrong email address, wrong database credentials
-        $this->tester->execute(array_merge($this->defaults, array('--useremail' => 'wrong')));
-        // $this->tester->execute(array_merge($this->defaults, array('--dbPass' => 'wrong')));
-        $output = $this->tester->getDisplay();
-
-        var_dump($output, array_merge($this->defaults, array('--dbPass' => 'wrong')));
-        die();
 
         $this->tester->execute($this->defaults);
         $output = $this->tester->getDisplay();
@@ -77,10 +118,9 @@ class NewCommandTest extends Base {
 
     /**
      * @depends testInstall
-     * @expectedException RuntimeException
+     * @expectedExceptionMessageRegExp /(There is already a \')(.*)(\' project)/
      */
     public function testIsInstalled() {
         $this->tester->execute($this->defaults);
     }
-
 }

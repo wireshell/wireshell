@@ -26,6 +26,7 @@ abstract class BaseTestCase extends TestCase {
     public function __construct() {
         $this->fs = new Filesystem();
         $this->app = new Application();
+        $this->app->setAutoExit(false);
     }
 
     public function checkInstallation() {
@@ -42,7 +43,6 @@ abstract class BaseTestCase extends TestCase {
     public function downloadArchive() {
         $client = new Client();
         $client->request('GET', 'https://github.com/processwire/processwire/archive/master.zip', ['sink' => 'Tests/processwire.zip']);
-        // $client->requestAsync('GET', 'https://github.com/processwire/processwire/archive/master.zip', ['sink' => 'Tests/processwire.zip']);
     }
 
 }

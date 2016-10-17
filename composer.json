@@ -37,7 +37,8 @@
         "monolog/monolog": "~1.12",
         "symfony/filesystem": "~2.5",
         "raulfraile/distill": "~0.9,!=0.9.3,!=0.9.4",
-        "phpunit/phpunit": "5.6.*"
+        "phpunit/phpunit": "5.6.*",
+        "ofbeaton/console-tester": "^1.1"
     },
     "require-dev": {
         "whatthejeff/nyancat-phpunit-resultprinter": "~1.2"

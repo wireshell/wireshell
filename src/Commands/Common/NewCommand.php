@@ -134,6 +134,7 @@ class NewCommand extends Command {
         $this->projectDir = $this->getDirectory();
         $this->projectName = basename($this->projectDir);
         $this->src = $input->getOption('src') ? $this->getAbsolutePath($input->getOption('src')) : null;
+
         $srcStatus = $this->checkExtractedSrc();
         $this->verbose = $input->getOption('v') ? true : false;
 
@@ -172,10 +173,14 @@ class NewCommand extends Command {
                 foreach ($doNotAsk as $item) if ($input->getOption($item)) $this->defaults[$item] = $input->getOption($item);
 
                 // ask
+                $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
                 $this->askDbInformations();
+                $index = 0;
                 while (is_null($this->installer->checkDatabaseConnection($this->defaults, false))) {
                     $this->tools->writeError("Database connection information did not work, please try again.");
-                    $this->askDbInformations();
+                    if ($index >= 3) throw new \RuntimeException('Database connection information did not work, please make sure that mysql is running.');
+                    $this->askDbInformations(true);
+                    $index++;
                 }
 
                 $this->defaults['timezone'] = $this->ask('timezone', 'Please enter the timezone', 'Europe/Berlin', false, timezone_identifiers_list());
@@ -200,11 +205,12 @@ class NewCommand extends Command {
 
     /**
      * Ask database informations
+     *
+     * @param boolean $doAsk whether to ask if params were provided
      */
-    private function askDbInformations() {
-        $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
-        $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', 'root');
-        $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true);
+    private function askDbInformations($doAsk = false) {
+        $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', 'root', null, null, null, $doAsk);
+        $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true, null, null, $doAsk);
     }
 
     /**
@@ -216,11 +222,12 @@ class NewCommand extends Command {
      * @param boolean $hidden
      * @param array $autocomplete,
      * @param string $validator
+     * @param boolean $doAsk whether to ask if params were provided
      * @return string
      */
-    private function ask($name,  $question, $default = null, $hidden = false, $autocomplete = null, $validator = null) {
+    private function ask($name,  $question, $default = null, $hidden = false, $autocomplete = null, $validator = null, $doAsk = false) {
         $item = $this->input->getOption($name);
-        if (!$item) {
+        if (!$item || $doAsk) {
             $question = new Question($this->tools->getQuestion($question, $default), $default);
 
             if ($hidden) {
@@ -243,10 +250,16 @@ class NewCommand extends Command {
                         });
                         break;
                 }
+
+                $question->setMaxAttempts(3);
             }
 
             $item = $this->helper->ask($this->input, $this->output, $question);
             $this->tools->nl();
+        }
+
+        if ($item && $validator === 'email' && !filter_var($item, FILTER_VALIDATE_EMAIL)) {
+            return $this->ask($name, $question, $default, $hidden, $autocomplete, $validator, true);
         }
 
         return $item;
@@ -397,48 +410,43 @@ class NewCommand extends Command {
             ->addFile($branch)
             ->getPreferredFile();
 
-        /** @var ProgressBar|null $progressBar */
-        $progressBar = null;
-        $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar) {
-            // Don't initialize the progress bar for redirects as the size is much smaller
-            if ($response->getStatusCode() >= 300) {
-                return;
-            }
-
-            if (null === $progressBar) {
-                ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
-                    return $this->formatSize($bar->getMaxSteps());
-                });
-                ProgressBar::setPlaceholderFormatterDefinition('current', function (ProgressBar $bar) {
-                    return str_pad($this->formatSize($bar->getStep()), 11, ' ', STR_PAD_LEFT);
-                });
-
-                $progressBar = new ProgressBar($this->output, $size);
-                $progressBar->setFormat('%current%/%max% %bar%  %percent:3s%%');
-                $progressBar->setRedrawFrequency(max(1, floor($size / 1000)));
-                $progressBar->setBarWidth(60);
-
-                if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
-                    $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
-                    $progressBar->setProgressCharacter('');
-                    $progressBar->setBarCharacter('▓'); // dark shade character \u2593
-                }
-
-                $progressBar->start();
-            }
-
-            $progressBar->setProgress($downloaded);
-        };
+        // store the file in a temporary hidden directory with a random name
+        $tmpFolder = '.' . uniqid(time());
+        $archiveName = 'pw.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
+        $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
+        $this->fs->mkdir($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder);
 
         $client = new Client();
-        $client->getEmitter()->attach(new Progress(null, $downloadCallback));
-
-        // store the file in a temporary hidden directory with a random name
-        $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pw.' . pathinfo($pwArchiveFile,
-                PATHINFO_EXTENSION);
 
         try {
-            $response = $client->get($pwArchiveFile);
+            $response = $client->request('GET', $branch, [
+                'sink' => $this->compressedFilePath,
+                'progress' => function ($size, $downloaded) use (&$progressBar) {
+                    if (is_null($progressBar) && $size) {
+                        ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
+                            return $this->formatSize($bar->getMaxSteps());
+                        });
+                        ProgressBar::setPlaceholderFormatterDefinition('current', function (ProgressBar $bar) {
+                            return str_pad($this->formatSize($bar->getStep()), 11, ' ', STR_PAD_LEFT);
+                        });
+
+                        $progressBar = new ProgressBar($this->output, $size);
+                        $progressBar->setFormat('%current%/%max% %bar%  %percent:3s%%');
+                        $progressBar->setRedrawFrequency(max(1, floor($size / 1000)));
+                        $progressBar->setBarWidth(60);
+
+                        if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
+                            $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
+                            $progressBar->setProgressCharacter('');
+                            $progressBar->setBarCharacter('▓'); // dark shade character \u2593
+                        }
+
+                        $progressBar->start();
+                    }
+
+                    if ($progressBar) $progressBar->setProgress($downloaded);
+                }
+            ]);
         } catch (ClientException $e) {
             if ($e->getCode() === 403 || $e->getCode() === 404) {
                 throw new \RuntimeException(sprintf(
@@ -459,12 +467,8 @@ class NewCommand extends Command {
             }
         }
 
-        $this->fs->dumpFile($this->compressedFilePath, $response->getBody());
-
-        if (null !== $progressBar) {
-            $progressBar->finish();
-            $this->tools->spacing();
-        }
+        $progressBar->finish();
+        $this->tools->spacing();
 
         return $this;
     }

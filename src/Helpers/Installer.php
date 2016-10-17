@@ -294,15 +294,27 @@ class Installer {
   }
 
     public function checkDatabaseConnection($values, $out = true) {
-        $database = null;
-        $dsn = "mysql:dbname=$values[dbName];host=$values[dbHost];port=$values[dbPort]";
-        $driver_options = array(
+        $pdo = null;
+        $dbname = "`" . str_replace("`", "``", $values['dbName']) . "`";
+        $dsnArr = array(
+            'host' => $values['dbHost'],
+            'port' => $values['dbPort']
+        );
+
+        $dsn = array_reduce(array_keys($dsnArr), function($carry, $key) use ($dsnArr) { 
+            $carry .= "{$key}={$dsnArr[$key]};"; 
+            return $carry; 
+        });
+
+        $driverOptions = array(
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         );
-        
+
         try {
-            $database = new PDO($dsn, $values['dbUser'], $values['dbPass'], $driver_options);
+            $pdo = new PDO("mysql:$dsn", $values['dbUser'], $values['dbPass'], $driverOptions);
+            $pdo->query("CREATE DATABASE IF NOT EXISTS $dbname");
+            $pdo->query("use $dbname");
             $success = true;
         } catch(Exception $e) {
             if ($out) {
@@ -311,7 +323,7 @@ class Installer {
             }
         }
 
-        return $database;
+        return $pdo;
     }
 
   /**
