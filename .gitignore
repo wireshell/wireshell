@@ -1,3 +1,12 @@
+# Composer
 vendor
-.DS_Store
+
+# Binaries
 composer.phar
+
+# Tests
+phpunit.xml
+
+# Directories etc.
+ProcessWire
+Tests/processwire.zip

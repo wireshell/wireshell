@@ -19,7 +19,6 @@ use Distill\Strategy\MinimumSize;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Message\Response;
-use GuzzleHttp\Subscriber\Progress\Progress;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -356,7 +355,10 @@ class NewCommand extends Command {
      * @throws \RuntimeException if a project with the same does already exist
      */
     private function checkProjectName() {
-        if (is_dir($this->projectDir) && !$this->isEmptyDirectory($this->projectDir)) {
+        if (
+            is_dir($this->projectDir) && 
+            !$this->isEmptyDirectory($this->projectDir) && 
+            $this->fs->exists($this->projectDir . '/site/config.php')) {
             throw new \RuntimeException(sprintf(
                 "There is already a '%s' project in this directory (%s).\n" .
                 "Change your project name or create it in another directory.",
