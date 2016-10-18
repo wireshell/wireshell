@@ -1,29 +1,58 @@
-<?php namespace Wireshell\Test\Commands\Common;
+<?php namespace Wireshell\Tests\Commands\Common;
 
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Wireshell\Tests\BaseTestCase as Base;
 use Wireshell\Commands\Common\StatusCommand;
 
-class StatusCommandTest extends \PHPUnit_Framework_TestCase {
+class StatusCommandTest extends Base {
+
+    /**
+     * @before
+     */
+    public function setupCommand() {
+        $this->app->add(new StatusCommand());
+        $this->command = $this->app->find('status');
+        $this->tester = new CommandTester($this->command);
+    }
 
     public function testNotEmptyOutput() {
-        $app = new Application();
-        $app->add(new StatusCommand());
-        $command = $app->find('status');
-        $commandTester = new CommandTester($command);
+        $this->tester->execute(array(
+            'command'  => $this->command->getName()
+        ));
 
-        // @todo: cwd ~/Projects/wireshell change inside woring project directory for now
-        // working project: `phpunit -c ~/.composer/vendor/wireshell/wireshell`
-        // sqlite?
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Version', $output);
+        $this->assertContains('ProcessWire', $output);
+        $this->assertContains('*****', $output);
+    }
 
-        // $commandTester->execute(array(
-        //     'command'  => $command->getName()
-        // ));
+    public function testImageDiagnostic() {
+        $this->tester->execute(array(
+            'command'  => $this->command->getName(),
+            '--image' => true
+        ));
 
-        // // the output of the command in the console
-        // $output = $commandTester->getDisplay();
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Image Diagnostics', $output);
+    }
 
-        // $this->assertContains('Version', $output);
-        // $this->assertContains('ProcessWire', $output);
+    public function testPhpDiagnostic() {
+        $this->tester->execute(array(
+            'command'  => $this->command->getName(),
+            '--php' => true
+        ));
+
+        $output = $this->tester->getDisplay();
+        $this->assertContains('PHP Diagnostics', $output);
+    }
+
+    public function testDisplayPass() {
+        $this->tester->execute(array(
+            'command'  => $this->command->getName(),
+            '--pass' => true
+        ));
+
+        $output = $this->tester->getDisplay();
+        $this->assertNotContains('*****', $output);
     }
 }

@@ -9,7 +9,6 @@ use Wireshell\Helpers\ProcessDiagnostics\DiagnosePhp;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
 
-
 /**
  * Class StatusCommand
  *
