@@ -186,12 +186,15 @@ Class WsTools {
     /**
      * Write block
      *
-     * @param string $text
+     * @param string|array $text
      * @param boolean $write
      */
     public function writeBlockBasic($text, $write = true) {
-        $out = $this->writeInfo($text, false);
-        if ($write) $this->output->writeln(array('', $out, ''));
+        $out = array('');
+        $this->getOutput($text, $out);
+        $out[] = '';
+
+        if ($write) $this->output->writeln($out);
         return $out;
     }
 
@@ -226,9 +229,18 @@ Class WsTools {
     }
 
     /**
-     * Output spacing
+     * Get Output
+     *
+     * @param string|array $text
+     * @param array $out
      */
-    public function spacing() {
-        $this->output->write(PHP_EOL);
+    private function getOutput($text, &$out) {
+        if (is_array($text)) {
+            foreach ($text as $t) {
+                $out[] = $this->writeInfo($t, false);
+            }
+        } else {
+            $out[] = $this->writeInfo($text, false);
+        }
     }
 }

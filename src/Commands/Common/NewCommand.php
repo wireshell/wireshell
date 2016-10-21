@@ -468,7 +468,7 @@ class NewCommand extends Command {
         }
 
         $progressBar->finish();
-        $this->tools->spacing();
+        $this->tools->nl();
 
         return $this;
     }

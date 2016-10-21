@@ -38,24 +38,30 @@ class WriteCommand extends PwConnector {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->tools = new Tools($output);
+        $tools = new Tools($output);
 
-        $this->tools->writeSuccess('Write Success!');
-        $this->tools->writeInfo('Write Info!');
-        $this->tools->writeComment('Write Comment!');
-        $this->tools->writeLink('Write Link!');
-        $this->tools->writeBlock('Write Block!');
-        $this->tools->writeError('Write Error!');
-        $this->tools->writeHeader('Write Header!');
-        $this->tools->writeMark('Write Mark!');
-        $this->tools->writeSection('Write Section!', 'Write Section Part Two.');
-        $this->tools->writeBlockBasic('Write Block Basic!');
-        $this->tools->writeBlockCommand('Write Block Command!');
-        $this->tools->writeInfo('nl');
-        $this->tools->nl();
-        $this->tools->writeInfo('spacing');
-        $this->tools->spacing();
-        $output->writeln($this->tools->getQuestion('Get Question', 'default'));
+        $tools->writeBlock('Style Guide');
+
+        $tools->writeBlockBasic(array(
+            '  use Wireshell\Helpers\WsTools as Tools;',
+            '  $tools = new Tools($output);',
+            '  $tools->writeInfo(\'This is how it should be used!\')'
+        ));
+
+        $tools->writeSuccess('Write Success!');
+        $tools->writeInfo('Write Info!');
+        $tools->writeComment('Write Comment!');
+        $tools->writeLink('Write Link!');
+        $tools->writeBlock('Write Block!');
+        $tools->writeError('Write Error!');
+        $tools->writeHeader('Write Header!');
+        $tools->writeMark('Write Mark!');
+        $tools->writeSection('Write Section!', 'Write Section Part Two.');
+        $tools->writeBlockBasic('Write Block Basic!');
+        $tools->writeBlockCommand('Write Block Command!');
+        $tools->writeInfo('nl:');
+        $tools->nl();
+        $output->writeln($tools->getQuestion('Get Question', 'default'));
 
         // @todo: list
         // @todo: table
