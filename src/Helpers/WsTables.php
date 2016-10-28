@@ -38,7 +38,7 @@ class WsTables {
 
         foreach ($tables as $table) {
             $table->render();
-            $output->writeln("\n");
+            $output->writeln('');
         }
     }
 

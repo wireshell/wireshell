@@ -10,7 +10,7 @@ use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
 
 /**
- * Class StatusCommand
+ * Class CheatCommand
  *
  * Returns versions, paths and environment info
  *
@@ -21,14 +21,14 @@ use Wireshell\Helpers\WsTools as Tools;
  * @author netcarver
  * @author horst
  */
-class WriteCommand extends PwConnector {
+class CheatCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
     protected function configure() {
         $this
-            ->setName('write')
+            ->setName('cheat')
             ->setDescription('Displays styles.');
     }
 
@@ -40,7 +40,7 @@ class WriteCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $tools = new Tools($output);
 
-        $tools->writeBlock('Style Guide');
+        $tools->writeBlockCommand($this->getName());
 
         $tools->writeBlockBasic(array(
             '  use Wireshell\Helpers\WsTools as Tools;',
@@ -62,6 +62,9 @@ class WriteCommand extends PwConnector {
         $tools->writeInfo('nl:');
         $tools->nl();
         $output->writeln($tools->getQuestion('Get Question', 'default'));
+
+        $output->write($tools->writeInfo('writeCount(5, 10) ', false));
+        $tools->writeCount(5, 10);
 
         // @todo: list
         // @todo: table

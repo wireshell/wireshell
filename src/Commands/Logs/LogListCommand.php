@@ -35,9 +35,9 @@ class LogListCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
-        $tools = new Tools();
+        $tools = new Tools($output);
         $logs = \ProcessWire\wire('log')->getLogs();
-        $output->writeln($tools->tint(count($logs) . ' logs', Tools::kTintComment));
+        $tools->writeBlockCommand($this->getName());
 
         $data = array();
         foreach ($logs as $log) {
@@ -53,5 +53,7 @@ class LogListCommand extends PwConnector {
         $tables = new Tables();
         $logTables = array($tables->buildTable($output, $data, $headers));
         $tables->renderTables($output, $logTables, false);
+        $count = count($logs);
+        $tools->writeInfo("($count in set, total: $count)");
     }
 }

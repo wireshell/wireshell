@@ -41,11 +41,12 @@ class LogTailCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
-        $tools = new Tools();
+        $tools = new Tools($output);
         $helper = $this->getHelper('question');
         $formatter = $this->getHelper('formatter');
         $log = \ProcessWire\wire('log');
         $availableLogs = $log->getLogs();
+        $tools->writeBlockCommand($this->getName());
 
         $question = new ChoiceQuestion(
             $tools->getQuestion('Please choose one of', key($availableLogs)),
@@ -57,11 +58,14 @@ class LogTailCommand extends PwConnector {
         if (!$name) {
             $name = $helper->ask($input, $output, $question);
         } else if (!array_key_exists($name, $availableLogs)) {
-            $output->writeln($tools->tint("<error> Log '{$name}' does not exist.</error>", Tools::kTintError) . "\n");
+            $tools->writeError("<error> Log '{$name}' does not exist.</error>");
+            $tools->nl();
             $name = $helper->ask($input, $output, $question);
         }
 
-        $tools->writeSection($output, $formatter, 'Log ' . ucfirst($name));
+        $tools->nl();
+        $tools->writeHeader('Log ' . ucfirst($name));
+        $tools->nl();
 
         $options = array(
             'limit' => $input->getOption('limit') ? $input->getOption('limit') : 10,
@@ -79,6 +83,6 @@ class LogTailCommand extends PwConnector {
 
         $count = count($data);
         $total = $log->getTotalEntries($name);
-        $output->writeln($tools->tint("($count in set, total: $total)", Tools::kTintComment));
+        $tools->writeCount($count, $total);
     }
 }

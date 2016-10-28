@@ -243,4 +243,18 @@ Class WsTools {
             $out[] = $this->writeInfo($text, false);
         }
     }
+
+    /**
+     * Returns: `x in set, total: y`
+     *
+     * @param int $count
+     * @param int $total
+     * @param boolean $write
+     * @return tinted string
+     */
+    public function writeCount($count, $total = null, $write = true) {
+        if (!$total) $total = $count;
+
+        $this->writeInfo("($count in set, total: $total)", $write);
+    }
 }
