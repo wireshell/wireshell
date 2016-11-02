@@ -16,7 +16,6 @@
 - field:create     Creates a field
 - field:delete     Deletes fields
 - field:edit       Edit a field
-- field:list       Lists all available fields.
 - field:tag        Tags fields
 - field:types      Lists all available fieldtypes.
 
@@ -33,13 +32,11 @@
 - page:create      Creates a ProcessWire page
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
-- page:list        Lists ProcessWire pages
 
 ## role
 
 - role:create      Creates a ProcessWire role
 - role:delete      Deletes ProcessWire role(s)
-- role:list        Lists ProcessWire role(s)
 
 ## template
 

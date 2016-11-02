@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Wireshell\Helpers\PwUserTools;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class PageListCommand
@@ -16,13 +17,7 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Tabea David <info@justonestep.de>
  */
-class PageListCommand extends PwUserTools
-{
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+class PageListCommand extends PwUserTools {
 
     /**
      * @var Integer
@@ -38,8 +33,7 @@ class PageListCommand extends PwUserTools
     /**
      * Configures the current command.
      */
-    public function configure()
-    {
+    public function configure() {
         $this
             ->setName('page:list')
             ->setDescription('Lists ProcessWire pages')
@@ -54,9 +48,10 @@ class PageListCommand extends PwUserTools
      * @param OutputInterface $output
      * @return int|null|void
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $this->tools = new Tools($output);
+        $this->tools->writeBlockCommand($this->getName());
 
         $pages = \ProcessWire\wire('pages');
         $this->output = $output;
@@ -71,19 +66,24 @@ class PageListCommand extends PwUserTools
      * @param Page $page
      * @param int $level
      */
-    public function listPages($page, $level)
-    {
+    public function listPages($page, $level) {
         $indent = 4;
-        $title = $page->title . ' { ' . $page->id . ', ' . $page->template . ' }';
+        $title = $this->tools->writeInfo($page->title, false)
+            . $this->tools->writeComment(' { ', false) 
+            . $this->tools->writeMark($page->id, false)
+            . $this->tools->writeComment(', ', false) 
+            . $this->tools->write($page->template, null, false)
+            . $this->tools->writeComment(' }', false);
         switch ($this->indent) {
         case 0:
-            $out = '|-- ' . $title;
+            $out = $this->tools->writeComment('|-- ', false) . $title;
             break;
         default:
             $i = $this->indent - $indent / 2;
             $j = $indent / 2 + 1;
             $out = '|' . str_pad(' ' . $title, strlen($title) + $j, '-', STR_PAD_LEFT);
             $out = '|' . str_pad($out, strlen($out) + $i, ' ', STR_PAD_LEFT);
+            $out = preg_replace('/(\|)(\s*\|--)?/', $this->tools->writeComment("$1$2", false), $out);
         }
 
         $this->output->writeln($out);
@@ -140,7 +140,8 @@ class PageListCommand extends PwUserTools
             if (!\ProcessWire\wire('pages')->get($startPage) instanceof \ProcessWire\NullPage) {
                 $start = $startPage;
             } else {
-                $this->output->writeln("<error>Startpage `{$startPage}` could not be found, using root page instead.</error>\n");
+                $this->tools->writeError("Startpage `{$startPage}` could not be found, using root page instead.");
+                $this->tools->nl();
             }
         }
 

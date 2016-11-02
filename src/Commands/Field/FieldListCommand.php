@@ -41,6 +41,8 @@ class FieldListCommand extends PwConnector {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $tools = new Tools($output);
+        $tools->writeBlockCommand($this->getName());
 
         // get available fields
         $fieldtypes = array();
@@ -55,15 +57,14 @@ class FieldListCommand extends PwConnector {
 
         if (count($data->count) > 0) {
             foreach ($data->content as $tag => $c) {
-                $output->writeln('<fg=yellow;options=bold> ' . strtoupper($tag) . "</>");
+                $tools->writeHeader(strtoupper($tag));
                 $tables = new Tables();
                 $fieldTables = array($tables->buildTable($output, $c, $headers));
                 $tables->renderTables($output, $fieldTables, false);
             }
         }
 
-        $tools = new Tools();
-        $output->writeln($tools->tint("($data->count in set)", Tools::kTintComment));
+        $tools->writeCount($data->count);
     }
 
     /**

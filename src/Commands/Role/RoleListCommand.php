@@ -4,6 +4,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class RoleListCommand
@@ -13,14 +14,12 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Tabea David
  */
-class RoleListCommand extends PwUserTools
-{
+class RoleListCommand extends PwUserTools {
 
     /**
      * Configures the current command.
      */
-    public function configure()
-    {
+    public function configure() {
         $this
             ->setName('role:list')
             ->setDescription('Lists ProcessWire role(s)');
@@ -31,15 +30,13 @@ class RoleListCommand extends PwUserTools
      * @param OutputInterface $output
      * @return int|null|void
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $tools = new Tools($output);
+        $tools->writeBlockCommand($this->getName());
 
         foreach (\ProcessWire\wire('roles') as $role) {
-            $output->writeln("  - {$role->name}");
+            $tools->writeInfo("  - {$role->name}");
         }
     }
-
 }
-
-
