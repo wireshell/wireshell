@@ -50,10 +50,10 @@ class LogListCommand extends PwConnector {
         }
 
         $headers = array('Name', 'Modified', 'Entries', 'Size');
-        $tables = new Tables();
-        $logTables = array($tables->buildTable($output, $data, $headers));
-        $tables->renderTables($output, $logTables, false);
+        $tables = new Tables($output);
+        $logTables = array($tables->buildTable($data, $headers));
+        $tables->renderTables($logTables, false);
         $count = count($logs);
-        $tools->writeInfo("($count in set, total: $count)");
+        $tools->writeCount($count);
     }
 }

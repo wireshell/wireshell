@@ -38,20 +38,20 @@ class UserListCommand extends PwUserTools {
     public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
         $users = $this->getUsers($input);
-        $formatter = $this->getHelper('formatter');
-        $tools = new Tools();
-        $tools->writeSection($output, $formatter, 'List Users');
+        $tools = new Tools($output);
+        $tables = new Tables($output);
+
+        $tools->writeBlockCommand($this->getName());
 
         if ($users->getTotal() > 0) {
             $content = $this->getUserData($users);
             $headers = array('Username', 'E-Mail', 'Superuser', 'Roles');
 
-            $tables = new Tables();
-            $userTables = array($tables->buildTable($output, $content, $headers));
-            $tables->renderTables($output, $userTables, false);
+            $userTables = array($tables->buildTable($content, $headers));
+            $tables->renderTables($userTables, false);
         }
 
-        $output->writeln($tools->tint("(Users: {$users->getTotal()})", Tools::kTintComment));
+        $tools->writeCount($users->getTotal());
     }
 
     /**

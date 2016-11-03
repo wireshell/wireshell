@@ -138,25 +138,6 @@ Class WsTools {
     }
 
     /**
-     * Simple method for listing output
-     * one column
-     *
-     * @param string $header
-     * @param array $items
-     */
-    public function renderList($header, $items) {
-        $this->output->writeln('<fg=yellow;options=underscore>' . ucfirst($header) . "</>");
-
-        if (count($items) > 0) {
-            foreach ($items as $item) {
-                $this->output->writeln(" - $item");
-            }
-        }
-
-        $this->output->writeln("\n" . self::tint('(' . count($items) . ' in set)', 'comment'));
-    }
-
-    /**
      * Get question green text, white brackets/semicolon, yellow default
      *
      * @param string $question
@@ -217,6 +198,19 @@ Class WsTools {
      */
     public function writeSection($section, $text, $write = true) {
         $out = $this->formatter->formatSection($section, $text);
+        if ($write) $this->output->writeln($out);
+        return $out;
+    }
+
+    /**
+     * Write definition list item
+     *
+     * @param string $section
+     * @param string $text
+     * @param boolean $write
+     */
+    public function writeDfList($section, $text, $write = true) {
+        $out = ' - ' . $this->writeSection($section, $text, false);
         if ($write) $this->output->writeln($out);
         return $out;
     }

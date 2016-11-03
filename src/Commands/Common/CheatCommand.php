@@ -65,9 +65,8 @@ class CheatCommand extends PwConnector {
 
         $output->write($tools->writeInfo('writeCount(5, 10) ', false));
         $tools->writeCount(5, 10);
-
-        // @todo: list
-        // @todo: table
+        $tools->nl();
+        $tools->writeDfList('Write Df List', 'Write Df List Part Two.');
     }
 
 }

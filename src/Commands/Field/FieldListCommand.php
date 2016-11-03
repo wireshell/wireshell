@@ -57,10 +57,10 @@ class FieldListCommand extends PwConnector {
 
         if (count($data->count) > 0) {
             foreach ($data->content as $tag => $c) {
-                $tools->writeHeader(strtoupper($tag));
-                $tables = new Tables();
-                $fieldTables = array($tables->buildTable($output, $c, $headers));
-                $tables->renderTables($output, $fieldTables, false);
+                $tools->writeInfo('--- ' . strtoupper($tag) . ' ---');
+                $tables = new Tables($output);
+                $fieldTables = array($tables->buildTable($c, $headers));
+                $tables->renderTables($fieldTables, false);
             }
         }
 

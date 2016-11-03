@@ -2,6 +2,7 @@
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class WsTables
@@ -13,13 +14,25 @@ use Symfony\Component\Console\Helper\Table;
  */
 class WsTables {
 
+    protected $output;
+    protected $tools;
+
+    public function __construct(OutputInterface $output) {
+        $this->output = $output;
+        $this->tools = new Tools($output);
+    }
+
     /**
-     * @param OutputInterface $output
      * @param array $content
      * @param array $headers
      */
-    public function buildTable(OutputInterface $output, $content, $headers) {
-        $tablePW = new Table($output);
+    public function buildTable($content, $headers) {
+        if (!is_array($headers)) $headers = array($headers);
+        foreach ($headers as $k => $header) {
+            $headers[$k] = $this->tools->writeHeader($header, false);
+        }
+
+        $tablePW = new Table($this->output);
         $tablePW
             ->setStyle('borderless')
             ->setHeaders($headers)
@@ -29,21 +42,18 @@ class WsTables {
     }
 
     /**
-     * @param OutputInterface $output
      * @param array $tables
      * @param boolean $nlBefore, default true
      */
-    public function renderTables(OutputInterface $output, $tables, $nlBefore = true) {
-        if ($nlBefore) $output->writeln("\n");
-
+    public function renderTables($tables) {
         foreach ($tables as $table) {
             $table->render();
-            $output->writeln('');
+            $this->output->writeln('');
         }
     }
 
-    public function writeTable(OutputInterface $output, $text) {
-        $table = new Table($output);
+    public function writeTable($text) {
+        $table = new Table($this->output);
         $table->setHeaders(array($text));
         $table->render();
     }

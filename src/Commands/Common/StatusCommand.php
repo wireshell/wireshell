@@ -7,6 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnoseImagehandling;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnosePhp;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTables as Tables;
 use Wireshell\Helpers\WsTools as Tools;
 
 /**
@@ -43,25 +44,26 @@ class StatusCommand extends PwConnector {
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
         $this->tools = new Tools($output);
+        $tables = new Tables($output);
+        $stTables = array();
 
         $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
 
-        $tables = [];
-        $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
-        $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
+        $stTables[] = $tables->buildTable($pwStatus, 'ProcessWire');
+        $stTables[] = $tables->buildTable($wsStatus, 'wireshell');
 
         if ($input->getOption('php')) {
             $phpStatus = $this->getDiagnosePHP();
-            $tables[] = $this->buildTable($output, $phpStatus, 'PHP Diagnostics');
+            $stTables[] = $tables->buildTable($phpStatus, 'PHP Diagnostics');
         }
 
         if ($input->getOption('image')) {
             $phpStatus = $this->getDiagnoseImagehandling();
-            $tables[] = $this->buildTable($output, $phpStatus, 'Image Diagnostics');
+            $stTables[] = $tables->buildTable($phpStatus, 'Image Diagnostics');
         }
 
-        $this->renderTables($output, $tables);
+        $tables->renderTables($stTables);
     }
 
     /**
@@ -131,18 +133,6 @@ class StatusCommand extends PwConnector {
         );
     }
 
-    protected function buildTable(OutputInterface $output, $statusArray, $label) {
-        $headers = [$this->tools->writeHeader($label, false)];
-
-        $tablePW = new Table($output);
-        $tablePW
-            ->setStyle('borderless')
-            ->setHeaders($headers)
-            ->setRows($statusArray);
-
-        return $tablePW;
-    }
-
     /**
      * @return string
      */
@@ -155,18 +145,6 @@ class StatusCommand extends PwConnector {
         }
 
         return $url;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param $tables
-     */
-    protected function renderTables(OutputInterface $output, $tables) {
-        $this->tools->writeBlockCommand($this->getName());
-        foreach ($tables as $table) {
-            $table->render();
-            $this->tools->nl();
-        }
     }
 
     /**

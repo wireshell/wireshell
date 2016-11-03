@@ -1,5 +1,7 @@
 # @todo
 
+Improve Commands, adapt Tools and Tables Helpers
+
 ## common
 
 - serve            Serve ProcessWire via built in PHP webserver
@@ -17,7 +19,6 @@
 - field:delete     Deletes fields
 - field:edit       Edit a field
 - field:tag        Tags fields
-- field:types      Lists all available fieldtypes.
 
 ## module
 
@@ -43,11 +44,11 @@
 - template:create  Creates a ProcessWire template
 - template:delete  Deletes ProcessWire template(s)
 - template:fields  Assign given fields to a given template
-- template:list    Lists ProcessWire templates
 
 ## user
 
 - user:create      Creates a ProcessWire user
 - user:delete      Deletes ProcessWire users
-- user:list        Lists ProcessWire users
 - user:update      Updates a ProcessWire user
+
+Done: 11 of 36

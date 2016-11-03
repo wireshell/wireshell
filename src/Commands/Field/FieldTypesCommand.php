@@ -33,17 +33,14 @@ class FieldTypesCommand extends PwConnector {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $tools = new Tools($output);
+        $tools->writeBlockCommand($this->getName());
 
         // get available fieldtypes
-        $fieldtypes = array();
         foreach (\ProcessWire\wire('modules') as $module) {
             if (preg_match('/^Fieldtype/', $module->name)) {
-                $fieldtypes[] = $module->name;
+                $tools->writeDfList($module->name, substr($module->name, 9));
             }
         }
-
-        $tools = new Tools();
-        $tools->renderList('Fieldtypes', $fieldtypes, $output);
     }
-
 }

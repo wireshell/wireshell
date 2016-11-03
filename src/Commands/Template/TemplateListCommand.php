@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTables as Tables;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class TemplateListCommand
@@ -35,14 +36,17 @@ class TemplateListCommand extends PwConnector {
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $tools = new Tools($output);
+        $tables = new Tables($output);
 
         $advanced = $input->getOption('advanced') ? true : false;
 
         $content = $this->getTemplateData($advanced);
         $headers = array('Template', 'Fields', 'Pages', 'Modified', 'Access');
-        $tables = new Tables();
-        $templateTables = array($tables->buildTable($output, $content, $headers));
-        $tables->renderTables($output, $templateTables);
+        $templateTables = array($tables->buildTable($content, $headers));
+
+        $tools->writeBlockCommand($this->getName());
+        $tables->renderTables($templateTables);
     }
 
     /**
