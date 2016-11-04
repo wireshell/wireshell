@@ -47,10 +47,9 @@ Improve Commands, adapt Tools and Tables Helpers
 
 ## user
 
-- user:delete      Deletes ProcessWire users
 - user:update      Updates a ProcessWire user
 
-Done: 11 of 36
+Done: 13 of 36
 
 ## Rewrites
 

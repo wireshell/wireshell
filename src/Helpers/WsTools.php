@@ -317,10 +317,10 @@ Class WsTools {
         return $item;
     }
 
-    public function askChoice($item, $options, $default = 0, $isMulti = false) {
+    public function askChoice($item, $question, $options, $default = 0, $isMulti = false) {
         if (!$item) {
             $question = new ChoiceQuestion(
-                $this->getQuestion('Which roles should be attached'),
+                $this->getQuestion($question),
                 $options,
                 $default
             );

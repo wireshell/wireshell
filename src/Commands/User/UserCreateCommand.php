@@ -65,7 +65,7 @@ class UserCreateCommand extends PwUserTools {
         $rls = $input->getOption('roles');
         $roles = $rls ? explode(",", $rls) : null;
 
-        $roles = $tools->askChoice($roles, $availableRoles, 0, true);
+        $roles = $tools->askChoice($roles, 'Which roles should be attached', $availableRoles, 0, true);
         if ($roles) $this->attachRolesToUser($name, $roles, $output);
 
         if ($pass) {
