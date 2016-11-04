@@ -5,7 +5,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Wireshell\Helpers\PwUserTools;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class UserCreateCommand
@@ -16,18 +18,16 @@ use Wireshell\Helpers\PwUserTools;
  * @author Marcus Herrmann
  * @author Tabea David
  */
-class UserCreateCommand extends PwUserTools
-{
+class UserCreateCommand extends PwUserTools {
 
     /**
      * Configures the current command.
      */
-    public function configure()
-    {
+    public function configure() {
         $this
             ->setName('user:create')
             ->setDescription('Creates a ProcessWire user')
-            ->addArgument('name', InputArgument::REQUIRED)
+            ->addArgument('name', InputArgument::OPTIONAL, 'Name of user.')
             ->addOption('email', null, InputOption::VALUE_REQUIRED, 'Supply an email address')
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Supply a password')
             ->addOption('roles', null, InputOption::VALUE_REQUIRED, 'Attach existing roles to user, comma separated');
@@ -38,41 +38,40 @@ class UserCreateCommand extends PwUserTools
      * @param OutputInterface $output
      * @return int|null|void
      */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
+    public function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
+        $tools = new Tools($output);
+        $tools
+            ->setHelper($this->getHelper('question'))
+            ->setInput($input);
 
-        $name = $input->getArgument('name');
-        $email = $input->getOption('email');
-        $pass = $input->getOption('password');
-        $roles = explode(",", $input->getOption('roles'));
+        $tools->writeBlockCommand($this->getName());
 
-        $helper = $this->getHelper('question');
-        if (!$email) {
-            $question = new Question('Please enter a email address : ', 'email');
-            $email = $helper->ask($input, $output, $question);
-        }
-        if (!$pass) {
-            $question = new Question('Please enter a password : ', 'password');
-            $question->setHidden(true);
-            $question->setHiddenFallback(false);
-            $pass = $helper->ask($input, $output, $question);
-        }
+        $name = $tools->ask($input->getArgument('name'), 'Username');
+        $email = $tools->ask($input->getOption('email'), 'E-Mail-Address', null, false, null, 'email');
+        $pass = $tools->ask($input->getOption('password'), 'Password', $tools->generatePassword(), true);
 
-        if (!\ProcessWire\wire("pages")->get("name={$name}") instanceof \ProcessWire\NullPage) {
-            $output->writeln("<error>User '{$name}' already exists!</error>");
-            exit(1);
+        while (!\ProcessWire\wire("pages")->get("name={$name}") instanceof \ProcessWire\NullPage) {
+            $tools->writeError("User '{$name}' already exists, please choose another one");
+            $name = $tools->ask($input->getArgument('name'), 'Username');
         }
 
         $user = $this->createUser($email, $name, $this->userContainer, $pass);
         $user->save();
 
-        if ($input->getOption('roles')) $this->attachRolesToUser($name, $roles, $output);
+        $availableRoles = array();
+        foreach (\ProcessWire\wire('roles') as $role) $availableRoles[] = $role->name;
+
+        $rls = $input->getOption('roles');
+        $roles = $rls ? explode(",", $rls) : null;
+
+        $roles = $tools->askChoice($roles, $availableRoles, 0, true);
+        if ($roles) $this->attachRolesToUser($name, $roles, $output);
 
         if ($pass) {
-          $output->writeln("<info>User '{$name}' created successfully!</info>");
+            $tools->writeInfo("User '{$name}' created successfully!");
         } else {
-          $output->writeln("<info>User '{$name}' created successfully! Please do not forget to set a password.</info>");
+            $tools->writeInfo("User '{$name}' created successfully! Please do not forget to set a password.");
         }
     }
 

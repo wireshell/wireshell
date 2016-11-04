@@ -47,8 +47,13 @@ Improve Commands, adapt Tools and Tables Helpers
 
 ## user
 
-- user:create      Creates a ProcessWire user
 - user:delete      Deletes ProcessWire users
 - user:update      Updates a ProcessWire user
 
 Done: 11 of 36
+
+## Rewrites
+
+* new command: ask has been outsourced to Tools
+* log:tail command: ask has been outsourced to Tools
+

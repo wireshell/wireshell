@@ -3,6 +3,8 @@
 use Symfony\Component\Console\Helper\FormatterHelper as Formatter;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 /**
  * Class WsTools
@@ -18,6 +20,8 @@ Class WsTools {
 
     protected $output;
     protected $formatter;
+    protected $helper;
+    protected $input;
 
     protected static $types = array('error', 'success', 'info', 'comment', 'link', 'header', 'mark');
 
@@ -42,6 +46,16 @@ Class WsTools {
 
         $style = new OutputFormatterStyle('blue', 'white', array('reverse'));
         $output->getFormatter()->setStyle('mark', $style);
+    }
+
+    public function setHelper($helper) {
+        $this->helper = $helper;
+        return $this;
+    }
+
+    public function setInput($input) {
+        $this->input = $input;
+        return $this;
     }
 
     /**
@@ -250,5 +264,83 @@ Class WsTools {
         if (!$total) $total = $count;
 
         $this->writeInfo("($count in set, total: $total)", $write);
+    }
+
+    /**
+     * Helper for symfony question helper
+     *
+     * @param string $item
+     * @param string $question
+     * @param string $default
+     * @param boolean $hidden
+     * @param array $autocomplete,
+     * @param string $validator
+     * @param boolean $doAsk whether to ask if params were provided
+     * @return string
+     */
+    public function ask($item,  $question, $default = null, $hidden = false, $autocomplete = null, $validator = null, $doAsk = false) {
+        if (!$item || $doAsk) {
+            $question = new Question($this->getQuestion($question, $default), $default);
+
+            if ($hidden) {
+                $question->setHidden(true);
+                $question->setHiddenFallback(false);
+            }
+
+            if ($autocomplete) {
+                $question->setAutocompleterValues($autocomplete);
+            }
+
+            if ($validator) {
+                switch ($validator) {
+                    case 'email':
+                        $question->setValidator(function ($answer) {
+                            if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+                                throw new \RuntimeException('Please enter a valid email address.');
+                            }
+                            return $answer;
+                        });
+                        break;
+                }
+
+                $question->setMaxAttempts(3);
+            }
+
+            $item = $this->helper->ask($this->input, $this->output, $question);
+            $this->nl();
+        }
+
+        if ($item && $validator === 'email' && !filter_var($item, FILTER_VALIDATE_EMAIL)) {
+            return $this->ask($item, $question, $default, $hidden, $autocomplete, $validator, true);
+        }
+
+        return $item;
+    }
+
+    public function askChoice($item, $options, $default = 0, $isMulti = false) {
+        if (!$item) {
+            $question = new ChoiceQuestion(
+                $this->getQuestion('Which roles should be attached'),
+                $options,
+                $default
+            );
+
+            if ($isMulti) $question->setMultiselect(true);
+
+            return $this->helper->ask($this->input, $this->output, $question);
+        }
+
+        return $item;
+    }
+
+    /**
+     * Generate random password with given length
+     *
+     * @param integer $length
+     * @return string
+     */
+    public function generatePassword($length = 12) {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+        return substr(str_shuffle($chars), 0, $length);
     }
 }
