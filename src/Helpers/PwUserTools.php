@@ -36,21 +36,18 @@ class PwUserTools extends PwConnector {
     }
 
     /**
-     * @param InputInterface $input
-     * @param $name
-     * @param $pass
+     * @param string $name
+     * @param string $pass
+     * @param string $email
+     * @param string $newname
      * @return \Page
      */
-    public function updateUser(InputInterface $input, $name, $pass)
-    {
+    public function updateUser($name, $pass, $email, $newname) {
         $user = \ProcessWire\wire('users')->get($name);
         $user->setOutputFormatting(false);
 
-        $newname = $input->getOption('newname');
-        $email = $input->getOption('email');
-
         if (!empty($newname)) {
-          $name = \ProcessWire\wire('sanitizer')->username($input->getOption('newname'));
+          $name = \ProcessWire\wire('sanitizer')->username($newname);
           $user->name = $name;
           $user->title = $name;
         }
@@ -58,7 +55,7 @@ class PwUserTools extends PwConnector {
         if (!empty($pass)) $user->pass = $pass;
 
         if (!empty($email)) {
-          $email = \ProcessWire\wire('sanitizer')->email($input->getOption('email'));
+          $email = \ProcessWire\wire('sanitizer')->email($email);
           if ($email) $user->email = $email;
         }
 
@@ -72,9 +69,17 @@ class PwUserTools extends PwConnector {
      * @param boolean $reset
      * @return mixed
      */
-    public function attachRolesToUser($user, $roles, $output, $reset = false)
-    {
+    public function attachRolesToUser($user, $roles, $output, $reset = false) {
         $editedUser = \ProcessWire\wire('users')->get($user);
+
+        // remove roles which are not submitted
+        foreach ($editedUser->roles as $role) {
+            if (!in_array($role->name, $roles)) {
+                var_dump('foo', $role->name);
+                $editedUser->removeRole($role->name);
+            }
+        }
+        $editedUser->save();
 
         // remove existing roles
         if ($reset === true) {
@@ -100,12 +105,24 @@ class PwUserTools extends PwConnector {
      * @param $output
      * @return bool
      */
-    private function checkIfRoleExists($role, $output)
-    {
+    private function checkIfRoleExists($role, $output) {
         if (\ProcessWire\wire("pages")->get("name={$role}") instanceof \ProcessWire\NullPage) {
             $output->writeln("<comment>Role '{$role}' does not exist!</comment>");
 
             return false;
         }
+    }
+
+    /**
+     * Get available roles
+     *
+     * @param string $rls
+     * @return array
+     */
+    public function getAvailableRoles($rls) {
+        $availableRoles = array();
+        foreach (\ProcessWire\wire('roles') as $role) $availableRoles[] = $role->name;
+
+        return $rls ? explode(",", $rls) : $availableRoles;
     }
 }

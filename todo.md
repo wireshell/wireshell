@@ -45,11 +45,7 @@ Improve Commands, adapt Tools and Tables Helpers
 - template:delete  Deletes ProcessWire template(s)
 - template:fields  Assign given fields to a given template
 
-## user
-
-- user:update      Updates a ProcessWire user
-
-Done: 13 of 36
+Done: 14 of 36
 
 ## Rewrites
 

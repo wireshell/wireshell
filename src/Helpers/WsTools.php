@@ -280,7 +280,10 @@ Class WsTools {
      */
     public function ask($item,  $question, $default = null, $hidden = false, $autocomplete = null, $validator = null, $doAsk = false) {
         if (!$item || $doAsk) {
-            $question = new Question($this->getQuestion($question, $default), $default);
+            $question = new Question(
+                $this->getQuestion($question, $default),
+                $default
+            );
 
             if ($hidden) {
                 $question->setHidden(true);
@@ -317,10 +320,14 @@ Class WsTools {
         return $item;
     }
 
-    public function askChoice($item, $question, $options, $default = 0, $isMulti = false) {
+    public function askChoice($item, $question, $options, $default = '0', $isMulti = false) {
         if (!$item) {
+
+            $def = array();
+            foreach (explode(',', $default) as $key) $def[] = $options[$key];
+
             $question = new ChoiceQuestion(
-                $this->getQuestion($question),
+                $this->getQuestion($question, implode(', ', $def)),
                 $options,
                 $default
             );

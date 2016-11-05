@@ -59,13 +59,18 @@ class UserCreateCommand extends PwUserTools {
         $user = $this->createUser($email, $name, $this->userContainer, $pass);
         $user->save();
 
-        $availableRoles = array();
-        foreach (\ProcessWire\wire('roles') as $role) $availableRoles[] = $role->name;
+        $options = $this->getAvailableRoles($input->getOption('roles'));
 
-        $rls = $input->getOption('roles');
-        $roles = $rls ? explode(",", $rls) : null;
+        $roles = $tools->askChoice(
+            $input->getOption('roles'),
+            'Which roles should be attached',
+            $options,
+            array_search('guest', $options),
+            true
+        );
 
-        $roles = $tools->askChoice($roles, 'Which roles should be attached', $availableRoles, 0, true);
+        $tools->nl();
+
         if ($roles) $this->attachRolesToUser($name, $roles, $output);
 
         if ($pass) {
