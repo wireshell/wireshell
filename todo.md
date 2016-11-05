@@ -36,7 +36,6 @@ Improve Commands, adapt Tools and Tables Helpers
 
 ## role
 
-- role:create      Creates a ProcessWire role
 - role:delete      Deletes ProcessWire role(s)
 
 ## template
@@ -45,7 +44,7 @@ Improve Commands, adapt Tools and Tables Helpers
 - template:delete  Deletes ProcessWire template(s)
 - template:fields  Assign given fields to a given template
 
-Done: 14 of 36
+Done: 15 of 36
 
 ## Rewrites
 
