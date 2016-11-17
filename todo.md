@@ -34,17 +34,13 @@ Improve Commands, adapt Tools and Tables Helpers
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-## role
-
-- role:delete      Deletes ProcessWire role(s)
-
 ## template
 
 - template:create  Creates a ProcessWire template
 - template:delete  Deletes ProcessWire template(s)
 - template:fields  Assign given fields to a given template
 
-Done: 15 of 36
+Done: 16 of 36
 
 ## Rewrites
 
