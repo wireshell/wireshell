@@ -322,7 +322,6 @@ Class WsTools {
 
     public function askChoice($item, $question, $options, $default = '0', $isMulti = false) {
         if (!$item) {
-
             $def = array();
             foreach (explode(',', $default) as $key) $def[] = $options[$key];
 
