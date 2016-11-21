@@ -36,10 +36,9 @@ Improve Commands, adapt Tools and Tables Helpers
 
 ## template
 
-- template:delete  Deletes ProcessWire template(s)
 - template:fields  Assign given fields to a given template
 
-Done: 17 of 36
+Done: 18 of 36
 
 ## Rewrites
 
