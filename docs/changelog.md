@@ -6,6 +6,8 @@ Check whether the latest build has passed: [Builds | Read the Docs](https://read
 
 **1.0.1** ()
 
+- Adapts `new` command, allows empty database password (`wireshell new prjct --dbPass=""`)
+
 **1.0.0** (2016-09-27)
 
 - Prepares wireshell for ProcessWire 3.x, adds namespace support, only supports ProcessWire 3.x

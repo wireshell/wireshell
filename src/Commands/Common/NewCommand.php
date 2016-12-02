@@ -101,7 +101,7 @@ class NewCommand extends Command {
             ->setDescription('Creates a new ProcessWire project')
             ->addArgument('directory', InputArgument::OPTIONAL, 'Directory where the new project will be created')
             ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user')
-            ->addOption('dbPass', null, InputOption::VALUE_REQUIRED, 'Database password')
+            ->addOption('dbPass', null, InputOption::VALUE_OPTIONAL, 'Database password')
             ->addOption('dbName', null, InputOption::VALUE_REQUIRED, 'Database name')
             ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host, default: `localhost`')
             ->addOption('dbPort', null, InputOption::VALUE_REQUIRED, 'Database port, default: `3306`')
@@ -210,7 +210,13 @@ class NewCommand extends Command {
      */
     private function askDbInformations($doAsk = false) {
         $this->defaults['dbUser'] = $this->ask('dbUser', 'Please enter the database user name', 'root', null, null, null, $doAsk);
-        $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true, null, null, $doAsk);
+
+        // allow empty passwords `--dbPass=""`
+        if (!$doAsk && $this->input->hasParameterOption('--dbPass') && !is_null($this->input->getParameterOption('--dbPass'))) {
+            $this->defaults['dbPass'] = $this->input->getParameterOption('--dbPass');
+        } else {
+            $this->defaults['dbPass'] = $this->ask('dbPass', 'Please enter the database password', null, true, null, null, $doAsk);
+        }
     }
 
     /**
