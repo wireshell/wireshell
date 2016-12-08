@@ -5,7 +5,6 @@ Improve Commands, adapt Tools and Tables Helpers
 ## common
 
 - serve            Serve ProcessWire via built in PHP webserver
-- upgrade          Checks for core upgrades.
 
 ## backup
 
@@ -38,7 +37,7 @@ Improve Commands, adapt Tools and Tables Helpers
 
 - template:fields  Assign given fields to a given template
 
-Done: 18 of 36
+Done: 19 of 36
 
 ## Rewrites
 

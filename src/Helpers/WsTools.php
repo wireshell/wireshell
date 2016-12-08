@@ -5,6 +5,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class WsTools
@@ -332,6 +333,19 @@ Class WsTools {
             );
 
             if ($isMulti) $question->setMultiselect(true);
+
+            return $this->helper->ask($this->input, $this->output, $question);
+        }
+
+        return $item;
+    }
+
+    public function askConfirmation($item, $question, $default = 'n') {
+        if (!$item) {
+            $question = new ConfirmationQuestion(
+                $this->getQuestion($question, $default),
+                false // value to return if the user doesn't enter any valid input
+            );
 
             return $this->helper->ask($this->input, $this->output, $question);
         }

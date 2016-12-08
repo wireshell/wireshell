@@ -2,6 +2,8 @@
 
 use ProcessWire\WireHttp;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\WsTools as Tools;
 
 /**
@@ -27,11 +29,27 @@ abstract class PwConnector extends SymfonyCommand {
     protected $userContainer;
     protected $roleContainer;
     protected $modulePath = '/site/modules/';
+    protected $output;
+    protected $input;
+    protected $tools;
 
-    /**
-     * @param $output
-     */
-    protected function checkForProcessWire($output) {
+    public function setOutput(OutputInterface $output) {
+        $this->output = $output;
+        $this->setTools();
+        return $this;
+    }
+
+    public function setInput(InputInterface $input) {
+        $this->input = $input;
+        return $this;
+    }
+
+    public function setTools() {
+        $this->tools = new Tools($this->output);
+        return $this;
+    }
+
+    protected function checkForProcessWire() {
         if (!is_dir(getcwd() . '/wire')) {
             foreach (new \DirectoryIterator(getcwd()) as $fileInfo) {
                 if (is_dir($fileInfo->getPathname() . '/wire')) chdir($fileInfo->getPathname());
@@ -41,25 +59,21 @@ abstract class PwConnector extends SymfonyCommand {
                 chdir('..');
 
                 if (empty(pathinfo(getcwd())['basename'])) {
-                    $output->writeln("<error>No ProcessWire installation found.</error>");
+                    $this->tools->writeError('No ProcessWire installation found.');
                     exit(1);
                 } else {
-                    $this->checkForProcessWire($output);
+                    $this->checkForProcessWire();
                 }
             } else {
-                $tools = new Tools($output);
-                $directory = $tools->write('`' . getcwd() . '`', 'info', false);
-                $output->writeln("Working directory changed to $directory.");
-                $tools->nl();
+                $directory = $this->tools->writeInfo('`' . getcwd() . '`', false);
+                $this->tools->write("Working directory changed to $directory.", false);
+                $this->tools->nl();
             }
         }
     }
 
-    /**
-     * @param $output
-     */
-    protected function bootstrapProcessWire($output) {
-        $this->checkForProcessWire($output);
+    protected function bootstrapProcessWire() {
+        $this->checkForProcessWire();
 
         if (!function_exists('\ProcessWire\wire')) include(getcwd() . '/index.php');
 
@@ -74,21 +88,20 @@ abstract class PwConnector extends SymfonyCommand {
         return $this->modulePath;
     }
 
-    protected function determineBranch($input) {
-        return $input->getOption('sha') ? $input->getOption('sha') : self::BRANCH_MASTER;
+    protected function determineBranch() {
+        return $this->input->getOption('sha') ? $this->input->getOption('sha') : self::BRANCH_MASTER;
     }
 
     /**
-     * @param $output
-     * @param InputInterface $input - whether branch name or commit
      * @return boolean
      */
-    protected function checkForCoreUpgrades($output, $input) {
+    protected function checkForCoreUpgrades() {
         $config = \ProcessWire\wire('config');
-        $targetBranch = $this->determineBranch($input);
+        $targetBranch = $this->determineBranch();
         $branches = $this->getCoreBranches($targetBranch);
         $upgrade = false;
         $new = version_compare($branches['master']['version'], $config->version);
+        $branch = $branches['master'];
 
         // branch does not exist - assume commit hash
         if (!array_key_exists($targetBranch, $branches)) {
@@ -96,15 +109,15 @@ abstract class PwConnector extends SymfonyCommand {
             $upgrade = true;
         } elseif ($new > 0 && $targetBranch === self::BRANCH_MASTER) {
             // master is newer than current
-            $branch = $branches['master'];
             $upgrade = true;
         }
 
-        $versionStr = "$branch[name] $branch[version]";
+        $versionStr = $this->tools->writeInfo(" $branch[name] $branch[version]", false);
         if ($upgrade) {
-            $output->writeln("<info>A ProcessWire core upgrade is available: $versionStr</info>");
+            $this->tools->write("A ProcessWire core upgrade is available:$versionStr", false);
+            $this->tools->nl();
         } else {
-            $output->writeln("<info>Your ProcessWire core is up-to-date: $versionStr</info>");
+            $this->tools->writeSuccess("Your ProcessWire core is up-to-date:$versionStr");
         }
 
         return array('upgrade' => $upgrade, 'branch' => $branch);

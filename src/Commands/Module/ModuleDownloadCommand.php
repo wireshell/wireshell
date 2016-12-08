@@ -19,7 +19,7 @@ class ModuleDownloadCommand extends PwModuleTools {
     /**
      * @var OutputInterface
      */
-    private $output;
+    protected $output;
 
     /**
      * Configures the current command.
@@ -42,7 +42,8 @@ class ModuleDownloadCommand extends PwModuleTools {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
+        parent::setOutput($output);
+        parent::bootstrapProcessWire();
         $this->output = $output;
 
         $modules = explode(",", $input->getArgument('modules'));

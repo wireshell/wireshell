@@ -38,6 +38,7 @@ class CheatCommand extends PwConnector {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        parent::setOutput($output);
         $tools = new Tools($output);
 
         $tools->writeBlockCommand($this->getName());

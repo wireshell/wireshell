@@ -21,7 +21,7 @@ class ModuleUpgradeCommand extends PwModuleTools {
     /**
      * @var OutputInterface
      */
-    private $output;
+    protected $output;
 
     /**
      * Configures the current command.

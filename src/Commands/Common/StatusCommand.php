@@ -42,10 +42,12 @@ class StatusCommand extends PwConnector {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
+        parent::setOutput($output)::bootstrapProcessWire();
         $this->tools = new Tools($output);
         $tables = new Tables($output);
         $stTables = array();
+
+        $this->tools->writeBlockCommand($this->getName());
 
         $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
