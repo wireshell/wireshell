@@ -39,7 +39,7 @@ class LogTailCommand extends PwConnector {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
+        parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
 
         $tools = new Tools($output);
         $helper = $this->getHelper('question');
@@ -77,9 +77,9 @@ class LogTailCommand extends PwConnector {
         $headers = array('Date', 'User', 'URL', 'Message');
         $data = $log->getEntries($name, $options);
 
-        $tables = new Tables();
-        $logTables = array($tables->buildTable($output, $data, $headers));
-        $tables->renderTables($output, $logTables, false);
+        $tables = new Tables($output);
+        $logTables = array($tables->buildTable($data, $headers));
+        $tables->renderTables($logTables, false);
 
         $count = count($data);
         $total = $log->getTotalEntries($name);

@@ -174,7 +174,11 @@ class UpgradeCommand extends PwConnector {
             $replace = array('wire');
 
             $indexVersion = array_search(md5(file_get_contents($this->root . 'index.php')), $this->indexHashes);
-            $htaccessVersion = array_search(md5(file_get_contents($this->root . '.htaccess')), $this->htaccessHashes);
+            if (file_exists($this->root . '.htaccess')) {
+              $htaccessVersion = array_search(md5(file_get_contents($this->root . '.htaccess')), $this->htaccessHashes);
+            } else {
+              $htaccessVersion = false;
+            }
 
             if ($indexVersion) {
                 $replace[] = 'index.php';

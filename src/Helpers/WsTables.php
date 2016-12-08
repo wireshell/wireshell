@@ -14,47 +14,61 @@ use Wireshell\Helpers\WsTools as Tools;
  */
 class WsTables {
 
-    protected $output;
-    protected $tools;
+  protected $output;
+  protected $tools;
 
-    public function __construct(OutputInterface $output) {
-        $this->output = $output;
-        $this->tools = new Tools($output);
+  /**
+   * Construct WsTables
+   *
+   * @param OutputInterface $output
+   */
+  public function __construct(OutputInterface $output) {
+    $this->output = $output;
+    $this->tools = new Tools($output);
+  }
+
+  /**
+   * Build borderless table
+   *
+   * @param array $content
+   * @param array $headers
+   */
+  public function buildTable($content, $headers) {
+    if (!is_array($headers)) $headers = array($headers);
+    foreach ($headers as $k => $header) {
+      $headers[$k] = $this->tools->writeHeader($header, false);
     }
 
-    /**
-     * @param array $content
-     * @param array $headers
-     */
-    public function buildTable($content, $headers) {
-        if (!is_array($headers)) $headers = array($headers);
-        foreach ($headers as $k => $header) {
-            $headers[$k] = $this->tools->writeHeader($header, false);
-        }
+    $tablePW = new Table($this->output);
+    $tablePW
+      ->setStyle('borderless')
+      ->setHeaders($headers)
+      ->setRows($content);
 
-        $tablePW = new Table($this->output);
-        $tablePW
-            ->setStyle('borderless')
-            ->setHeaders($headers)
-            ->setRows($content);
+    return $tablePW;
+  }
 
-        return $tablePW;
+  /**
+   * Render Tables
+   *
+   * @param array $tables
+   * @param boolean $nlBefore, default true
+   */
+  public function renderTables($tables) {
+    foreach ($tables as $table) {
+      $table->render();
+      $this->output->writeln('');
     }
+  }
 
-    /**
-     * @param array $tables
-     * @param boolean $nlBefore, default true
-     */
-    public function renderTables($tables) {
-        foreach ($tables as $table) {
-            $table->render();
-            $this->output->writeln('');
-        }
-    }
-
-    public function writeTable($text) {
-        $table = new Table($this->output);
-        $table->setHeaders(array($text));
-        $table->render();
-    }
+  /**
+   * Write Table
+   *
+   * @param string $text
+   */
+  public function writeTable($text) {
+    $table = new Table($this->output);
+    $table->setHeaders(array($text));
+    $table->render();
+  }
 }

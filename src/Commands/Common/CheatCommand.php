@@ -23,51 +23,51 @@ use Wireshell\Helpers\WsTools as Tools;
  */
 class CheatCommand extends PwConnector {
 
-    /**
-     * Configures the current command.
-     */
-    protected function configure() {
-        $this
-            ->setName('cheat')
-            ->setDescription('Displays styles.');
-    }
+  /**
+   * Configures the current command.
+   */
+  protected function configure() {
+    $this
+      ->setName('cheat')
+      ->setDescription('Displays styles.');
+  }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::setOutput($output);
-        $tools = new Tools($output);
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::setOutput($output);
+    $tools = new Tools($output);
 
-        $tools->writeBlockCommand($this->getName());
+    $tools->writeBlockCommand($this->getName());
 
-        $tools->writeBlockBasic(array(
-            '  use Wireshell\Helpers\WsTools as Tools;',
-            '  $tools = new Tools($output);',
-            '  $tools->writeInfo(\'This is how it should be used!\')'
-        ));
+    $tools->writeBlockBasic(array(
+      '  use Wireshell\Helpers\WsTools as Tools;',
+      '  $tools = new Tools($output);',
+      '  $tools->writeInfo(\'This is how it should be used!\')'
+    ));
 
-        $tools->writeSuccess('Write Success!');
-        $tools->writeInfo('Write Info!');
-        $tools->writeComment('Write Comment!');
-        $tools->writeLink('Write Link!');
-        $tools->writeBlock('Write Block!');
-        $tools->writeError('Write Error!');
-        $tools->writeHeader('Write Header!');
-        $tools->writeMark('Write Mark!');
-        $tools->writeSection('Write Section!', 'Write Section Part Two.');
-        $tools->writeBlockBasic('Write Block Basic!');
-        $tools->writeBlockCommand('Write Block Command!');
-        $tools->writeInfo('nl:');
-        $tools->nl();
-        $output->writeln($tools->getQuestion('Get Question', 'default'));
+    $tools->writeSuccess('Write Success!');
+    $tools->writeInfo('Write Info!');
+    $tools->writeComment('Write Comment!');
+    $tools->writeLink('Write Link!');
+    $tools->writeBlock('Write Block!');
+    $tools->writeError('Write Error!');
+    $tools->writeHeader('Write Header!');
+    $tools->writeMark('Write Mark!');
+    $tools->writeSection('Write Section!', 'Write Section Part Two.');
+    $tools->writeBlockBasic('Write Block Basic!');
+    $tools->writeBlockCommand('Write Block Command!');
+    $tools->writeInfo('nl:');
+    $tools->nl();
+    $output->writeln($tools->getQuestion('Get Question', 'default'));
 
-        $output->write($tools->writeInfo('writeCount(5, 10) ', false));
-        $tools->writeCount(5, 10);
-        $tools->nl();
-        $tools->writeDfList('Write Df List', 'Write Df List Part Two.');
-    }
+    $output->write($tools->writeInfo('writeCount(5, 10) ', false));
+    $tools->writeCount(5, 10);
+    $tools->nl();
+    $tools->writeDfList('Write Df List', 'Write Df List Part Two.');
+  }
 
 }

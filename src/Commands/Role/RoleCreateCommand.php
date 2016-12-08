@@ -32,6 +32,7 @@ class RoleCreateCommand extends PwUserTools {
      * @return int|null|void
      */
     public function execute(InputInterface $input, OutputInterface $output) {
+        parent::init($output, $input);
         parent::bootstrapProcessWire($output);
         $tools = new Tools($output);
         $tools

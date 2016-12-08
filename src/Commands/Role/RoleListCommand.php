@@ -16,27 +16,28 @@ use Wireshell\Helpers\WsTools as Tools;
  */
 class RoleListCommand extends PwUserTools {
 
-    /**
-     * Configures the current command.
-     */
-    public function configure() {
-        $this
-            ->setName('role:list')
-            ->setDescription('Lists ProcessWire role(s)');
-    }
+  /**
+   * Configures the current command.
+   */
+  public function configure() {
+    $this
+      ->setName('role:list')
+      ->setDescription('Lists ProcessWire role(s)');
+  }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    public function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
-        $tools = new Tools($output);
-        $tools->writeBlockCommand($this->getName());
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  public function execute(InputInterface $input, OutputInterface $output) {
+    parent::init($output, $input);
+    parent::bootstrapProcessWire($output);
+    $tools = new Tools($output);
+    $tools->writeBlockCommand($this->getName());
 
-        foreach (\ProcessWire\wire('roles') as $role) {
-            $tools->writeInfo("  - {$role->name}");
-        }
+    foreach (\ProcessWire\wire('roles') as $role) {
+      $tools->writeInfo("  - {$role->name}");
     }
+  }
 }

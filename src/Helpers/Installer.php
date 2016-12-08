@@ -1,5 +1,4 @@
-<?php
-namespace Wireshell\Helpers;
+<?php namespace Wireshell\Helpers;
 
 use Psr\Log\LoggerInterface;
 use PDO;
@@ -21,11 +20,13 @@ use DirectoryIterator;
  * ProcessWire 3.x
  * Copyright (C) 2014 by Ryan Cramer
  * Licensed under GNU/GPL v2, see LICENSE.TXT
+ * https://processwire.com
  *
- * http://processwire.com
+ * Class Installer
  *
+ * @package Wireshell
+ * @author Tabea David <info@justonestep.de>
  */
-
 class Installer {
 
   /**
@@ -91,15 +92,24 @@ class Installer {
 
   protected $projectDir;
 
+  /**
+   * Construct Installer
+   *
+   * @param LoggerInterface $log
+   * @param string $projectDir
+   * @param boolean $v
+   */
   public function __construct(LoggerInterface $log, $projectDir, $v = true) {
-      $this->log = $log;
-      $this->projectDir = $projectDir;
-      $this->v = $v;
+    $this->log = $log;
+    $this->projectDir = $projectDir;
+    $this->v = $v;
   }
 
   /**
    * Check if the given function $name exists and report OK or fail with $label
    *
+   * @param string $name
+   * @param string $label
    */
   protected function checkFunction($name, $label) {
     if (function_exists($name)) {
@@ -112,29 +122,31 @@ class Installer {
   /**
    * Step 0: Get `site` folder
    *
+   * @param string $profile
    */
   public function getSiteFolder($profile) {
     $projectDir = $this->projectDir;
-
     $site = self::PROFILE_DEFAULT;
     $availableProfiles = array('beginner', 'blank', 'classic', 'default', 'languages');
+
     if ($profile) {
-        $site = in_array($profile, $availableProfiles) ? 'site-' . $profile : $profile;
-        if (!is_dir("$projectDir/$site")) $site = self::PROFILE_DEFAULT;
+      $site = in_array($profile, $availableProfiles) ? 'site-' . $profile : $profile;
+      if (!is_dir("$projectDir/$site")) $site = self::PROFILE_DEFAULT;
     }
 
-    if (is_file($projectDir . "/site/install/install.sql")) {
-      if ($this->v) $this->log->info("Found installation profile in /site/install/");
-
-    } else if (is_dir($projectDir . "/site/")) {
-      if ($this->v) $this->log->info("Found /site/ -- already installed? ");
-
-    } else if (@rename($projectDir . "/$site", $projectDir . "/site")) {
+    if (is_file("$projectDir/site/install/install.sql")) {
+      if ($this->v) $this->log->info('Found installation profile in `/site/install/`');
+    } else if (is_dir("$projectDir/site/")) {
+      if ($this->v) $this->log->info('Found `/site/` -- already installed?');
+    } else if (@rename("$projectDir/$site", "$projectDir/site")) {
       if ($this->v) $this->log->info("Renamed /$site => /site");
-
     } else {
-      $this->error("Before continuing, please rename '/site-default' to '/site' -- this is the default installation profile.");
-      if ($this->v) $this->log->info("If you prefer, you may download an alternate installation profile at processwire.com/download, which you should unzip to /site");
+      $this->error('Before continuing, rename `/site-default` to `/site` (this is the default installation profile).');
+      if ($this->v) {
+        $message = 'If you prefer, you may download an alternate installation profile ';
+        $message .= 'at processwire.com/download, which you should unzip to `/site`.';
+        $this->log->info($message);
+      }
       return;
     }
 
@@ -149,83 +161,84 @@ class Installer {
     $projectDir = $this->projectDir;
 
     if (version_compare(PHP_VERSION, self::MIN_REQUIRED_PHP_VERSION) >= 0) {
-      if ($this->v) $this->log->info("PHP version " . PHP_VERSION);
+      if ($this->v) $this->log->info('PHP version ' . PHP_VERSION);
     } else {
-      $this->error("ProcessWire requires PHP version " . self::MIN_REQUIRED_PHP_VERSION . " or newer. You are running PHP " . PHP_VERSION);
+      $message = 'ProcessWire requires PHP version ' . self::MIN_REQUIRED_PHP_VERSION;
+      $message .= ' or newer. You are running PHP ' . PHP_VERSION;
+      $this->error($message);
     }
 
     if (extension_loaded('pdo_mysql')) {
-      if ($this->v) $this->log->info("PDO (mysql) database");
+      if ($this->v) $this->log->info('PDO (mysql) database');
     } else {
-      $this->error("PDO (pdo_mysql) is required (for MySQL database)");
+      $this->error('PDO (pdo_mysql) is required (for MySQL database)');
     }
 
-    if (self::TEST_MODE) {
-      $this->error("Example error message for test mode");
-    }
+    if (self::TEST_MODE) $this->error('Example error message for test mode');
 
-    $this->checkFunction("filter_var", "Filter functions (filter_var)");
-    $this->checkFunction("mysqli_connect", "MySQLi (not required by core, but may be required by some 3rd party modules)");
-    $this->checkFunction("imagecreatetruecolor", "GD 2.0 or newer");
-    $this->checkFunction("json_encode", "JSON support");
-    $this->checkFunction("preg_match", "PCRE support");
-    $this->checkFunction("ctype_digit", "CTYPE support");
-    $this->checkFunction("iconv", "ICONV support");
-    $this->checkFunction("session_save_path", "SESSION support");
-    $this->checkFunction("hash", "HASH support");
-    $this->checkFunction("spl_autoload_register", "SPL support");
+    $this->checkFunction('filter_var', 'Filter functions (filter_var)');
+    $this->checkFunction('mysqli_connect', 'MySQLi (not required by core, but may be required by some 3rd party modules)');
+    $this->checkFunction('imagecreatetruecolor', 'GD 2.0 or newer');
+    $this->checkFunction('json_encode', 'JSON support');
+    $this->checkFunction('preg_match', 'PCRE support');
+    $this->checkFunction('ctype_digit', 'CTYPE support');
+    $this->checkFunction('iconv', 'ICONV support');
+    $this->checkFunction('session_save_path', 'SESSION support');
+    $this->checkFunction('hash', 'HASH support');
+    $this->checkFunction('spl_autoload_register', 'SPL support');
 
     if (function_exists('apache_get_modules')) {
       if (in_array('mod_rewrite', apache_get_modules())) {
-        if ($this->v) $this->log->info("Found Apache module: mod_rewrite");
+        if ($this->v) $this->log->info('Found Apache module: mod_rewrite');
       } else {
-        $this->info("Apache mod_rewrite does not appear to be installed and is required by ProcessWire.");
+        $this->info('Apache mod_rewrite does not appear to be installed and is required by ProcessWire.');
       }
     } else {
       // apache_get_modules doesn't work on a cgi installation.
       // check for environment var set in htaccess file, as submitted by jmarjie.
       $mod_rewrite = getenv('HTTP_MOD_REWRITE') == 'On' || getenv('REDIRECT_HTTP_MOD_REWRITE') == 'On' ? true : false;
-      if ($mod_rewrite) {
-        if ($this->v) $this->log->info("Found Apache module (cgi): mod_rewrite");
-      } else {
-        // $this->error("Unable to determine if Apache mod_rewrite (required by ProcessWire) is installed. On some servers, we may not be able to detect it until your .htaccess file is place. Please click the 'check again' button at the bottom of this screen, if you haven't already.");
-      }
+      if ($mod_rewrite && $this->v) $this->log->info("Found Apache module (cgi): mod_rewrite");
     }
 
-    if (is_writable($projectDir . "/site/assets/")) {
-      if ($this->v) $this->log->info($projectDir . "/site/assets/ is writable");
+    if (is_writable("$projectDir/site/assets/")) {
+      if ($this->v) $this->log->info("$projectDir/site/assets/ is writable");
     } else {
       $this->error("Error: Directory {$projectDir}/site/assets/ must be writable. Please adjust the permissions before continuing.");
     }
 
-    if (is_writable($projectDir . "/site/config.php")) {
-      if ($this->v) $this->log->info($projectDir . "/site/config.php is writable");
+    if (is_writable("$projectDir/site/config.php")) {
+      if ($this->v) $this->log->info("$projectDir/site/config.php is writable");
     } else {
-      $this->error("Error: File {$projectDir}/site/config.php must be writable. Please adjust the permissions before continuing.");
+      $this->error("Error: File `{$projectDir}/site/config.php` must be writable. Please adjust the permissions before continuing.");
     }
 
-    if (!is_file($projectDir . "/.htaccess") || !is_readable($projectDir . "/.htaccess")) {
-      if (@rename($projectDir . "/htaccess.txt", $projectDir . "/.htaccess")) {
-        if ($this->v) $this->log->info("Installed .htaccess");
+    if (!is_file("$projectDir/.htaccess") || !is_readable("$projectDir/.htaccess")) {
+      if (@rename("$projectDir/htaccess.txt", "$projectDir/.htaccess")) {
+        if ($this->v) $this->log->info('Installed `.htaccess`');
       } else {
-        $this->error("/.htaccess doesn't exist. Before continuing, you should rename the included htaccess.txt file to be .htaccess (with the period in front of it, and no '.txt' at the end).");
+        $message = '`/.htaccess` doesn\'t exist. Before continuing, you should rename the included `htaccess.txt` file to be `.htaccess`';
+        $message .= '(with the period in front of it, and no `.txt` at the end).';
+        $this->error($message);
       }
-
-    } else if (!strpos(file_get_contents($projectDir . "/.htaccess"), "PROCESSWIRE")) {
-      $this->error("/.htaccess file exists, but is not for ProcessWire. Please overwrite or combine it with the provided /htaccess.txt file (i.e. rename /htaccess.txt to /.htaccess, with the period in front).");
-
+    } else if (!strpos(file_get_contents("$projectDir/.htaccess"), 'PROCESSWIRE')) {
+      $message = '`/.htaccess` file exists, but is not for ProcessWire. Please overwrite or combine it with the provided `/htaccess.txt` file ';
+      $message .= '(i.e. rename `/htaccess.txt` to /.htaccess`, with the period in front).';
+      $this->error($message);
     } else {
-      if ($this->v) $this->log->info(".htaccess looks good");
+      if ($this->v) $this->log->info('`.htaccess` looks good');
     }
 
     if ($this->numErrors) {
-      $this->log->error("One or more errors were found above. We recommend you correct these issues before proceeding or contact ProcessWire support if you have questions or think the error is incorrect. But if you want to proceed anyway, click Continue below.");
+      $message = 'One or more errors were found above. We recommend you correct these issues before proceeding or contact ProcessWire support ';
+      $message .= 'if you have questions or think the error is incorrect. But if you want to proceed anyway, click Continue below.';
+      $this->log->error($message);
     }
   }
 
   /**
    * Step 3: Save database configuration, then begin profile import
    *
+   * @param array $post
    */
   public function dbSaveConfig($post) {
     $fields = array('dbUser', 'dbName', 'dbPass', 'dbHost', 'dbPort');
@@ -238,7 +251,7 @@ class Installer {
     }
 
     if (!$values['dbUser'] || !$values['dbName'] || !$values['dbPort']) {
-      $this->error("Missing database configuration fields");
+      $this->error('Missing database configuration fields');
       return ;
     }
 
@@ -252,7 +265,7 @@ class Installer {
     foreach ($fields as $field) {
       $value = (int) $post[$field];
       if (strlen("$value") !== 3) $this->error("Value for '$field' is invalid");
-        else $this->$field = "0$value";
+      else $this->$field = "0$value";
       $values[$field] = $value;
     }
 
@@ -279,59 +292,65 @@ class Installer {
     }
 
     if ($this->numErrors) {
-      $this->error("Please fix the error to further proceed");
+      $this->error('Please fix the error to further proceed');
       return;
     }
 
-    if ($this->v) $this->log->info("Database connection successful to " . htmlspecialchars($values['dbName']));
+    if ($this->v) $this->log->info('Database connection successful to ' . htmlspecialchars($values['dbName']));
 
     if ($this->dbSaveConfigFile($values)) {
-        $this->profileImport($database);
-        $this->adminAccountSave($post);
+      $this->profileImport($database);
+      $this->adminAccountSave($post);
     } else {
-        $this->error("Error saving config file :( ");
+      $this->error('Error saving config file.');
     }
   }
 
-    public function checkDatabaseConnection($values, $out = true) {
-        $pdo = null;
-        $dbname = "`" . str_replace("`", "``", $values['dbName']) . "`";
-        $dsnArr = array(
-            'host' => $values['dbHost'],
-            'port' => $values['dbPort']
-        );
+  /**
+   * Check database connection
+   *
+   * @param array $values
+   * @param boolean $out
+   */
+  public function checkDatabaseConnection($values, $out = true) {
+    $pdo = null;
+    $dbname = "`" . str_replace("`", "``", $values['dbName']) . "`";
+    $dsnArr = array(
+      'host' => $values['dbHost'],
+      'port' => $values['dbPort']
+    );
 
-        $dsn = array_reduce(array_keys($dsnArr), function($carry, $key) use ($dsnArr) { 
-            $carry .= "{$key}={$dsnArr[$key]};"; 
-            return $carry; 
-        });
+    $dsn = array_reduce(array_keys($dsnArr), function($carry, $key) use ($dsnArr) { 
+      $carry .= "{$key}={$dsnArr[$key]};"; 
+      return $carry; 
+    });
 
-        $driverOptions = array(
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
+    $driverOptions = array(
+      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'",
+      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    );
 
-        try {
-            $pdo = new PDO("mysql:$dsn", $values['dbUser'], $values['dbPass'], $driverOptions);
-            $pdo->query("CREATE DATABASE IF NOT EXISTS $dbname");
-            $pdo->query("use $dbname");
-            $success = true;
-        } catch(Exception $e) {
-            if ($out) {
-                $this->error("Database connection information did not work.");
-                $this->error($e->getMessage());
-            }
-        }
-
-        return $pdo;
+    try {
+      $pdo = new PDO("mysql:$dsn", $values['dbUser'], $values['dbPass'], $driverOptions);
+      $pdo->query("CREATE DATABASE IF NOT EXISTS $dbname");
+      $pdo->query("use $dbname");
+      $success = true;
+    } catch(Exception $e) {
+      if ($out) {
+        $this->error("Database connection information did not work.");
+        $this->error($e->getMessage());
+      }
     }
+
+    return $pdo;
+  }
 
   /**
    * Save configuration to /site/config.php
    *
+   * @param array $values
    */
   protected function dbSaveConfigFile(array $values) {
-
     $salt = md5(mt_rand() . microtime(true));
 
     $cfg =  "\n/**" .
@@ -357,8 +376,8 @@ class Installer {
       "\n * " .
       "\n */" .
       "\n\$config->chmodDir = '0$values[chmodDir]'; // permission for directories created by ProcessWire" .
-      "\n\$config->chmodFile = '0$values[chmodFile]'; // permission for files created by ProcessWire " .
-      "\n" .
+    "\n\$config->chmodFile = '0$values[chmodFile]'; // permission for files created by ProcessWire " .
+    "\n" .
       "\n/**" .
       "\n * Installer: Time zone setting" .
       "\n * " .
@@ -368,11 +387,11 @@ class Installer {
 
     if (!empty($values['httpHosts'])) {
       $cfg .= "" .
-      "\n/**" .
-      "\n * Installer: HTTP Hosts Whitelist" .
-      "\n * " .
-      "\n */" .
-      "\n\$config->httpHosts = array(";
+        "\n/**" .
+        "\n * Installer: HTTP Hosts Whitelist" .
+        "\n * " .
+        "\n */" .
+        "\n\$config->httpHosts = array(";
       foreach ($values['httpHosts'] as $host) $cfg .= "'$host', ";
       $cfg = rtrim($cfg, ", ") . ");\n\n";
     }
@@ -392,36 +411,39 @@ class Installer {
   /**
    * Step 3b: Import profile
    *
+   * @param Database $database
    */
   protected function profileImport($database) {
-    $profile = $this->projectDir . "/site/install/";
+    $profile = $this->projectDir . '/site/install/';
     if (!is_file("{$profile}install.sql")) die("No installation profile found in {$profile}");
 
     // checks to see if the database exists using an arbitrary query (could just as easily be something else)
     try {
-      $query = $database->prepare("SHOW COLUMNS FROM pages");
+      $query = $database->prepare('SHOW COLUMNS FROM pages');
       $result = $query->execute();
     } catch(Exception $e) {
       $result = false;
     }
 
     if (self::REPLACE_DB || !$result || $query->rowCount() == 0) {
-      $this->profileImportSQL($database, $this->projectDir . "/wire/core/install.sql", $profile . "install.sql");
+      $this->profileImportSQL($database, $this->projectDir . '/wire/core/install.sql', $profile . 'install.sql');
 
-      if (is_dir($profile . "files")) $this->profileImportFiles($profile);
-        else $this->mkdir($this->projectDir . "/site/assets/files/");
+      if (is_dir($profile . 'files')) {
+        $this->profileImportFiles($profile);
+      } else {
+        $this->mkdir($this->projectDir . '/site/assets/files/');
+      }
 
-      $this->mkdir($this->projectDir . "/site/assets/cache/");
-      $this->mkdir($this->projectDir . "/site/assets/logs/");
-      $this->mkdir($this->projectDir . "/site/assets/sessions/");
-
+      $this->mkdir($this->projectDir . '/site/assets/cache/');
+      $this->mkdir($this->projectDir . '/site/assets/logs/');
+      $this->mkdir($this->projectDir . '/site/assets/sessions/');
     } else {
-      if ($this->v) $this->log->info("A profile is already imported, skipping...");
+      if ($this->v) $this->log->info('A profile is already imported, skipping...');
     }
 
     // copy default site modules /site-default/modules/ to /site/modules/
-    $dir = $this->projectDir . "/site/modules/";
-    $defaultDir = $this->projectDir . "/site-default/modules/";
+    $dir = $this->projectDir . '/site/modules/';
+    $defaultDir = $this->projectDir . '/site-default/modules/';
     if (!is_dir($dir)) $this->mkdir($dir);
     if (is_dir($defaultDir)) {
       if (is_writable($dir)) {
@@ -434,27 +456,22 @@ class Installer {
       } else {
         $this->log->warning("$dir is not writable, unable to install default site modules (recommended, but not required)");
       }
-    } else {
-      // they are installing site-default already
     }
-
-    // $this->adminAccount();
   }
 
 
   /**
    * Import files to profile
    *
+   * @param string $fromPath
    */
   protected function profileImportFiles($fromPath) {
-
     if (self::TEST_MODE) {
       if ($this->v) $this->log->info("TEST MODE: Skipping file import - $fromPath");
       return;
     }
 
     $dir = new DirectoryIterator($fromPath);
-
     foreach ($dir as $file) {
       if ($file->isDot()) continue;
       if (!$file->isDir()) continue;
@@ -481,28 +498,37 @@ class Installer {
   /**
    * Import profile SQL dump
    *
+   * @param Database $database
+   * @param string $file1
+   * @param string $file2
+   * @param array $options
    */
   protected function profileImportSQL($database, $file1, $file2, array $options = array()) {
     $defaults = array(
       'dbEngine' => 'MyISAM',
       'dbCharset' => 'utf8',
-      );
+    );
+
     $options = array_merge($defaults, $options);
     if (self::TEST_MODE) return;
     $restoreOptions = array();
     $replace = array();
+
     if ($options['dbEngine'] != 'MyISAM') {
       $replace['ENGINE=MyISAM'] = "ENGINE=$options[dbEngine]";
       $this->log->warning("Engine changed to '$options[dbEngine]', please keep an eye out for issues.");
     }
+
     if ($options['dbCharset'] != 'utf8') {
       $replace['CHARSET=utf8'] = "CHARSET=$options[dbCharset]";
       $this->log->warning("Character set has been changed to '$options[dbCharset]', please keep an eye out for issues.");
     }
+
     if (count($replace)) $restoreOptions['findReplaceCreateTable'] = $replace;
     require($this->projectDir . "/wire/core/WireDatabaseBackup.php");
     $backup = new WireDatabaseBackup();
     $backup->setDatabase($database);
+
     if ($backup->restoreMerge($file1, $file2, $restoreOptions)) {
       if ($this->v) {
         $this->log->info("Imported database file: $file1");
@@ -516,35 +542,32 @@ class Installer {
   /**
    * Save submitted admin account form
    *
+   * @param array $accountInfo
    */
   protected function adminAccountSave($accountInfo) {
-    if (file_exists($this->projectDir . "/vendor/autoload.php")) {
-        require $this->projectDir . "/vendor/autoload.php";
+    if (file_exists($this->projectDir . '/vendor/autoload.php')) {
+      require $this->projectDir . '/vendor/autoload.php';
     }
-    require $this->projectDir . "/index.php";
+    require $this->projectDir . '/index.php';
 
     $input = $wire->input;
     $sanitizer = $wire->sanitizer;
 
-    if (!$accountInfo['username'] || !$accountInfo['userpass']) $this->error("Missing account information");
-    if ($accountInfo['userpass'] !== $accountInfo['userpass_confirm']) $this->error("Passwords do not match");
-    if (strlen($accountInfo['userpass']) < 6) $this->error("Password must be at least 6 characters long");
+    if (!$accountInfo['username'] || !$accountInfo['userpass']) $this->error('Missing account information');
+    if ($accountInfo['userpass'] !== $accountInfo['userpass_confirm']) $this->error('Passwords do not match');
+    if (strlen($accountInfo['userpass']) < 6) $this->error('Password must be at least 6 characters long');
 
     $username = $sanitizer->pageName($accountInfo['username']);
-    if ($username != $accountInfo['username']) $this->error("Username must be only a-z 0-9");
-    if (strlen($username) < 2) $this->error("Username must be at least 2 characters long");
+    if ($username != $accountInfo['username']) $this->error('Username must be only a-z 0-9');
+    if (strlen($username) < 2) $this->error('Username must be at least 2 characters long');
 
     $adminName = $sanitizer->pageName($accountInfo['admin_name']);
-    if ($adminName != $accountInfo['admin_name']) $this->error("Admin login URL must be only a-z 0-9");
-    if (strlen($adminName) < 2) $this->error("Admin login URL must be at least 2 characters long");
+    if ($adminName != $accountInfo['admin_name']) $this->error('Admin login URL must be only a-z 0-9');
+    if (strlen($adminName) < 2) $this->error('Admin login URL must be at least 2 characters long');
 
     $email = strtolower($sanitizer->email($accountInfo['useremail']));
-    if ($email != strtolower($accountInfo['useremail'])) $this->error("Email address did not validate");
-
-    if ($this->numErrors) {
-        return;
-    }
-    // return $this->adminAccount($wire);
+    if ($email != strtolower($accountInfo['useremail'])) $this->error('Email address did not validate');
+    if ($this->numErrors) return;
 
     $superuserRole = $wire->roles->get("name=superuser");
     $user = $wire->users->get($wire->config->superUserPageID);
@@ -566,12 +589,11 @@ class Installer {
 
     try {
       if (self::TEST_MODE) {
-        if ($this->v) $this->log->info("TEST MODE: skipped user creation");
+        if ($this->v) $this->log->info('TEST MODE: skipped user creation');
       } else {
         $wire->users->save($user);
         $wire->pages->save($admin);
       }
-
     } catch(Exception $e) {
       $this->error($e->getMessage());
       return;
@@ -593,16 +615,16 @@ class Installer {
 
     if (!self::TEST_MODE) {
       if (@unlink($this->projectDir . "/install.php")) {
-        if ($this->v) $this->log->info("Deleted this installer (./install.php) for security.");
+        if ($this->v) $this->log->info('Deleted this installer (./install.php) for security.');
       } else {
-        if ($this->v) $this->log->info("Please delete this installer! The file is located in your web root at: ./install.php");
+        if ($this->v) $this->log->info('Please delete this installer! The file is located in your web root at: ./install.php');
       }
     }
 
     if ($this->v) {
-      $this->log->info("There are additional configuration options available in <b>/site/config.php</b> that you may want to review.");
-      $this->log->info("To save space, you may optionally delete <b>/site/install/</b> - it's no longer needed.");
-      $this->log->info("Note that future runtime errors are logged to <b>/site/assets/logs/errors.txt</b> (not web accessible).");
+      $this->log->info('There are additional configuration options available in <b>/site/config.php</b> that you may want to review.');
+      $this->log->info('To save space, you may optionally delete <b>/site/install/</b> - it\'s no longer needed.');
+      $this->log->info('Note that future runtime errors are logged to <b>/site/assets/logs/errors.txt</b> (not web accessible).');
       $this->log->info("Your admin URL is <a href='./$adminName/'>/$adminName/</a>");
     }
 
@@ -612,14 +634,10 @@ class Installer {
     }
   }
 
-  /******************************************************************************************************************
-   * OUTPUT FUNCTIONS
-   *
-   */
-
   /**
    * Report and log an error
    *
+   * @param string $str
    */
   protected function error($str) {
     $this->numErrors++;
@@ -627,14 +645,11 @@ class Installer {
     return false;
   }
 
-  /******************************************************************************************************************
-   * FILE FUNCTIONS
-   *
-   */
-
   /**
    * Create a directory and assign permission
    *
+   * @param string $path
+   * @param boolean $showNote
    */
   protected function mkdir($path, $showNote = true) {
     if (self::TEST_MODE) return;
@@ -651,9 +666,10 @@ class Installer {
   /**
    * Copy directories recursively
    *
+   * @param string $src
+   * @param string $dst
    */
   protected function copyRecursive($src, $dst) {
-
     if (self::TEST_MODE) return;
 
     if (substr($src, -1) != '/') $src .= '/';
@@ -676,6 +692,9 @@ class Installer {
     return true;
   }
 
+  /**
+   * Timezones
+   */
   protected function timezones() {
     $timezones = timezone_identifiers_list();
     $extras = array(
@@ -687,39 +706,10 @@ class Installer {
       'US Alaska|America/Anchorage',
       'US Hawaii|America/Adak',
       'US Hawaii (no DST)|Pacific/Honolulu',
-      );
+    );
+
     foreach ($extras as $t) $timezones[] = $t;
+
     return $timezones;
   }
 }
-
-/*
-$installer = new Installer();
-// $installer->compatibilityCheck();
-$dbUser = 'root';
-$dbName = 'pwtest';
-$dbPass = 'mysqlroot';
-$dbHost = 'localhost';
-$dbPort = 3306;
-$timezone = '';
-$chmodDir = '755';
-$chmodFile = '644';
-$httpHosts = "
-installer.localhost
-www.installer.localhost
-";
-$post = array(
-    'dbUser' => $dbUser,
-    'dbName' => $dbName,
-    'dbPass' => $dbPass,
-    'dbHost' => $dbHost,
-    'dbPort' => $dbPort,
-    'dbEngine' => 'MyISAM',
-    'dbCharset' => 'utf8',
-    'timezone' => $timezone,
-    'chmodDir' => $chmodDir,
-    'chmodFile' => $chmodFile,
-    'httpHosts' => $httpHosts
-);
-$installer->dbSaveConfig($post);
-*/

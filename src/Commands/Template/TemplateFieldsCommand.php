@@ -13,15 +13,14 @@ use Wireshell\Helpers\PwConnector;
  *
  * @package Wireshell
  * @author Marcus Herrmann
+ * @author Tabea David
  */
-class TemplateFieldsCommand extends PwConnector
-{
+class TemplateFieldsCommand extends PwConnector {
 
     /**
      * Configures the current command.
      */
-    protected function configure()
-    {
+    protected function configure() {
         $this
             ->setName('template:fields')
             ->setDescription('Assign given fields to a given template')
@@ -34,13 +33,10 @@ class TemplateFieldsCommand extends PwConnector
      * @param OutputInterface $output
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-
+    protected function execute(InputInterface $input, OutputInterface $output) {
         parent::bootstrapProcessWire($output);
 
         $template = \ProcessWire\wire('templates')->get($input->getArgument('template'));
-
         $fields = explode(",", $input->getOption('fields'));
 
         if (!$input->getOption('fields')) {
@@ -56,7 +52,6 @@ class TemplateFieldsCommand extends PwConnector
         $this->assignFieldsToTemplate($fields, $template, $output);
 
         $output->writeln("<info>Field(s) added to '{$template}' successfully!</info>");
-
     }
 
     /**
@@ -64,8 +59,7 @@ class TemplateFieldsCommand extends PwConnector
      * @param $template
      * @param $output
      */
-    private function assignFieldsToTemplate($fields, $template, $output)
-    {
+    private function assignFieldsToTemplate($fields, $template, $output) {
         foreach ($fields as $field) {
             $this->checkIfFieldExists($field, $output);
 
@@ -74,7 +68,6 @@ class TemplateFieldsCommand extends PwConnector
         }
 
         return $template;
-
     }
 
     /**
@@ -82,8 +75,7 @@ class TemplateFieldsCommand extends PwConnector
      * @param $output
      * @return bool
      */
-    private function checkIfFieldExists($field, $output)
-    {
+    private function checkIfFieldExists($field, $output) {
         if (!\ProcessWire\wire("fields")->get("{$field}")) {
             $output->writeln("<error>Field '{$field}' does not exist!</error>");
 
