@@ -194,6 +194,18 @@ Class WsTools {
   }
 
   /**
+   * Write error section
+   *
+   * @param string $text
+   * @param boolean $write
+   */
+  public function writeBlockError($text, $write = true) {
+    $out = $this->formatter->formatBlock($text, 'bg=red;fg=white', true);
+    if ($write) $this->output->writeln(array($out, ''));
+    return $out;
+  }
+
+  /**
    * Write block
    *
    * @param string|array $text
