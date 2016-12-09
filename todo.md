@@ -1,10 +1,6 @@
 # @todo
 
-Improve Commands, adapt Tools and Tables Helpers
-
-## common
-
-- serve            Serve ProcessWire via built in PHP webserver
+Improve Commands
 
 ## backup
 
@@ -35,8 +31,12 @@ Improve Commands, adapt Tools and Tables Helpers
 
 Done: 20 of 36
 
+Sections Done: 5 of 9
+
 ## Rewrites
 
 * new command: ask has been outsourced to Tools
 * log:tail command: ask has been outsourced to Tools
+* optimize PwConnector and PwUserTools
+* add possibility to change debug mode (at least add option for new command)
 
