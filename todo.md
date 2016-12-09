@@ -26,7 +26,7 @@ Improve Commands
 
 Done: 22 of 36
 
-Sections Done: 5 of 9
+Sections Done: 6 of 9
 
 ## Rewrites
 
