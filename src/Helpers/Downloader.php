@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Message\Response;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Filesystem\Filesystem;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class Downloader
@@ -23,6 +24,7 @@ class Downloader {
   private $projectDir;
   private $version;
   private $output;
+  private $tools;
 
   /**
    * Construct Downloader
@@ -36,6 +38,7 @@ class Downloader {
     $this->output = $output;
     $this->projectDir = $projectDir;
     $this->version = $version;
+    $this->tools = new Tools($output);
   }
 
   /**
@@ -111,6 +114,12 @@ class Downloader {
     }
 
     $this->fs->dumpFile($this->compressedFilePath, $response->getBody());
+    if (!$progressBar) {
+      $this->tools->nl(2);
+      $this->tools->writeError('Something went wrong. Please try again.');
+      exit(1);
+    }
+
     $progressBar->finish();
 
     return $this->compressedFilePath;

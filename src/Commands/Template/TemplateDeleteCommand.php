@@ -44,18 +44,14 @@ class TemplateDeleteCommand extends PwConnector {
 
     $tools->writeBlockCommand($this->getName());
 
-    $templates = \ProcessWire\wire('templates');
-    $fieldgroups = \ProcessWire\wire('fieldgroups');
-    $availableTemplates = array();
-    foreach ($templates as $template) {
-      if ($template->flags & Template::flagSystem) continue;
-      $availableTemplates[] = $template->name;
-    }
-
+    // ask which template should be deleted
+    $availableTemplates = $this->getAvailableTemplates();
     $tmplsString = $input->getArgument('name');
     $names = $tmplsString ? explode(',', $tmplsString) : null;
     $names = $tools->askChoice($names, 'Select all templates which should be deleted', $availableTemplates, 0, true);
     $tools->nl();
+
+    $fieldgroups = \ProcessWire\wire('fieldgroups');
 
     foreach ($names as $name) {
       $template = $templates->get($name);

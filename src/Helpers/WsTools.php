@@ -246,9 +246,11 @@ Class WsTools {
 
   /**
    * Output new line / break
+   *
+   * @param integer $count
    */
-  public function nl() {
-    $this->output->writeln('');
+  public function nl($count = 1) {
+    for ($i = 0; $i < $count; $i++) $this->output->writeln('');
   }
 
   /**

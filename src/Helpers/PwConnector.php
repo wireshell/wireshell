@@ -1,6 +1,7 @@
 <?php namespace Wireshell\Helpers;
 
 use ProcessWire\WireHttp;
+use ProcessWire\Template;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -255,6 +256,21 @@ abstract class PwConnector extends SymfonyCommand {
     }
 
     return "$version[Major].$version[Minor].$version[Revision]";
+  }
+
+  /**
+   * Get available templates
+   *
+   * @param boolean $excludeFlagged
+   */
+  public function getAvailableTemplates($excludeFlagged = true) {
+    $availableTemplates = array();
+    foreach (\ProcessWire\wire('templates') as $template) {
+      if ($excludeFlagged && $template->flags & Template::flagSystem) continue;
+      $availableTemplates[] = $template->name;
+    }
+
+    return $availableTemplates;
   }
 
 }

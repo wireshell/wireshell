@@ -33,11 +33,7 @@ Improve Commands, adapt Tools and Tables Helpers
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-## template
-
-- template:fields  Assign given fields to a given template
-
-Done: 19 of 36
+Done: 20 of 36
 
 ## Rewrites
 
