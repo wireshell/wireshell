@@ -49,19 +49,24 @@ class UserUpdateCommand extends PwUserTools {
       ->setHelper($this->getHelper('question'));
     $tools->writeBlockCommand($this->getName());
 
-    // @todo: use ChoiceQuestion
-    $users = \ProcessWire\wire('users');
-    $availableUsernames = array();
-    foreach ($users as $user) $availableUsernames[] = $user->name;
+    // ask for username
+    $name = $tools->askChoice(
+      $input->getArgument('name'),
+      'Which user should be updated?',
+      $this->getAvailableUsers(),
+      0
+    );
 
-    $name = $tools->ask($input->getArgument('name'), 'Which user should be updated?', null, null, $availableUsernames);
-    while (\ProcessWire\wire('pages')->get("name={$name}") instanceof \ProcessWire\NullPage) {
+    $tools->nl();
+
+    // check if user exists
+    $user = \ProcessWire\wire('pages')->get("name={$name}");
+    if ($user instanceof \ProcessWire\NullPage) {
       $tools->writeError("User '{$name}' does not exist.");
-      $name = $tools->ask('', 'Which user should be updated?');
+      exit(1);
     }
 
-    $user = \ProcessWire\wire('pages')->get("name={$name}");
-
+    // update roles, pass, name and email
     $roles = $input->getOption('roles') ? explode(",", $input->getOption('roles')) : null;
     $pass = $input->getOption('password');
     $newname = $input->getOption('newname');

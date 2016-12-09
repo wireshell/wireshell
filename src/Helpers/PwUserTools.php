@@ -84,7 +84,6 @@ class PwUserTools extends PwConnector {
     // remove roles which are not submitted
     foreach ($editedUser->roles as $role) {
       if (!in_array($role->name, $roles)) {
-        var_dump('foo', $role->name);
         $editedUser->removeRole($role->name);
       }
     }
@@ -133,5 +132,19 @@ class PwUserTools extends PwConnector {
     foreach (\ProcessWire\wire('roles') as $role) $availableRoles[] = $role->name;
 
     return $rls ? explode(",", $rls) : $availableRoles;
+  }
+
+  public function getAvailableUsers($excludeGuest = false) {
+    $availableUsers = array();
+    $usersObj = \ProcessWire\wire('users')->find('start=0')->sort('name');
+    foreach ($usersObj as $user) $availableUsers[] = $user->name;
+
+    // filter out guest
+    if ($excludeGuest) {
+      $guestIndex = array_search('guest', $availableUsers);
+      if ($guestIndex) unset($availableUsers[$guestIndex]);
+    }
+
+    return $availableUsers;
   }
 }

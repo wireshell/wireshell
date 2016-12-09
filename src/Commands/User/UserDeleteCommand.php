@@ -54,14 +54,7 @@ class UserDeleteCommand extends PwUserTools {
       $output->writeln("<info>Deleted {$users->count()} users successfully!</info>");
     } else {
       // check name
-      $availableUsers = array();
-      $usersObj = \ProcessWire\wire('users')->find('start=0')->sort('name');
-      foreach ($usersObj as $user) $availableUsers[] = $user->name;
-
-      // filter out guest
-      $guestIndex = array_search('guest', $availableUsers);
-      if ($guestIndex) unset($availableUsers[$guestIndex]);
-
+      $availableUsers = parent::getAvailableUsers(true);
       $urs = $input->getArgument('name');
       $users = $urs ? explode(',', $urs) : null;
 
