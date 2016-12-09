@@ -2,11 +2,6 @@
 
 Improve Commands
 
-## backup
-
-- backup:db        Performs database dump
-- backup:images    Performs images backup
-
 ## field
 
 - field:clone      Clones a field
@@ -29,7 +24,7 @@ Improve Commands
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-Done: 20 of 36
+Done: 22 of 36
 
 Sections Done: 5 of 9
 
