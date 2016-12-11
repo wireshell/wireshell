@@ -561,8 +561,8 @@ class Installer {
     if ($username != $accountInfo['username']) $this->error('Username must be only a-z 0-9');
     if (strlen($username) < 2) $this->error('Username must be at least 2 characters long');
 
-    $adminName = $sanitizer->pageName($accountInfo['admin_name']);
-    if ($adminName != $accountInfo['admin_name']) $this->error('Admin login URL must be only a-z 0-9');
+    $adminName = $sanitizer->pageName($accountInfo['adminUrl']);
+    if ($adminName !== $accountInfo['adminUrl']) $this->error('Admin login URL must be only a-z 0-9');
     if (strlen($adminName) < 2) $this->error('Admin login URL must be at least 2 characters long');
 
     $email = strtolower($sanitizer->email($accountInfo['useremail']));

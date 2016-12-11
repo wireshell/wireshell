@@ -60,7 +60,7 @@ class NewCommand extends Command {
     'chmodDir' => '755',
     'chmodFile' => '644',
     'httpHosts' => '',
-    'admin_name' => 'processwire',
+    'adminUrl' => 'processwire',
     'username' => '',
     'userpass' => '',
     'userpass_confirm' => '',
