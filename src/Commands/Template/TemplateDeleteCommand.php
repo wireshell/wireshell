@@ -40,9 +40,8 @@ class TemplateDeleteCommand extends PwConnector {
     $tools = new Tools($output);
     $tools
       ->setHelper($this->getHelper('question'))
-      ->setInput($input);
-
-    $tools->writeBlockCommand($this->getName());
+      ->setInput($input)
+      ->writeBlockCommand($this->getName());
 
     // ask which template should be deleted
     $availableTemplates = $this->getAvailableTemplates();
