@@ -24,7 +24,7 @@ Improve Commands
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-Done: 22 of 36
+Done: 23 of 37
 
 Sections Done: 6 of 9
 
@@ -33,5 +33,4 @@ Sections Done: 6 of 9
 * new command: ask has been outsourced to Tools
 * log:tail command: ask has been outsourced to Tools
 * optimize PwConnector and PwUserTools
-* add possibility to change debug mode (at least add option for new command)
 * Installer :: `$this->error` improve error messages output

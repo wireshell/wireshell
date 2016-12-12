@@ -195,6 +195,23 @@ $ wireshell status --php --image
 
 ---
 
+## Debug
+
+Change debug mode.
+
+```sh
+$ wireshell debug
+```
+
+### Available options:
+
+```sh
+--on : turn debug mode on
+--off : turn debig mode off
+```
+
+---
+
 ## Serve
 
 A wrapper for `php -S localhost:8000`, fires the small PHP web server and lets you bypass the configuration of a virtual host.

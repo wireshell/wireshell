@@ -7,6 +7,7 @@ Check whether the latest build has passed: [Builds | Read the Docs](https://read
 **1.0.1** ()
 
 - Adapts `new` command, allows empty database password (`wireshell new prjct --dbPass=""`)
+- Adds `debug` command which allows you to change the debug mode
 
 **1.0.0** (2016-09-27)
 

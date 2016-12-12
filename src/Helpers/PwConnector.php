@@ -66,7 +66,12 @@ abstract class PwConnector extends SymfonyCommand {
   /**
    * Check for ProcessWire
    */
-  protected function checkForProcessWire() {
+  public function checkForProcessWire() {
+    if (!getcwd()) {
+      $this->tools->writeError('Please check whether the current directory still exists.');
+      exit(1);
+    }
+
     if (!is_dir(getcwd() . '/wire')) {
       foreach (new \DirectoryIterator(getcwd()) as $fileInfo) {
         if (is_dir($fileInfo->getPathname() . '/wire')) chdir($fileInfo->getPathname());
