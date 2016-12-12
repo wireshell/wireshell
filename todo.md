@@ -4,7 +4,6 @@ Improve Commands
 
 ## field
 
-- field:clone      Clones a field
 - field:create     Creates a field
 - field:delete     Deletes fields
 - field:edit       Edit a field
@@ -24,7 +23,7 @@ Improve Commands
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-Done: 23 of 37
+Done: 24 of 37 ~ 65%
 
 Sections Done: 6 of 9
 
