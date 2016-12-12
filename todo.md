@@ -4,7 +4,6 @@ Improve Commands
 
 ## field
 
-- field:create     Creates a field
 - field:delete     Deletes fields
 - field:edit       Edit a field
 - field:tag        Tags fields
@@ -23,7 +22,7 @@ Improve Commands
 - page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-Done: 24 of 37 ~ 65%
+Done: 25 of 37 ~ 68%
 
 Sections Done: 6 of 9
 

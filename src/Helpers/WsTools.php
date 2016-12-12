@@ -333,6 +333,15 @@ Class WsTools {
             return $answer;
           });
           break;
+
+        case 'required':
+          $question->setValidator(function ($answer) {
+            if (!$answer) {
+              throw new \RuntimeException('Please provide an answer.');
+            }
+            return $answer;
+          });
+          break;
         }
 
         $question->setMaxAttempts(3);
