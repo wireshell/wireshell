@@ -5,7 +5,6 @@ Improve Commands
 ## field
 
 - field:edit       Edit a field
-- field:tag        Tags fields
 
 ## module
 
@@ -19,13 +18,15 @@ Improve Commands
 
 - page:create      Creates a ProcessWire page
 
-Done: 28 of 37 ~ 76%
+Done: 29 of 37 ~ 78%
 
 Sections Done: 6 of 9
 
 ## Rewrites
 
 * new command: ask has been outsourced to Tools
+* new/upgrade command: branch develop??
 * log:tail command: ask has been outsourced to Tools
 * optimize PwConnector and PwUserTools
-* Installer :: `$this->error` improve error messages output
+* collect `availableWhatevers`
+* Installer :: `$this->error` improve error message output
