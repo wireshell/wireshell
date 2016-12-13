@@ -41,6 +41,7 @@ class FieldListCommand extends PwConnector {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+
     $tools = new Tools($output);
     $tools->writeBlockCommand($this->getName());
 

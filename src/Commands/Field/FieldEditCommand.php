@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class FieldEditCommand
@@ -18,47 +19,59 @@ use Wireshell\Helpers\PwConnector;
  * @package Wireshell
  * @author Tabea David
  */
-class FieldEditCommand extends PwConnector
-{
+class FieldEditCommand extends PwConnector {
 
-    /**
-     * Configures the current command.
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('field:edit')
-            ->setDescription('Edit a field')
-            ->addArgument('field', InputArgument::REQUIRED)
-            ->addOption('name', null, InputOption::VALUE_REQUIRED, 'Change field name')
-            ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Change label');
+  /**
+   * Configures the current command.
+   */
+  protected function configure() {
+    $this
+      ->setName('field:edit')
+      ->setDescription('Edit a field')
+      ->addArgument('field', InputArgument::OPTIONAL)
+      ->addOption('name', null, InputOption::VALUE_REQUIRED, 'Change field name')
+      ->addOption('description', null, InputOption::VALUE_OPTIONAL, 'Change field description')
+      ->addOption('notes', null, InputOption::VALUE_OPTIONAL, 'Change field description')
+      ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Change label');
+  }
+
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+
+    $tools = new Tools($output);
+    $tools
+      ->setInput($input)
+      ->setHelper($this->getHelper('question'))
+      ->writeBlockCommand($this->getName());
+
+    $fields = \ProcessWire\wire('fields');
+
+    $field = $tools->ask($input->getArgument('field'), 'Field name', null, false, null, 'required');
+    $fieldToEdit = $fields->get($field);
+
+    if (is_null($fieldToEdit)) {
+      $tools->writeError("Field '{$field}' does not exist.");
+      exit(1);
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::bootstrapProcessWire($output);
+    $name = $tools->ask($input->getOption('name'), 'New field name', $fieldToEdit->name);
+    $label = $tools->ask($input->getOption('label'), 'New field label', $fieldToEdit->label);
+    $description = $input->getOption('description') ? $input->getOption('description') : null;
+    $notes = $input->getOption('notes') ? $input->getOption('notes') : null;
 
-        $field = $input->getArgument('field');
-        $fields = \ProcessWire\wire('fields');
-        $fieldToEdit = $fields->get($field);
+    if ($name && $name !== $fieldToEdit->name) $fieldToEdit->name = $name;
+    if ($label && $label !== $fieldToEdit->label) $fieldToEdit->label = ucfirst($label);
+    if ($description !== $fieldToEdit->description) $fieldToEdit->description = $description;
+    if ($notes !== $fieldToEdit->notes) $fieldToEdit->notes = $notes;
 
-        if (is_null($fieldToEdit)) {
-            $output->writeln("<error>Field '{$field}' does not exist!</error>");
-            return;
-        }
+    $fieldToEdit->save();
 
-        if ($input->getOption('name')) $fieldToEdit->name = $input->getOption('name');
-        if ($input->getOption('label')) $fieldToEdit->label = ucfirst($input->getOption('label'));
-
-        $fieldToEdit->save();
-
-        $output->writeln("<info>Field '{$field}' edited successfully!</info>");
-    }
+    $tools->writeSuccess("Field '{$field}' edited successfully.");
+  }
 
 }
-

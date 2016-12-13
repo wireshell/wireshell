@@ -2,10 +2,6 @@
 
 Improve Commands
 
-## field
-
-- field:edit       Edit a field
-
 ## module
 
 - module:disable   Disable provided module(s)
@@ -14,9 +10,9 @@ Improve Commands
 - module:generate  Generates a boilerplate module
 - module:upgrade   Upgrades given module(s)
 
-Done: 30 of 37 ~ 81%
+Done: 31 of 37 ~ 84%
 
-Sections Done: 7 of 9
+Sections Done: 8 of 9
 
 ## Rewrites
 
