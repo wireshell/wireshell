@@ -50,6 +50,7 @@ class TemplateDeleteCommand extends PwConnector {
     $names = $tools->askChoice($names, 'Select all templates which should be deleted', $availableTemplates, 0, true);
     $tools->nl();
 
+    $templates = \ProcessWire\wire('templates');
     $fieldgroups = \ProcessWire\wire('fieldgroups');
 
     foreach ($names as $name) {

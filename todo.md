@@ -18,10 +18,9 @@ Improve Commands
 ## page
 
 - page:create      Creates a ProcessWire page
-- page:delete      Deletes ProcessWire pages
 - page:emptytrash  Empty Trash
 
-Done: 26 of 37 ~ 70%
+Done: 27 of 37 ~ 73%
 
 Sections Done: 6 of 9
 
