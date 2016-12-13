@@ -6,7 +6,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Wireshell\Helpers\PwUserTools;
+use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTools as Tools;
 
 /**
  * Class PageCreateCommand
@@ -16,7 +17,7 @@ use Wireshell\Helpers\PwUserTools;
  * @package Wireshell
  * @author Tabea David
  */
-class PageCreateCommand extends PwUserTools {
+class PageCreateCommand extends PwConnector {
 
   static $supportedTypes = array('json');
 
@@ -27,7 +28,7 @@ class PageCreateCommand extends PwUserTools {
     $this
       ->setName('page:create')
       ->setDescription('Creates a ProcessWire page')
-      ->addArgument('name', InputArgument::REQUIRED)
+      ->addArgument('name', InputArgument::OPTIONAL)
       ->addOption('template', null, InputOption::VALUE_REQUIRED, 'Template')
       ->addOption('parent', null, InputOption::VALUE_REQUIRED, 'Parent Page')
       ->addOption('title', null, InputOption::VALUE_REQUIRED, 'Title')
@@ -40,18 +41,22 @@ class PageCreateCommand extends PwUserTools {
    * @return int|null|void
    */
   public function execute(InputInterface $input, OutputInterface $output) {
-    parent::init($output, $input);
-    parent::bootstrapProcessWire($output);
+    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
 
-    $names = explode(',', $input->getArgument('name'));
+    $this->tools = new Tools($output);
+    $this->tools
+      ->setHelper($this->getHelper('question'))
+      ->setInput($input);
+
     $pages = \ProcessWire\wire('pages');
-    $template = $this->getTemplate($input, $output);
-    $parent = $this->getParent($input, $output);
+    $names = $this->tools->ask($input->getArgument('name'), 'Name(s) for new page(s)', null, false, null, 'required');
+    $template = $this->getTemplate($input->getOption('template'));
+    $parent = $this->getParent($input->getOption('parent'));
 
-    foreach ($names as $name) {
+    foreach (explode(',', $names) as $name) {
       $sanitizedName = \ProcessWire\wire('sanitizer')->pageName($name);
       if (!\ProcessWire\wire('pages')->get($parent->url . $sanitizedName . '/') instanceof \ProcessWire\NullPage) {
-        $output->writeln("<error>The page name  '{$name}' is already taken.</error>");
+        $this->writeError("The page name  '{$name}' is already taken.");
         continue;
       }
 
@@ -65,7 +70,7 @@ class PageCreateCommand extends PwUserTools {
       // IMPORTANT: Save the page once, so that file-type fields can be added to it below!
       $p->save();
 
-      if ($input->getOption('file')) $this->addFileData($input->getOption('file'), $output, $p);
+      if ($input->getOption('file')) $this->addFileData($input->getOption('file'), $p);
 
       $output->writeln("<info>Page `{$name}` has been successfully created.</info>");
     }
@@ -73,49 +78,43 @@ class PageCreateCommand extends PwUserTools {
 
 
   /**
-   * get template
+   * Get template
    *
-   * @param InputInterface $input
-   * @param OutputInterface $output
+   * @param string $name
    */
-  private function getTemplate($input, $output) {
-    $templateName = $input->getOption('template');
-    if (!$templateName) {
-      $helper = $this->getHelper('question');
-      $question = new Question('Please enter the template : ', 'template');
-      $templateName = $helper->ask($input, $output, $question);
-    }
+  private function getTemplate($name) {
+    $templateName = $this->tools->ask($name, 'Which template should be assigned', null, false, null, 'required');
 
     $template = \ProcessWire\wire('templates')->get($templateName);
     if (!$template) {
-      $output->writeln("<error>Template '{$templateName}' doesn't exist!</error>");
+      $this->tools->writeError("Template '{$templateName}' doesn't exist.");
       exit(1);
     }
 
     if ($template->noParents) {
-      $output->writeln("<error>Template '{$templateName}' is not allowed to be used for new pages!</error>");
+      $this->tools->writeError("Template '{$templateName}' is not allowed to be used for new pages.");
       exit(1);
     }
 
     $this->template = $template;
+
     return $templateName;
   }
 
   /**
-   * get parent
+   * Get parent
    *
-   * @param InputInterface $input
-   * @param OutputInterface $output
+   * @param $name
    */
-  private function getParent($input, $output) {
+  private function getParent($name) {
     $parent = '/';
 
     // parent page submitted and existing?
-    if ($input->getOption('parent')) {
-      if (!\ProcessWire\wire('pages')->get('/' . $input->getOption('parent') . '/') instanceof \ProcessWire\NullPage) {
-        $parent = '/' . $input->getOption('parent') . '/';
-      } elseif (!\ProcessWire\wire('pages')->get($input->getOption('parent')) instanceof \ProcessWire\NullPage) {
-        $parent = (int)$input->getOption('parent');
+    if ($name) {
+      if (!\ProcessWire\wire('pages')->get("/$name/") instanceof \ProcessWire\NullPage) {
+        $parent = "/$name/";
+      } elseif (!\ProcessWire\wire('pages')->get($name) instanceof \ProcessWire\NullPage) {
+        $parent = (int)$name;
       }
     }
 
@@ -124,7 +123,7 @@ class PageCreateCommand extends PwUserTools {
 
     // may pages using this template have children?
     if (!empty($parentTemplate->noChildren)) {
-      $output->writeln("<error>The parent page '{$parent}' is not allowed to have children!</error>");
+      $this->tools->writeError("The parent page '{$parent}' is not allowed to have children.");
       exit(1);
     }
 
@@ -134,7 +133,7 @@ class PageCreateCommand extends PwUserTools {
       && !empty($this->template->parentTemplates)
       && !in_array($parentTemplate->id, $this->template->parentTemplates)
     ) {
-      $output->writeln("<error>The parent page '{$parent}' is not allowed to be parent for this template!</error>");
+      $this->tools->writeError("The parent page '{$parent}' is not allowed to be parent for this template.");
       exit(1);
     }
 
@@ -144,7 +143,7 @@ class PageCreateCommand extends PwUserTools {
       && !empty($parentTemplate->childTemplates)
       && !in_array($this->template->id, $parentTemplate->childTemplates)
     ) {
-      $output->writeln("<error>This template '{$this->template}' is not allowed to be children of template '{$parentTemplate}'!</error>");
+      $this->tools->writeError("This template '{$this->template}' is not allowed to be children of template '{$parentTemplate}'.");
       exit(1);
     }
 
@@ -155,38 +154,32 @@ class PageCreateCommand extends PwUserTools {
    * Import field data, if a field data file is available
    *
    * @param string $dataFilePath
-   * @param OutputInterface $output
    * @param Page $p
    * @return array
-   *
    */
-  protected function addFileData($dataFilePath, $output, $p) {
+  protected function addFileData($dataFilePath, $p) {
     // check whether the file does exist
     if (!file_exists($dataFilePath)) {
-      $output->writeln("<error>The file `$dataFilePath` does not exist.</error>");
+      $this->tools->writeError("The file `$dataFilePath` does not exist.");
       exit(1);
     } else {
       // yeah, file exists - check file extension
       $ext = pathinfo($dataFilePath, PATHINFO_EXTENSION);
 
       if (!in_array($ext, self::$supportedTypes)) {
-        $output->writeln("<error>The file extension `$ext` is currently not supported.</error>");
+        $this->tools->writeError("The file extension `$ext` is currently not supported.");
         exit(1);
       }
     }
 
-    $data = '';
-    if ($ext === 'json') {
-      $data = json_decode(file_get_contents($dataFilePath));
-    }
-
     // no valid content? empty file?
+    $data = $ext === 'json' ? json_decode(file_get_contents($dataFilePath)) : null;
     if (!$data) {
-      $output->writeln("<error>The file `$dataFilePath` does not contain valid `$ext`.</error>");
+      $this->tools->writeError("The file `$dataFilePath` does not contain valid `$ext`.");
       exit(1);
     }
 
-    $this->addFieldContent($data, $ext, $output, $p);
+    $this->addFieldContent($data, $ext, $p);
   }
 
   /**
@@ -194,11 +187,9 @@ class PageCreateCommand extends PwUserTools {
    *
    * @param string $data file content
    * @param string $ext file extension
-   * @param OutputInterface $output
    * @param Page $p
-   *
    */
-  protected function addFieldContent($data, $ext, $output, $p) {
+  protected function addFieldContent($data, $ext, $p) {
     if ($ext === 'json') {
       foreach ($data as $fieldname => $fieldval) {
         $fieldname = strtolower($fieldname);
@@ -207,7 +198,7 @@ class PageCreateCommand extends PwUserTools {
           if ($fieldname === 'name') $fieldval = \ProcessWire\wire('sanitizer')->pageName($fieldval);
           $p->$fieldname = $fieldval;
         } else {
-          $output->writeln("<comment>For the chosen template field `$fieldname` does not exist.\n</comment>");
+          $this->tools->writeComment("For the chosen template field `$fieldname` does not exist.");
         }
       }
     }

@@ -14,13 +14,9 @@ Improve Commands
 - module:generate  Generates a boilerplate module
 - module:upgrade   Upgrades given module(s)
 
-## page
+Done: 30 of 37 ~ 81%
 
-- page:create      Creates a ProcessWire page
-
-Done: 29 of 37 ~ 78%
-
-Sections Done: 6 of 9
+Sections Done: 7 of 9
 
 ## Rewrites
 
@@ -30,3 +26,4 @@ Sections Done: 6 of 9
 * optimize PwConnector and PwUserTools
 * collect `availableWhatevers`
 * Installer :: `$this->error` improve error message output
+* optimize questions: add autocompletion instead of choice / text
