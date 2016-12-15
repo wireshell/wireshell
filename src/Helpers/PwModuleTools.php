@@ -14,6 +14,8 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Wireshell\Helpers\WsTools as Tools;
+use Wireshell\Helpers\Downloader;
 
 /**
  * PwModuleTools
@@ -29,8 +31,29 @@ class PwModuleTools extends PwConnector {
    * @var Filesystem
    */
   private $fs;
+  protected $tools;
 
   const timeout = 4.5;
+
+  /**
+   * Construct PwModuleTools
+   *
+   * @param OutputInterface $output
+   */
+  public function init(OutputInterface $output, InputInterface $input) {
+    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+    $this->tools = parent::setTools();
+  }
+
+  /**
+   * Set module
+   *
+   * @param string $module
+   */
+  public function setModule($module) {
+    $this->module = $module;
+    $this->downloader = new Downloader($this->output, \ProcessWire\wire('config')->paths->siteModules, $module);
+  }
 
   /**
    * check if a module already exists
@@ -206,92 +229,29 @@ class PwModuleTools extends PwConnector {
    * download the project and removes ProcessWire-related files that don't make
    * sense in a proprietary project.
    *
-   * @param string $module
-   * @param OutputInterface $output
    * @return NewCommand
    */
-  public function cleanUpTmp($module, $output) {
+  public function cleanUpTmp() {
     $fs = new Filesystem();
     $fs->remove(dirname($this->compressedFilePath));
-    $output->writeln("<info> Module {$module} downloaded successfully.</info>\n");
+    $this->tools->writeSuccess(" Module `{$this->module}` downloaded successfully.");
   }
 
   /**
    * Extracts the compressed Symfony file (ZIP or TGZ) using the
    * native operating system commands if available or PHP code otherwise.
    *
-   * @param string $module
-   * @param OutputInterface $output
-   * @return NewCommand
-   *
    * @throws \RuntimeException if the downloaded archive could not be extracted
    */
-  public function extractModule($module, $output) {
-    $output->writeln(" Preparing module...\n");
+  public function extractModule() {
+    $this->tools->nl();
+    $this->tools->writeComment(" Extracting module...\n");
+    $dir = \ProcessWire\wire('config')->paths->siteModules . $this->module;
+    if (is_dir($dir)) chmod($dir, 0755);
 
-    try {
-      $distill = new Distill();
-      $extractionSucceeded = $distill->extractWithoutRootDirectory($this->compressedFilePath,
-        \ProcessWire\wire('config')->paths->siteModules . $module);
-      $dir = \ProcessWire\wire('config')->paths->siteModules . $module;
-      if (is_dir($dir)) {
-        chmod($dir, 0755);
-      }
-    } catch (FileCorruptedException $e) {
-      throw new \RuntimeException(
-        "This module can't be downloaded because the downloaded package is corrupted.\n" .
-        "To solve this issue, try installing the module again.\n"
-      );
-    } catch (FileEmptyException $e) {
-      throw new \RuntimeException(
-        "This module can't be downloaded because the downloaded package is empty.\n" .
-        "To solve this issue, try installing the module again.\n"
-      );
-    } catch (TargetDirectoryNotWritableException $e) {
-      throw new \RuntimeException(sprintf(
-        "This module can't be downloaded because the installer doesn't have enough\n" .
-        "permissions to uncompress and rename the package contents.\n" .
-        "To solve this issue, check the permissions of the %s directory and\n" .
-        "try installing this module again.\n",
-        getcwd()
-      ));
-    } catch (\Exception $e) {
-      throw new \RuntimeException(sprintf(
-        "This module can't be downloaded because the downloaded package is corrupted\n" .
-        "or because the installer doesn't have enough permissions to uncompress and\n" .
-        "rename the package contents.\n" .
-        "To solve this issue, check the permissions of the %s directory and\n" .
-        "try installing this module again.\n",
-        getcwd()
-      ));
-    }
-
-    if (!$extractionSucceeded) {
-      throw new \RuntimeException(
-        "This module can't be downloaded because the downloaded package is corrupted\n" .
-        "or because the uncompress commands of your operating system didn't work."
-      );
-    }
+    $this->downloader->extract($this->compressedFilePath, \ProcessWire\wire('config')->paths->siteModules . $this->module);
 
     return $this;
-  }
-
-  /**
-   * Utility method to show the number of bytes in a readable format.
-   *
-   * @param int $bytes The number of bytes to format
-   * @return string The human readable string of bytes (e.g. 4.32MB)
-   */
-  private function formatSize($bytes) {
-    $units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-    $bytes = max($bytes, 0);
-    $pow = $bytes ? floor(log($bytes, 1024)) : 0;
-    $pow = min($pow, count($units) - 1);
-
-    $bytes /= pow(1024, $pow);
-
-    return number_format($bytes, 2) . ' ' . $units[$pow];
   }
 
   /**
@@ -301,84 +261,14 @@ class PwModuleTools extends PwConnector {
    *
    * @param string $url
    * @param string $module
-   * @param OutputInterface $output
    * @return NewCommand
    *
    * @throws \RuntimeException if the ProcessWire archive could not be downloaded
    */
-  public function downloadModule($url, $module, $output) {
-    $output->writeln(" Downloading module $module...");
-
-    $distill = new Distill();
-    $pwArchiveFile = $distill
-      ->getChooser()
-      ->setStrategy(new MinimumSize())
-      ->addFile($url)
-      ->getPreferredFile();
-
-    /** @var ProgressBar|null $progressBar */
-    $progressBar = null;
-    $downloadCallback = function ($size, $downloaded, $client, $request, Response $response) use (&$progressBar, &$output) {
-      // Don't initialize the progress bar for redirects as the size is much smaller
-      if ($response->getStatusCode() >= 300) {
-        return;
-      }
-
-      if (null === $progressBar) {
-        ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
-          return $this->formatSize($bar->getMaxSteps());
-        });
-        ProgressBar::setPlaceholderFormatterDefinition('current', function (ProgressBar $bar) {
-          return str_pad($this->formatSize($bar->getStep()), 11, ' ', STR_PAD_LEFT);
-        });
-
-        $progressBar = new ProgressBar($output, $size);
-        $progressBar->setFormat('%current%/%max% %bar%  %percent:3s%%');
-        $progressBar->setRedrawFrequency(max(1, floor($size / 1000)));
-        $progressBar->setBarWidth(60);
-
-        if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
-          $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
-          $progressBar->setProgressCharacter('');
-          $progressBar->setBarCharacter('▓'); // dark shade character \u2593
-        }
-
-        $progressBar->start();
-      }
-
-      $progressBar->setProgress($downloaded);
-    };
-
-    $client = new Client();
-    $client->getEmitter()->attach(new Progress(null, $downloadCallback));
-
-    // store the file in a temporary hidden directory with a random name
-    $this->compressedFilePath = \ProcessWire\wire('config')->paths->siteModules . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . $module . '.' . pathinfo($pwArchiveFile,
-      PATHINFO_EXTENSION);
-
-    try {
-      $response = $client->get($pwArchiveFile);
-    } catch (ClientException $e) {
-      if ($e->getCode() === 403 || $e->getCode() === 404) {
-        throw new \RuntimeException(
-          "The selected module $module cannot be downloaded because it does not exist.\n"
-        );
-      } else {
-        throw new \RuntimeException(sprintf(
-          "The selected module (%s) couldn't be downloaded because of the following error:\n%s",
-          $module,
-          $e->getMessage()
-        ));
-      }
-    }
-
-    $fs = new Filesystem();
-    $fs->dumpFile($this->compressedFilePath, $response->getBody());
-
-    if (null !== $progressBar) {
-      $progressBar->finish();
-      $output->writeln("\n");
-    }
+  public function downloadModule($url) {
+    $this->tools->writeComment(" Downloading module {$this->module}...");
+    $this->compressedFilePath = $this->downloader->download($url, $this->module);
+    $this->tools->nl();
 
     return $this;
   }

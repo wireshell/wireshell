@@ -11,6 +11,26 @@
 class PwTools extends PwConnector {
 
   /**
+   * Get available field types short version
+   */
+  public static function getAvailableFieldtypesShort() {
+    return array(
+      'text',
+      'textarea',
+      'email',
+      'datetime',
+      'checkbox',
+      'file',
+      'float',
+      'image',
+      'integer',
+      'page',
+      'fieldset',
+      'tab'
+    );
+  }
+
+  /**
    * Method to get field type name
    * Type of field: text|textarea|email|datetime|checkbox|file|float|image|integer|page|url
    *
@@ -54,6 +74,12 @@ class PwTools extends PwConnector {
       break;
     case 'url':
       $type = 'FieldtypeUrl';
+      break;
+    case 'fieldset':
+      $type = 'FieldtypeFieldsetOpen';
+      break;
+    case 'tab':
+      $type = 'FieldtypeFieldsetTabOpen';
       break;
     }
 

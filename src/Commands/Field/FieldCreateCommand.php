@@ -50,9 +50,11 @@ class FieldCreateCommand extends PwConnector {
       ->writeBlockCommand($this->getName());
 
     $name = $tools->ask($input->getArgument('name'), 'New field name', null, false, null, 'required');
-    $label = $input->getOption('label') ? $input->getOption('label') : $name;
+    $label = $tools->ask($input->getOption('label'), 'New field label', $name);
+    $suppliedType = $tools->askChoice($input->getOption('type'), 'Field type', PWTools::getAvailableFieldtypesShort(), '0');
+    $tools->nl();
 
-    $type = PwTools::getProperFieldtypeName($input->getOption('type'));
+    $type = PwTools::getProperFieldtypeName($suppliedType);
     $check = $this->checkFieltype($type);
 
     if ($check === true) {
@@ -63,6 +65,17 @@ class FieldCreateCommand extends PwConnector {
       $field->description = $input->getOption('desc');
       if ($input->getOption('tag')) $field->tags = $input->getOption('tag');
       $field->save();
+
+      // add FieldsetClose if tab / fieldset
+      if (in_array($suppliedType, array('fieldset', 'tab'))) {
+        $field = new Field();
+        $field->type = \ProcessWire\wire('modules')->get('FieldtypeFieldsetClose');
+        $field->name = "{$name}_END";
+        $field->label = 'Close an open fieldset';
+        $field->description = $input->getOption('desc');
+        if ($input->getOption('tag')) $field->tags = $input->getOption('tag');
+        $field->save();
+      }
 
       $tools->writeSuccess("Field '{$name}' ($type) created successfully.");
     } else {

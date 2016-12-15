@@ -47,9 +47,10 @@ class Downloader {
    * and it downloads the file.
    *
    * @param string $uri
+   * @param string $prefix
    * @throws \RuntimeException if the ProcessWire archive could not be downloaded
    */
-  public function download($uri) {
+  public function download($uri, $prefix = 'pw') {
     $distill = new Distill();
     $pwArchiveFile = $distill
       ->getChooser()
@@ -61,7 +62,7 @@ class Downloader {
 
     // store the file in a temporary hidden directory with a random name
     $tmpFolder = '.' . uniqid(time());
-    $archiveName = 'pw.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
+    $archiveName = $prefix . '.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
     $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
     $this->fs->mkdir($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder);
 
@@ -96,20 +97,34 @@ class Downloader {
       ]);
     } catch (ClientException $e) {
       if ($e->getCode() === 403 || $e->getCode() === 404) {
-        throw new \RuntimeException(sprintf(
-          "The selected version (%s) cannot be installed because it does not exist.\n" .
-          "Try the special \"latest\" version to install the latest stable ProcessWire release:\n" .
-          '%s %s latest',
-          $this->version,
-          $_SERVER['PHP_SELF'],
-          $this->projectDir
-        ));
+        if ($prefix === 'pw') {
+          throw new \RuntimeException(sprintf(
+            "The selected version (%s) cannot be installed because it does not exist.\n" .
+            "Try the special \"latest\" version to install the latest stable ProcessWire release:\n" .
+            '%s %s latest',
+            $this->version,
+            $_SERVER['PHP_SELF'],
+            $this->projectDir
+          ));
+        } else {
+          throw new \RuntimeException(
+            "The selected module {$this->version} cannot be downloaded because it does not exist.\n"
+          );
+        }
       } else {
-        throw new \RuntimeException(sprintf(
-          "The selected version (%s) couldn't be downloaded because of the following error:\n%s",
-          $this->version,
-          $e->getMessage()
-        ));
+        if ($prefix === 'pw') {
+          throw new \RuntimeException(sprintf(
+            "The selected version (%s) couldn't be downloaded because of the following error:\n%s",
+            $this->version,
+            $e->getMessage()
+          ));
+        } else {
+          throw new \RuntimeException(sprintf(
+            "The selected module (%s) couldn't be downloaded because of the following error:\n%s",
+            $this->version,
+            $e->getMessage()
+          ));
+        }
       }
     }
 
@@ -132,38 +147,40 @@ class Downloader {
    * @param string $to
    * @param string $name
    */
-  public function extract($from, $to, $name) {
+  public function extract($from, $to, $name = '') {
+    $source = $name ? 'ProcessWire' : 'the module';
+
     try {
       $distill = new Distill();
       $extractionSucceeded = $distill->extractWithoutRootDirectory($from, $to);
     } catch (FileCorruptedException $e) {
       throw new \RuntimeException(sprintf(
-        "ProcessWire can't be installed because the downloaded package is corrupted.\n" .
-        "To solve this issue, try installing ProcessWire again.\n%s",
-        $name
+        "%s can't be installed because the downloaded package is corrupted.\n" .
+        "To solve this issue, try installing %s again.\n%s",
+        ucfirst($source), $source, $name
       ));
     } catch (FileEmptyException $e) {
       throw new \RuntimeException(sprintf(
-        "ProcessWire can't be installed because the downloaded package is empty.\n" .
-        "To solve this issue, try installing ProcessWire again.\n%s",
-        $name
+        "%s can't be installed because the downloaded package is empty.\n" .
+        "To solve this issue, try installing %s again.\n%s",
+        ucfirst($source), $source, $name
       ));
     } catch (TargetDirectoryNotWritableException $e) {
       throw new \RuntimeException(sprintf(
-        "ProcessWire can't be installed because the installer doesn't have enough\n" .
+        "%s can't be installed because the installer doesn't have enough\n" .
         "permissions to uncompress and rename the package contents.\n" .
         "To solve this issue, check the permissions of the %s directory and\n" .
-        "try installing ProcessWire again.\n%s",
-        getcwd(), $name
+        "try installing %s again.\n%s",
+        ucfirst($source), getcwd(), $source, $name
       ));
     } catch (\Exception $e) {
       throw new \RuntimeException(sprintf(
-        "ProcessWire can't be installed because the downloaded package is corrupted\n" .
+        "%s can't be installed because the downloaded package is corrupted\n" .
         "or because the installer doesn't have enough permissions to uncompress and\n" .
         "rename the package contents.\n" .
         "To solve this issue, check the permissions of the %s directory and\n" .
-        "try installing ProcessWire again.\n%s",
-        getcwd(), $name
+        "try installing %s again.\n%s",
+        ucfirst($source), getcwd(), $source, $name
       ));
     }
 
