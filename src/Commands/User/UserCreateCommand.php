@@ -41,15 +41,14 @@ class UserCreateCommand extends PwUserTools {
   public function execute(InputInterface $input, OutputInterface $output) {
     parent::init($output, $input);
     parent::bootstrapProcessWire($output);
+
     $tools = new Tools($output);
     $tools
       ->setHelper($this->getHelper('question'))
-      ->setInput($input);
+      ->setInput($input)
+      ->writeBlockCommand($this->getName());
 
-    $tools->writeBlockCommand($this->getName());
-
-    $name = '';
-    while (!$name) $name = $tools->ask($input->getArgument('name'), 'Username');
+    $name = $tools->ask($input->getArgument('name'), 'Username', null, false, null, 'required');
     $email = $tools->ask($input->getOption('email'), 'E-Mail-Address', null, false, null, 'email');
     $pass = $tools->ask($input->getOption('password'), 'Password', $tools->generatePassword(), true);
 

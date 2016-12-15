@@ -5,12 +5,10 @@ Improve Commands
 ## module
 
 - module:disable   Disable provided module(s)
-- module:download  Downloads ProcessWire module(s).
-- module:enable    Enables provided module(s)
 - module:generate  Generates a boilerplate module
 - module:upgrade   Upgrades given module(s)
 
-Done: 31 of 37 ~ 84%
+Done: 33 of 37 ~ 89%
 
 Sections Done: 8 of 9
 
