@@ -14,7 +14,7 @@ use Wireshell\Helpers\WsTools as Tools;
  * Enables provided module(s)
  *
  * @package Wireshell
- * @author Tabea David <td@kf-interactive.com>
+ * @author Tabea David <info@justonestep.de>
  */
 class ModuleEnableCommand extends PwModuleTools {
 
@@ -51,6 +51,7 @@ class ModuleEnableCommand extends PwModuleTools {
       // if module doesn't exist, download the module
       if (!$this->checkIfModuleExists($module)) {
         $this->tools->writeComment("Cannot find '{$module}' locally, trying to download...");
+        $this->tools->nl();
         $this->passOnToModuleDownloadCommand($module, $output, $input);
       }
 
@@ -61,7 +62,12 @@ class ModuleEnableCommand extends PwModuleTools {
       }
 
       // install module
-      if (\ProcessWire\wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
+      $options = array(
+        'noPermissionCheck' => true,
+        'noInit' => true
+      );
+
+      if (\ProcessWire\wire('modules')->getInstall($module, $options)) {
         $this->tools->writeSuccess(" Module `{$module}` installed successfully.");
       } else {
         $this->tools->writeError(" Module `{$module}` does not exist.");

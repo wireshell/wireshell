@@ -63,7 +63,12 @@ class PwModuleTools extends PwConnector {
    */
   public function checkIfModuleExists($module) {
     $moduleDir = \ProcessWire\wire('config')->paths->siteModules . $module;
-    if (\ProcessWire\wire('modules')->getModule($module, array('noPermissionCheck' => true, 'noInit' => true))) {
+    $options = array(
+      'noPermissionCheck' => true,
+      'noInit' => true,
+      'noInstall' => true
+    );
+    if (\ProcessWire\wire('modules')->getModule($module, $options)) {
       $return = true;
     }
 
@@ -88,7 +93,6 @@ class PwModuleTools extends PwConnector {
    * Check all site modules for newer versions from the directory
    *
    * @param bool $onlyNew Only return array of modules with new versions available
-   * @param OutputInterface $output
    * @return array of array(
    *  'ModuleName' => array(
    *    'title' => 'Module Title',
@@ -101,7 +105,7 @@ class PwModuleTools extends PwConnector {
    * @throws WireException
    *
    */
-  public function getModuleVersions($onlyNew = false, $output) {
+  public function getModuleVersions($onlyNew = false) {
     $url = \ProcessWire\wire('config')->moduleServiceURL .
       '?apikey=' . \ProcessWire\wire('config')->moduleServiceKey .
       '&limit=100' .
@@ -135,7 +139,7 @@ class PwModuleTools extends PwConnector {
     if (!is_array($data)) {
       $error = $http->getError();
       if (!$error) $error = 'Error retrieving modules directory data';
-      $output->writeln("<error>$error</error>");
+      $this->tools->writeError("$error");
       return array();
     }
 
@@ -164,7 +168,6 @@ class PwModuleTools extends PwConnector {
    * Check all site modules for newer versions from the directory
    *
    * @param bool $onlyNew Only return array of modules with new versions available
-   * @param OutputInterface $output
    * @return array of array(
    *  'ModuleName' => array(
    *    'title' => 'Module Title',
@@ -176,7 +179,7 @@ class PwModuleTools extends PwConnector {
    * )
    * @throws WireException
    */
-  public function getModuleVersion($onlyNew = false, $output, $module) {
+  public function getModuleVersion($onlyNew = false, $module) {
     // get current module data
     $info = \ProcessWire\wire('modules')->getModuleInfoVerbose($module);
     $versions = array(
@@ -194,13 +197,13 @@ class PwModuleTools extends PwConnector {
     $data = $http->getJSON($url);
 
     if (!$data || !is_array($data)) {
-      $output->writeln("<error>Error retrieving data from web service URL - {$http->getError()}</error>");
+      $this->tools->writeError("Error retrieving data from web service URL - `{$http->getError()}`.");
       return array();
     }
 
     if ($data['status'] !== 'success') {
       $error = \ProcessWire\wire('sanitizer')->entities($data['error']);
-      $output->writeln("<error>Error reported by web service: $error</error>");
+      $this->tools->writeError("Error reported by web service: `$error`");
       return array();
     }
 
@@ -219,7 +222,7 @@ class PwModuleTools extends PwConnector {
       $versions['requiresVersions'] = $data['requires_versions'];
     }
 
-    if ($onlyNew && !$versions['remote']) $versions = array();
+    if ($onlyNew && !isset($versions['remote'])) $versions = array();
 
     return $versions;
   }

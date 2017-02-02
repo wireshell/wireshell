@@ -63,14 +63,15 @@ class Downloader {
     // store the file in a temporary hidden directory with a random name
     $tmpFolder = '.' . uniqid(time());
     $archiveName = $prefix . '.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
-    $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
+    $progressBar = null;
+    $this->compressedFilePath = $this->projectDir . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
     $this->fs->mkdir($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder);
 
     try {
       $response = $client->request('GET', $uri, [
         'sink' => $this->compressedFilePath,
         'progress' => function ($size, $downloaded) use (&$progressBar) {
-          if (is_null($progressBar) && $size) {
+          if (!$progressBar && $size) {
             ProgressBar::setPlaceholderFormatterDefinition('max', function (ProgressBar $bar) {
               return $this->formatSize($bar->getMaxSteps());
             });
@@ -90,9 +91,18 @@ class Downloader {
             }
 
             $progressBar->start();
-          }
+          } 
 
-          if ($progressBar) $progressBar->setProgress($downloaded);
+          if ($progressBar)  {
+            $progressBar->setProgress($downloaded);
+          } elseif (!$progressBar && $downloaded) {
+            // Move the cursor to the beginning of the line
+            $this->output->write("\x0D");
+
+            // Erase the line
+            $this->output->write("\x1B[2K");
+            $this->output->write('  ' . $this->formatSize($downloaded));
+          }
         }
       ]);
     } catch (ClientException $e) {
@@ -129,13 +139,8 @@ class Downloader {
     }
 
     $this->fs->dumpFile($this->compressedFilePath, $response->getBody());
-    if (!$progressBar) {
-      $this->tools->nl(2);
-      $this->tools->writeError('Something went wrong. Please try again.');
-      exit(1);
-    }
 
-    $progressBar->finish();
+    if ($progressBar) $progressBar->finish();
 
     return $this->compressedFilePath;
   }
