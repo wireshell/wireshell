@@ -17,30 +17,31 @@ use Wireshell\Helpers\WsTools as Tools;
  */
 class FieldTypesCommand extends PwConnector {
 
-    /**
-     * Configures the current command.
-     */
-    protected function configure() {
-        $this
-            ->setName('field:types')
-            ->setDescription('Lists all available fieldtypes.');
-    }
+  /**
+   * Configures the current command.
+   */
+  protected function configure() {
+    $this
+      ->setName('field:types')
+      ->setDescription('Lists all available fieldtypes.');
+  }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
-        $tools = new Tools($output);
-        $tools->writeBlockCommand($this->getName());
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
 
-        // get available fieldtypes
-        foreach (\ProcessWire\wire('modules') as $module) {
-            if (preg_match('/^Fieldtype/', $module->name)) {
-                $tools->writeDfList($module->name, substr($module->name, 9));
-            }
-        }
+    $tools = new Tools($output);
+    $tools->writeBlockCommand($this->getName());
+
+    // get available fieldtypes
+    foreach (\ProcessWire\wire('modules') as $module) {
+      if (preg_match('/^Fieldtype/', $module->name)) {
+        $tools->writeDfList($module->name, substr($module->name, 9));
+      }
     }
+  }
 }
