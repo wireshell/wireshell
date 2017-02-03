@@ -1,17 +1,5 @@
 # @todo
 
-Improve Commands
-
-## module
-
-- module:generate  Generates a boilerplate module
-
-Done: 36 of 37 ~ 97%
-
-Sections Done: 8 of 9
-
-## Rewrites
-
 * add tests!
 * new command: ask has been outsourced to Tools
 * new/upgrade command: branch develop??
@@ -24,3 +12,4 @@ Sections Done: 8 of 9
 * change input argument / option to `isArray`
 * maybe use replace output add some places (@see Downloader)
 * add shell autocompletion
+* rewrite `$tools->writeError(); exit(1);` to `$tools->writeErrorAndExit();`

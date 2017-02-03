@@ -68,6 +68,9 @@ class CheatCommand extends PwConnector {
     $tools->writeCount(5, 10);
     $tools->nl();
     $tools->writeDfList('Write Df List', 'Write Df List Part Two.');
+    $tools->writeDfList('Write Df List 2', 'Write Df List Part Two 2.');
+    $tools->nl();
+    $tools->writeError('Write Error and exit!');
   }
 
 }

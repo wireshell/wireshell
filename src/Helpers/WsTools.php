@@ -145,6 +145,19 @@ Class WsTools {
   }
 
   /**
+   * Simple method for coloring error output
+   * and exit
+   *
+   * @param string $string
+   * @param boolean $write
+   * @return tinted string
+   */
+  public function writeErrorAndExit($string) {
+    $this->writeError($string);
+    exit(1);
+  }
+
+  /**
    * Simple method for coloring comment output
    *
    * @param string $string
