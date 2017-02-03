@@ -181,7 +181,7 @@ $ wireshell field:clone headline --name=header
 
 ## Edit
 
-Edit a field. Change name and/or label.
+Edit a field. Change name, label, description and/or notes.
 
 ```sh
 $ wireshell field:edit {fieldname}
@@ -192,6 +192,8 @@ $ wireshell field:edit {fieldname}
 ```sh
 --name : change field name
 --label : change field label
+--description : change field description
+--notes : change field notes
 ```
 
 ### Examples

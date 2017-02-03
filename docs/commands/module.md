@@ -28,7 +28,7 @@ $ wireshell module:download FlagPages,ImageExtra
 Download module via github.
 
 ```sh
-$ wireshell module:download ContinentsAndCountries --github=justonestep/processwire-countries
+$ wireshell module:download ContinentsAndCountries --github=justb3a/processwire-countries
 ```
 
 If you want to download a branch, you have to provide the --github option, too.
@@ -65,7 +65,7 @@ $ wireshell module:download FlagPages,ImageExtra
 Download and enable module via github.
 
 ```sh
-$ wireshell module:download ContinentsAndCountries --github=justonestep/processwire-countries
+$ wireshell module:download ContinentsAndCountries --github=justb3a/processwire-countries
 ```
 
 Download `develop` branch and enable module.
@@ -81,7 +81,7 @@ $ wireshell module:download FlagPages --github=marcus-herrmann/ProcessWire-FlagP
 Disables and uninstalls one or more modules.
 
 ```sh
-$ wireshell module:disable {class-name},{class-name}
+$ wireshell module:disable {class-name} {class-name}
 ```
 
 ### Available options:
@@ -95,13 +95,13 @@ $ wireshell module:disable {class-name},{class-name}
 Deinstall modules but keep files.
 
 ```sh
-$ wireshell module:disable FlagPages,ImageExtra
+$ wireshell module:disable FlagPages ImageExtra
 ```
 
 Deinstall modules and remove files.
 
 ```sh
-$ wireshell module:disable FlagPages,ImageExtra --rm
+$ wireshell module:disable --rm FlagPages ImageExtra
 ```
 
 ---
@@ -111,7 +111,7 @@ $ wireshell module:disable FlagPages,ImageExtra --rm
 Upgrades given module(s).
 
 ```sh
-$ wireshell module:upgrade {class-name},{class-name}*
+$ wireshell module:upgrade {class-name} {class-name}*
 ```
 
 \* This argument is optional. If you want to check for module updates, just skip it.

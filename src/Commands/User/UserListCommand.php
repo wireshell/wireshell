@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\PwUserTools;
 use Wireshell\Helpers\WsTools as Tools;
-use Wireshell\Helpers\WsTables as WsTables;
+use Wireshell\Helpers\WsTables as Tables;
 
 /**
  * Class UserListCommand
@@ -18,111 +18,83 @@ use Wireshell\Helpers\WsTables as WsTables;
  * @author Tabea David <info@justonestep.de>
  */
 
-class UserListCommand extends PwUserTools
-{
+class UserListCommand extends PwUserTools {
 
-    /**
-     * Configures the current command.
-     */
-    public function configure()
-    {
-        $this
-            ->setName('user:list')
-            ->setDescription('Lists ProcessWire users')
-            ->addOption('role', null, InputOption::VALUE_REQUIRED, 'Find user by role');
+  /**
+   * Configures the current command.
+   */
+  public function configure() {
+    $this
+      ->setName('user:list')
+      ->setDescription('Lists ProcessWire users')
+      ->addOption('role', null, InputOption::VALUE_REQUIRED, 'Find user by role');
+  }
+
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  public function execute(InputInterface $input, OutputInterface $output) {
+    parent::init($output, $input);
+    parent::bootstrapProcessWire($output);
+    $users = $this->getUsers($input);
+    $tools = new Tools($output);
+    $tables = new Tables($output);
+
+    $tools->writeBlockCommand($this->getName());
+
+    if ($users->getTotal() > 0) {
+      $content = $this->getUserData($users);
+      $headers = array('Username', 'E-Mail', 'Superuser', 'Roles');
+
+      $userTables = array($tables->buildTable($content, $headers));
+      $tables->renderTables($userTables, false);
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::bootstrapProcessWire($output);
+    $tools->writeCount($users->getTotal());
+  }
 
-        $users = $this->getUsers($input);
-        $output->writeln("Users: " . $users->getTotal());
+  /**
+   * get users
+   *
+   * @param InputInterface $input
+   */
+  private function getUsers($input) {
+    $role = $input->getOption('role');
 
-        if ($users->getTotal() > 0) {
-            $content = $this->getUserData($users);
-            $headers = array('Username', 'E-Mail', 'Superuser', 'Roles');
-            $tables = array(WsTables::buildTable($output, $content, $headers));
-            WsTables::renderTables($output, $tables);
-        }
+    if ($role) {
+      $users = \ProcessWire\wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
+    } else {
+      $users = \ProcessWire\wire('users')->find('start=0')->sort('name');
     }
 
-    /**
-     * get users
-     *
-     * @param InputInterface $input
-     */
-    private function getUsers($input) {
-        $role = $input->getOption('role');
+    return $users;
+  }
 
-        if ($role) {
-            $users = \ProcessWire\wire('users')->find('roles=' . $input->getOption('role'))->sort('name');
-        } else {
-            $users = \ProcessWire\wire('users')->find('start=0')->sort('name');
-        }
+  /**
+   * get user data
+   *
+   * @param $users
+   * @return array
+   */
+  private function getUserData($users) {
+    $content = array();
+    foreach ($users as $user) {
+      $roles = array();
+      foreach ($user->roles as $role) {
+        $roles[] = $role->name;
+      }
 
-        return $users;
+      $content[] = array(
+        $user->name,
+        $user->email,
+        $user->isSuperuser() ? '✔' : '',
+        implode(', ', $roles)
+      );
     }
 
-    /**
-     * get user data
-     *
-     * @param $users
-     * @return array
-     */
-    private function getUserData($users) {
-        $content = array();
-        foreach ($users as $user) {
-            $roles = array();
-            foreach ($user->roles as $role) {
-                $roles[] = $role->name;
-            }
-
-            $content[] = array(
-                $user->name,
-                $user->email,
-                $user->isSuperuser() ? '✔' : '',
-                implode(', ', $roles)
-            );
-        }
-
-        return $content;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param array $content
-     * @param array $headers
-     */
-    protected function buildTable(OutputInterface $output, $content, $headers)
-    {
-        $tablePW = new Table($output);
-        $tablePW
-            ->setStyle('borderless')
-            ->setHeaders($headers)
-            ->setRows($content);
-
-        return $tablePW;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param $tables
-     */
-    protected function renderTables(OutputInterface $output, $tables)
-    {
-        $output->writeln("\n");
-
-        foreach ($tables as $table)
-        {
-            $table->render();
-            $output->writeln("\n");
-        }
-    }
+    return $content;
+  }
 
 }

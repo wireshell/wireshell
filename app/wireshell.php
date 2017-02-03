@@ -29,7 +29,9 @@ use Wireshell\Commands\Common\NewCommand;
 use Wireshell\Commands\Common\UpgradeCommand;
 use Wireshell\Commands\Common\StatusCommand;
 use Wireshell\Commands\Common\ServeCommand;
-use Wireshell\Commands\Backup\BackupCommand;
+use Wireshell\Commands\Common\CheatCommand;
+use Wireshell\Commands\Common\DebugCommand;
+use Wireshell\Commands\Backup\BackupDatabaseCommand;
 use Wireshell\Commands\Backup\BackupImagesCommand;
 use Wireshell\Commands\Page\PageCreateCommand;
 use Wireshell\Commands\Page\PageListCommand;
@@ -44,7 +46,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Application('wireshell - An extendable ProcessWire CLI', '1.0.0');
+$app = new Application('wireshell - An extendable ProcessWire CLI', '1.0.1');
 
 $app->add(new UserCreateCommand());
 $app->add(new UserUpdateCommand());
@@ -73,7 +75,9 @@ $app->add(new NewCommand());
 $app->add(new UpgradeCommand(new \Symfony\Component\Filesystem\Filesystem()));
 $app->add(new StatusCommand());
 $app->add(new ServeCommand());
-$app->add(new BackupCommand());
+$app->add(new CheatCommand());
+$app->add(new DebugCommand());
+$app->add(new BackupDatabaseCommand());
 $app->add(new BackupImagesCommand());
 $app->add(new PageCreateCommand());
 $app->add(new PageListCommand());

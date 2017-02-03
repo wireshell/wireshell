@@ -158,7 +158,7 @@ $ wireshell status --php --image
  =============== =====================
   wireshell
  =============== =====================
-  Version         1.0.0
+  Version         1.0.1
   Documentation   http://wireshell.pw
   License         MIT
  =============== =====================
@@ -191,6 +191,23 @@ $ wireshell status --php --image
   Exif read data        Available
   Imagick Extension     Not available
  ===================== ====================================
+```
+
+---
+
+## Debug
+
+Change debug mode.
+
+```sh
+$ wireshell debug
+```
+
+### Available options:
+
+```sh
+--on : turn debug mode on
+--off : turn debig mode off
 ```
 
 ---

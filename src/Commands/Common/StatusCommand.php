@@ -7,8 +7,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnoseImagehandling;
 use Wireshell\Helpers\ProcessDiagnostics\DiagnosePhp;
 use Wireshell\Helpers\PwConnector;
+use Wireshell\Helpers\WsTables as Tables;
 use Wireshell\Helpers\WsTools as Tools;
-
 
 /**
  * Class StatusCommand
@@ -42,26 +42,30 @@ class StatusCommand extends PwConnector {
      * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::bootstrapProcessWire($output);
+        parent::setOutput($output)::bootstrapProcessWire();
+        $this->tools = new Tools($output);
+        $tables = new Tables($output);
+        $stTables = array();
+
+        $this->tools->writeBlockCommand($this->getName());
 
         $pwStatus = $this->getPWStatus($input->getOption('pass'));
         $wsStatus = $this->getWsStatus();
 
-        $tables = [];
-        $tables[] = $this->buildTable($output, $pwStatus, 'ProcessWire');
-        $tables[] = $this->buildTable($output, $wsStatus, 'wireshell');
+        $stTables[] = $tables->buildTable($pwStatus, 'ProcessWire');
+        $stTables[] = $tables->buildTable($wsStatus, 'wireshell');
 
         if ($input->getOption('php')) {
             $phpStatus = $this->getDiagnosePHP();
-            $tables[] = $this->buildTable($output, $phpStatus, 'PHP Diagnostics');
+            $stTables[] = $tables->buildTable($phpStatus, 'PHP Diagnostics');
         }
 
         if ($input->getOption('image')) {
             $phpStatus = $this->getDiagnoseImagehandling();
-            $tables[] = $this->buildTable($output, $phpStatus, 'Image Diagnostics');
+            $stTables[] = $tables->buildTable($phpStatus, 'Image Diagnostics');
         }
 
-        $this->renderTables($output, $tables);
+        $tables->renderTables($stTables);
     }
 
     /**
@@ -69,18 +73,18 @@ class StatusCommand extends PwConnector {
      */
     protected function getPWStatus($showPass) {
         $config = \ProcessWire\wire('config');
-        $on = Tools::tint('On', Tools::kTintError);
-        $off = Tools::tint('Off', Tools::kTintInfo);
-        $none = Tools::tint('None', Tools::kTintInfo);
+        $on = $this->tools->writeInfo('On', false);
+        $off = $this->tools->writeComment('Off', false);
+        $none = $this->tools->writeComment('None', false);
 
         $version = $config->version;
         $latestVersion = parent::getVersion();
 
         if ($version !== $latestVersion) {
-            $version .= Tools::tint(" (upgrade available: $latestVersion)", Tools::kTintComment);
+            $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)", false);
         }
 
-        $adminUrl = $this->getAdminUrl();
+        $adminUrl = $this->tools->writeLink($this->getAdminUrl(), false);
         $advancedMode = $config->advanced ? $on : $off;
         $debugMode = $config->debug ? $on : $off;
         $timezone = $config->timezone;
@@ -126,21 +130,9 @@ class StatusCommand extends PwConnector {
     protected function getWsStatus() {
         return array(
             array('Version', $this->getApplication()->getVersion()),
-            array('Documentation', 'http://wireshell.pw'),
+            array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw', false)),
             array('License', 'MIT')
         );
-    }
-
-    protected function buildTable(OutputInterface $output, $statusArray, $label) {
-        $headers = [Tools::tint($label, Tools::kTintComment)];
-
-        $tablePW = new Table($output);
-        $tablePW
-            ->setStyle('borderless')
-            ->setHeaders($headers)
-            ->setRows($statusArray);
-
-        return $tablePW;
     }
 
     /**
@@ -155,19 +147,6 @@ class StatusCommand extends PwConnector {
         }
 
         return $url;
-    }
-
-    /**
-     * @param OutputInterface $output
-     * @param $tables
-     */
-    protected function renderTables(OutputInterface $output, $tables) {
-        $output->writeln("\n");
-
-        foreach ($tables as $table) {
-            $table->render();
-            $output->writeln("\n");
-        }
     }
 
     /**
