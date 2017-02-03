@@ -4,10 +4,14 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
 Check whether the latest build has passed: [Builds | Read the Docs](https://readthedocs.org/projects/wireshell/builds/)
 
-**1.0.1** ()
+**1.0.1** (2017-02-02)
 
 - Adapts `new` command, allows empty database password (`wireshell new prjct --dbPass=""`)
 - Adds `debug` command which allows you to change the debug mode
+- Improves every command, optimizes output
+- Adds PHPUnit implementation
+- Upgrades `guzzlehttp/guzzle` to version 6.2
+- Removes `guzzlehttp/progress-subscriber` because it's DEPRECATED
 
 **1.0.0** (2016-09-27)
 

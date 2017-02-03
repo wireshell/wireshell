@@ -13,3 +13,12 @@
 * maybe use replace output add some places (@see Downloader)
 * add shell autocompletion
 * rewrite `$tools->writeError(); exit(1);` to `$tools->writeErrorAndExit();`
+* update packages (composer.json)
+
+| package            | atm                  | upgrade to |
+|--------------------|----------------------|------------|
+| php                | >=5.4.0              | >=5.5.9    |
+| symfony/console    | ~2.0                 | ~3.2       |
+| symfony/filesystem | ~2.5                 | ~3.2       |
+| monolog/monolog    | ~1.12                | ~1.22      |
+| raulfraile/distill | ~0.9,!=0.9.3,!=0.9.4 | ~0.9.10    |
