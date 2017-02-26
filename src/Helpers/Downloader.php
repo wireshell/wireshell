@@ -64,7 +64,7 @@ class Downloader {
     $tmpFolder = '.' . uniqid(time());
     $archiveName = $prefix . '.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
     $progressBar = null;
-    $this->compressedFilePath = $this->projectDir . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
+    $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR. $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
     $this->fs->mkdir($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder);
 
     try {
