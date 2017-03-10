@@ -35,8 +35,7 @@ class TemplateDeleteCommand extends PwConnector {
    * @return int|null|void
    */
   public function execute(InputInterface $input, OutputInterface $output) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
-
+    $this->init($input, $output);
     $tools = new Tools($output);
     $tools
       ->setHelper($this->getHelper('question'))

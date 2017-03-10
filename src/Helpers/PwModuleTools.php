@@ -38,10 +38,14 @@ class PwModuleTools extends PwConnector {
   /**
    * Construct PwModuleTools
    *
+   * @param InputInterface $input
    * @param OutputInterface $output
    */
-  public function init(OutputInterface $output, InputInterface $input) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+  public function init(InputInterface $input, OutputInterface $output) {
+    $this
+      ->setInput($input)
+      ->setOutput($output)
+      ->bootstrapProcessWire();
     $this->tools = parent::setTools();
   }
 

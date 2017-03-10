@@ -36,9 +36,7 @@ class ModuleEnableCommand extends PwModuleTools {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::init($output, $input);
-    parent::bootstrapProcessWire($output);
-
+    $this->init($input, $output);
     $this->tools = new Tools($output);
     $this->tools->setHelper($this->getHelper('question'))
       ->setInput($input)

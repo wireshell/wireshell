@@ -35,6 +35,19 @@ abstract class PwConnector extends SymfonyCommand {
   protected $tools;
 
   /**
+   * Init
+   *
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   */
+  public function init(InputInterface $input, OutputInterface $output) {
+    $this
+      ->setInput($input)
+      ->setOutput($output)
+      ->bootstrapProcessWire();
+  }
+
+  /**
    * Setter for Output
    *
    * @param OutputInterface $output

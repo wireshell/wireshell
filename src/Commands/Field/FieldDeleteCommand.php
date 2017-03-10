@@ -37,8 +37,7 @@ class FieldDeleteCommand extends PwConnector {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
-
+    $this->init($input, $output);
     $tools = new Tools($output);
     $tools
       ->setInput($input)

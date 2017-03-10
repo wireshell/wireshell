@@ -40,8 +40,7 @@ class ModuleUpgradeCommand extends PwModuleTools {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::init($output, $input);
-    parent::bootstrapProcessWire($output);
+    $this->init($input, $output);
 
     if (!\ProcessWire\wire('config')->moduleServiceKey) throw new \RuntimeException('No module service key was found.');
 

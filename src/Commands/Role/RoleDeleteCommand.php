@@ -32,10 +32,8 @@ class RoleDeleteCommand extends PwUserTools {
    * @return int|null|void
    */
   public function execute(InputInterface $input, OutputInterface $output) {
-    parent::init($output, $input);
-    parent::bootstrapProcessWire($output);
+    $this->init($input, $output);
     $roles = \ProcessWire\wire('roles');
-
     $tools = new Tools($output);
     $tools
       ->setInput($input)

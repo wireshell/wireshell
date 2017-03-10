@@ -36,7 +36,7 @@ class Downloader {
   public function __construct($output, $projectDir, $version) {
     $this->fs = new Filesystem();
     $this->output = $output;
-    $this->projectDir = $projectDir;
+    $this->projectDir = substr($projectDir, -1) === '/' ? substr($projectDir, 0, -1) : $projectDir;
     $this->version = $version;
     $this->tools = new Tools($output);
   }
@@ -64,7 +64,7 @@ class Downloader {
     $tmpFolder = '.' . uniqid(time());
     $archiveName = $prefix . '.' . pathinfo($pwArchiveFile, PATHINFO_EXTENSION); 
     $progressBar = null;
-    $this->compressedFilePath = $this->projectDir . $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
+    $this->compressedFilePath = $this->projectDir . DIRECTORY_SEPARATOR. $tmpFolder . DIRECTORY_SEPARATOR . $archiveName; 
     $this->fs->mkdir($this->projectDir . DIRECTORY_SEPARATOR . $tmpFolder);
 
     try {

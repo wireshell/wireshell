@@ -36,12 +36,10 @@ class UserListCommand extends PwUserTools {
    * @return int|null|void
    */
   public function execute(InputInterface $input, OutputInterface $output) {
-    parent::init($output, $input);
-    parent::bootstrapProcessWire($output);
+    $this->init($input, $output);
     $users = $this->getUsers($input);
     $tools = new Tools($output);
     $tables = new Tables($output);
-
     $tools->writeBlockCommand($this->getName());
 
     if ($users->getTotal() > 0) {

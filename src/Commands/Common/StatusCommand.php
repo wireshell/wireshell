@@ -24,159 +24,159 @@ use Wireshell\Helpers\WsTools as Tools;
  */
 class StatusCommand extends PwConnector {
 
-    /**
-     * Configures the current command.
-     */
-    protected function configure() {
-        $this
-            ->setName('status')
-            ->setDescription('Returns versions, paths and environment info')
-            ->addOption('image', null, InputOption::VALUE_NONE, 'get Diagnose for Imagehandling')
-            ->addOption('php', null, InputOption::VALUE_NONE, 'get Diagnose for PHP')
-            ->addOption('pass', null, InputOption::VALUE_NONE, 'display database password');
+  /**
+   * Configures the current command.
+   */
+  protected function configure() {
+    $this
+      ->setName('status')
+      ->setDescription('Returns versions, paths and environment info')
+      ->addOption('image', null, InputOption::VALUE_NONE, 'get Diagnose for Imagehandling')
+      ->addOption('php', null, InputOption::VALUE_NONE, 'get Diagnose for PHP')
+      ->addOption('pass', null, InputOption::VALUE_NONE, 'display database password');
+  }
+
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int|null|void
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    $this->init($input, $output);
+    $this->tools = new Tools($output);
+    $tables = new Tables($output);
+    $stTables = array();
+
+    $this->tools->writeBlockCommand($this->getName());
+
+    $pwStatus = $this->getPWStatus($input->getOption('pass'));
+    $wsStatus = $this->getWsStatus();
+
+    $stTables[] = $tables->buildTable($pwStatus, 'ProcessWire');
+    $stTables[] = $tables->buildTable($wsStatus, 'wireshell');
+
+    if ($input->getOption('php')) {
+      $phpStatus = $this->getDiagnosePHP();
+      $stTables[] = $tables->buildTable($phpStatus, 'PHP Diagnostics');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        parent::setOutput($output)::bootstrapProcessWire();
-        $this->tools = new Tools($output);
-        $tables = new Tables($output);
-        $stTables = array();
-
-        $this->tools->writeBlockCommand($this->getName());
-
-        $pwStatus = $this->getPWStatus($input->getOption('pass'));
-        $wsStatus = $this->getWsStatus();
-
-        $stTables[] = $tables->buildTable($pwStatus, 'ProcessWire');
-        $stTables[] = $tables->buildTable($wsStatus, 'wireshell');
-
-        if ($input->getOption('php')) {
-            $phpStatus = $this->getDiagnosePHP();
-            $stTables[] = $tables->buildTable($phpStatus, 'PHP Diagnostics');
-        }
-
-        if ($input->getOption('image')) {
-            $phpStatus = $this->getDiagnoseImagehandling();
-            $stTables[] = $tables->buildTable($phpStatus, 'Image Diagnostics');
-        }
-
-        $tables->renderTables($stTables);
+    if ($input->getOption('image')) {
+      $phpStatus = $this->getDiagnoseImagehandling();
+      $stTables[] = $tables->buildTable($phpStatus, 'Image Diagnostics');
     }
 
-    /**
-     * @return array
-     */
-    protected function getPWStatus($showPass) {
-        $config = \ProcessWire\wire('config');
-        $on = $this->tools->writeInfo('On', false);
-        $off = $this->tools->writeComment('Off', false);
-        $none = $this->tools->writeComment('None', false);
+    $tables->renderTables($stTables);
+  }
 
-        $version = $config->version;
-        $latestVersion = parent::getVersion();
+  /**
+   * @return array
+   */
+  protected function getPWStatus($showPass) {
+    $config = \ProcessWire\wire('config');
+    $on = $this->tools->writeInfo('On', false);
+    $off = $this->tools->writeComment('Off', false);
+    $none = $this->tools->writeComment('None', false);
 
-        if ($version !== $latestVersion) {
-            $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)", false);
-        }
+    $version = $config->version;
+    $latestVersion = parent::getVersion();
 
-        $adminUrl = $this->tools->writeLink($this->getAdminUrl(), false);
-        $advancedMode = $config->advanced ? $on : $off;
-        $debugMode = $config->debug ? $on : $off;
-        $timezone = $config->timezone;
-        $hosts = implode(", ", $config->httpHosts);
-        $adminTheme = $config->defaultAdminTheme;
-        $dbHost = $config->dbHost;
-        $dbName = $config->dbName;
-        $dbUser = $config->dbUser;
-        $dbPass = $showPass ? $config->dbPass : '*****';
-        $dbPort = $config->dbPort;
-
-        $prepended = trim($config->prependTemplateFile);
-        $appended = trim($config->appendTemplateFile);
-        $prependedTemplateFile = $prepended != '' ? $prepended : $none;
-        $appendedTemplateFile = $appended != '' ? $appended : $none;
-
-        $installPath = getcwd();
-
-        $status = [
-            ['Version', $version],
-            ['Admin URL', $adminUrl],
-            ['Advanced mode', $advancedMode],
-            ['Debug mode', $debugMode],
-            ['Timezone', $timezone],
-            ['HTTP hosts', $hosts],
-            ['Admin theme', $adminTheme],
-            ['Prepended template file', $prependedTemplateFile],
-            ['Appended template file', $appendedTemplateFile],
-            ['Database host', $dbHost],
-            ['Database name', $dbName],
-            ['Database user', $dbUser],
-            ['Database password', $dbPass],
-            ['Database port', $dbPort],
-            ['Installation path', $installPath]
-        ];
-
-        return $status;
+    if ($version !== $latestVersion) {
+      $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)", false);
     }
 
-    /**
-     * @return array
-     */
-    protected function getWsStatus() {
-        return array(
-            array('Version', $this->getApplication()->getVersion()),
-            array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw', false)),
-            array('License', 'MIT')
-        );
+    $adminUrl = $this->tools->writeLink($this->getAdminUrl(), false);
+    $advancedMode = $config->advanced ? $on : $off;
+    $debugMode = $config->debug ? $on : $off;
+    $timezone = $config->timezone;
+    $hosts = implode(", ", $config->httpHosts);
+    $adminTheme = $config->defaultAdminTheme;
+    $dbHost = $config->dbHost;
+    $dbName = $config->dbName;
+    $dbUser = $config->dbUser;
+    $dbPass = $showPass ? $config->dbPass : '*****';
+    $dbPort = $config->dbPort;
+
+    $prepended = trim($config->prependTemplateFile);
+    $appended = trim($config->appendTemplateFile);
+    $prependedTemplateFile = $prepended != '' ? $prepended : $none;
+    $appendedTemplateFile = $appended != '' ? $appended : $none;
+
+    $installPath = getcwd();
+
+    $status = [
+      ['Version', $version],
+      ['Admin URL', $adminUrl],
+      ['Advanced mode', $advancedMode],
+      ['Debug mode', $debugMode],
+      ['Timezone', $timezone],
+      ['HTTP hosts', $hosts],
+      ['Admin theme', $adminTheme],
+      ['Prepended template file', $prependedTemplateFile],
+      ['Appended template file', $appendedTemplateFile],
+      ['Database host', $dbHost],
+      ['Database name', $dbName],
+      ['Database user', $dbUser],
+      ['Database password', $dbPass],
+      ['Database port', $dbPort],
+      ['Installation path', $installPath]
+    ];
+
+    return $status;
+  }
+
+  /**
+   * @return array
+   */
+  protected function getWsStatus() {
+    return array(
+      array('Version', $this->getApplication()->getVersion()),
+      array('Documentation', $this->tools->writeLink('https://docs.wireshell.pw', false)),
+      array('License', 'MIT')
+    );
+  }
+
+  /**
+   * @return string
+   */
+  protected function getAdminUrl() {
+    $admin = \ProcessWire\wire('pages')->get('template=admin');
+    $url = \ProcessWire\wire('config')->urls->admin;
+
+    if (!($admin instanceof \ProcessWire\NullPage) && isset($admin->httpUrl)) {
+      $url = $admin->httpUrl;
     }
 
-    /**
-     * @return string
-     */
-    protected function getAdminUrl() {
-        $admin = \ProcessWire\wire('pages')->get('template=admin');
-        $url = \ProcessWire\wire('config')->urls->admin;
+    return $url;
+  }
 
-        if (!($admin instanceof \ProcessWire\NullPage) && isset($admin->httpUrl)) {
-            $url = $admin->httpUrl;
-        }
+  /**
+   * wrapper method for the Diagnose PHP submodule from @netcarver
+   */
+  protected function getDiagnosePHP() {
+    $sub = new DiagnosePhp();
+    $rows = $sub->GetDiagnostics();
+    $result = [];
 
-        return $url;
+    foreach ($rows as $row) {
+      $result[] = [$row['title'], $row['value']];
     }
 
-    /**
-     * wrapper method for the Diagnose PHP submodule from @netcarver
-     */
-    protected function getDiagnosePHP() {
-        $sub = new DiagnosePhp();
-        $rows = $sub->GetDiagnostics();
-        $result = [];
+    return $result;
+  }
 
-        foreach ($rows as $row) {
-            $result[] = [$row['title'], $row['value']];
-        }
+  /**
+   * wrapper method for the Diagnose Imagehandling submodule from @netcarver & @horst
+   */
+  protected function getDiagnoseImagehandling() {
+    $sub = new DiagnoseImagehandling();
+    $rows = $sub->GetDiagnostics();
+    $result = [];
 
-        return $result;
+    foreach ($rows as $row) {
+      $result[] = [$row['title'], $row['value']];
     }
 
-    /**
-     * wrapper method for the Diagnose Imagehandling submodule from @netcarver & @horst
-     */
-    protected function getDiagnoseImagehandling() {
-        $sub = new DiagnoseImagehandling();
-        $rows = $sub->GetDiagnostics();
-        $result = [];
-
-        foreach ($rows as $row) {
-            $result[] = [$row['title'], $row['value']];
-        }
-
-        return $result;
-    }
+    return $result;
+  }
 
 }
