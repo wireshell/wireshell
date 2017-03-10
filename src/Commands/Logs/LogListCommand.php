@@ -33,8 +33,7 @@ class LogListCommand extends PwConnector {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
-
+    $this->init($input, $output);
     $tools = new Tools($output);
     $logs = \ProcessWire\wire('log')->getLogs();
     $tools->writeBlockCommand($this->getName());

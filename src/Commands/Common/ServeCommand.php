@@ -30,8 +30,7 @@ class ServeCommand extends PwConnector {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::checkForProcessWire($output);
-
+    $this->checkForProcessWire($output);
     $output->writeln("Starting PHP server at localhost:8000");
     passthru("php -S localhost:8000");
   }

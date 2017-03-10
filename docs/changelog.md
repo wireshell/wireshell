@@ -4,6 +4,11 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
 Check whether the latest build has passed: [Builds | Read the Docs](https://readthedocs.org/projects/wireshell/builds/)
 
+**1.0.2** (2017-03-10)
+
+- Fixes parse error for usage with php below version 7
+- Adds missing directory separator, check if there is one first
+
 **1.0.1** (2017-02-02)
 
 - Adapts `new` command, allows empty database password (`wireshell new prjct --dbPass=""`)

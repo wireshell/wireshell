@@ -17,10 +17,14 @@ class PwUserTools extends PwConnector {
   /**
    * Construct PwUserTools
    *
+   * @param InputInterface $input
    * @param OutputInterface $output
    */
-  public function init(OutputInterface $output, InputInterface $input) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+  public function init(InputInterface $input, OutputInterface $output) {
+    $this
+      ->setInput($input)
+      ->setOutput($output)
+      ->bootstrapProcessWire();
   }
 
   /**

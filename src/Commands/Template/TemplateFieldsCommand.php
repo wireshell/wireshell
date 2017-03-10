@@ -35,9 +35,8 @@ class TemplateFieldsCommand extends PwConnector {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    parent::setOutput($output)::setInput($input)::bootstrapProcessWire();
+    $this->init($input, $output);
     $this->errorCount = 0;
-
     $this->tools = new Tools($output);
     $this->tools
       ->setHelper($this->getHelper('question'))

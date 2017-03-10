@@ -158,7 +158,7 @@ $ wireshell status --php --image
  =============== =====================
   wireshell
  =============== =====================
-  Version         1.0.1
+  Version         1.0.2
   Documentation   http://wireshell.pw
   License         MIT
  =============== =====================
