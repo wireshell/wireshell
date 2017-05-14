@@ -1,5 +1,6 @@
 <?php namespace Wireshell\Helpers;
 
+use ProcessWire\WireException;
 use ProcessWire\WireHttp;
 use ProcessWire\Template;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -81,7 +82,7 @@ abstract class PwConnector extends SymfonyCommand {
    */
   public function checkForProcessWire() {
     if (!getcwd()) {
-      $this->tools->writeError('Please check whether the current directory still exists.');
+      $this->tools->writeErrorAndExit('Please check whether the current directory still exists.');
       exit(1);
     }
 
@@ -176,21 +177,16 @@ abstract class PwConnector extends SymfonyCommand {
     $branches = array();
     $http = new WireHttp();
     $http->setHeader('User-Agent', 'ProcessWireUpgrade');
-    $json = $http->get(self::branchesURL);
+    $data = $http->getJson(self::branchesURL);
 
-    if (!$json) {
+    if (!$data) {
       $error = 'Error loading GitHub branches ' . self::branchesURL;
-      throw new \WireException($error);
-      $this->error($error);
-      return array();
+      $this->tools->writeErrorAndExit($error);
     }
 
-    $data = json_decode($json, true);
     if (!$data) {
       $error = 'Error JSON decoding GitHub branches ' . self::branchesURL;
-      throw new \WireException($error);
-      $this->error($error);
-      return array();
+      $this->tools->writeErrorAndExit($error);
     }
 
     foreach ($data as $info) {
@@ -207,9 +203,7 @@ abstract class PwConnector extends SymfonyCommand {
 
       if (!$json) {
         $error = "Error loading sha `$targetBranch`.";
-        throw new \WireException($error);
-        $this->error($error);
-        return array();
+        $this->tools->writeErrorAndExit($error);
       }
 
       $name = $targetBranch;
