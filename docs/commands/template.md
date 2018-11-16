@@ -140,3 +140,45 @@ $ wireshell template:fields basic-page --fields=images,headline,body
 ```
 
 ---
+
+## Tag
+
+Tag one or more existing templates.
+
+```sh
+$ wireshell template:tag {template} --tag={tag}
+```
+
+### Available options:
+
+```sh
+--tag : tag name
+```
+
+### Examples
+
+Tag template `basic-page` and `home` with tag `general`.
+
+```sh
+$ wireshell template:tag basic-page,home --tag=general
+```
+
+---
+
+## Info
+
+Displays detailed information about a specific template.
+
+```sh
+$ wireshell template:info {template}
+```
+
+### Examples
+
+Get detailed information about template `basic-page`.
+
+```sh
+$ wireshell template:info basic-page
+```
+
+---

@@ -158,6 +158,7 @@ class NewCommand extends Command {
         // ask
         $this->defaults['dbName'] = $this->ask('dbName', 'Please enter the database name', 'pw');
         $this->askDbInformations();
+
         $index = 0;
         while (is_null($this->installer->checkDatabaseConnection($this->defaults, false))) {
           $this->tools->writeError("Database connection information did not work, please try again.");
