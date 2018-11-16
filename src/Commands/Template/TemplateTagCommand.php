@@ -1,4 +1,4 @@
-<?php namespace Wireshell\Commands\Field;
+<?php namespace Wireshell\Commands\Template;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -8,23 +8,23 @@ use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
 
 /**
- * Class FieldTagCommand
+ * Class TemplateTagCommand
  *
- * Tags a field
+ * Creating ProcessWire templates
  *
  * @package Wireshell
  * @author Tabea David
  */
-class FieldTagCommand extends PwConnector {
+class TemplateTagCommand extends PwConnector {
 
   /**
    * Configures the current command.
    */
-  protected function configure() {
+  public function configure() {
     $this
-      ->setName('field:tag')
-      ->setDescription('Tags fields')
-      ->addArgument('field', InputArgument::OPTIONAL, 'Comma separated list.')
+      ->setName('template:tag')
+      ->setDescription('Tags templates')
+      ->addArgument('template', InputArgument::OPTIONAL, 'Comma separated list.')
       ->addOption('tag', null, InputOption::VALUE_REQUIRED, 'Tag name');
   }
 
@@ -41,28 +41,27 @@ class FieldTagCommand extends PwConnector {
       ->setHelper($this->getHelper('question'))
       ->writeBlockCommand($this->getName());
 
-    $fields = \ProcessWire\wire('fields');
+    $templates = \ProcessWire\wire('templates');
 
-    $inputFields = $tools->ask($input->getArgument('field'), 'Field name(s), comma-separated', null, false, null, 'required');
+    $inputTemplates = $tools->ask($input->getArgument('template'), 'Template name(s), comma-separated', null, false, null, 'required');
     $tag = $tools->ask($input->getOption('tag'), 'Tag name', null, false, null, 'required');
 
-    foreach (explode(',', $inputFields) as $field) {
-      $fieldToTag = $fields->get($field);
+    foreach (explode(',', $inputTemplates) as $template) {
+      $templateToTag = $templates->get($template);
       $tools->nl();
 
-      if (is_null($fieldToTag)) {
-        $tools->writeError(" > Field '{$field}' does not exist.");
+      if (is_null($templateToTag)) {
+        $tools->writeError(" > Template '{$template}' does not exist.");
         continue;
       }
 
       try {
-        $fieldToTag->tags = $tag;
-        $fieldToTag->save();
-        $tools->writeSuccess(" > Field '{$field}' edited successfully.");
+        $templateToTag->tags = $tag;
+        $templateToTag->save();
+        $tools->writeSuccess(" > Template '{$template}' edited successfully.");
       } catch (\WireException $e) {
         $tools->writeError(" > {$e->getMessage()}");
       }
     }
   }
-
 }
