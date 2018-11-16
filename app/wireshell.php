@@ -11,6 +11,8 @@ use Wireshell\Commands\Role\RoleDeleteCommand;
 use Wireshell\Commands\Role\RoleListCommand;
 use Wireshell\Commands\Template\TemplateCreateCommand;
 use Wireshell\Commands\Template\TemplateFieldsCommand;
+use Wireshell\Commands\Template\TemplateTagCommand;
+use Wireshell\Commands\Template\TemplateInfoCommand;
 use Wireshell\Commands\Template\TemplateDeleteCommand;
 use Wireshell\Commands\Template\TemplateListCommand;
 use Wireshell\Commands\Field\FieldCreateCommand;
@@ -20,6 +22,7 @@ use Wireshell\Commands\Field\FieldTagCommand;
 use Wireshell\Commands\Field\FieldTypesCommand;
 use Wireshell\Commands\Field\FieldListCommand;
 use Wireshell\Commands\Field\FieldEditCommand;
+use Wireshell\Commands\Field\FieldRenameCommand;
 use Wireshell\Commands\Module\ModuleDownloadCommand;
 use Wireshell\Commands\Module\ModuleEnableCommand;
 use Wireshell\Commands\Module\ModuleDisableCommand;
@@ -46,7 +49,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
     require __DIR__.'/../vendor/autoload.php';
 }
 
-$app = new Application('wireshell - An extendable ProcessWire CLI', '1.0.2');
+$app = new Application('wireshell - An extendable ProcessWire CLI', '1.0.3');
 
 $app->add(new UserCreateCommand());
 $app->add(new UserUpdateCommand());
@@ -57,6 +60,8 @@ $app->add(new RoleDeleteCommand());
 $app->add(new RoleListCommand());
 $app->add(new TemplateCreateCommand());
 $app->add(new TemplateFieldsCommand());
+$app->add(new TemplateTagCommand());
+$app->add(new TemplateInfoCommand());
 $app->add(new TemplateDeleteCommand());
 $app->add(new TemplateListCommand());
 $app->add(new FieldCreateCommand());
@@ -66,6 +71,7 @@ $app->add(new FieldTagCommand());
 $app->add(new FieldTypesCommand());
 $app->add(new FieldListCommand());
 $app->add(new FieldEditCommand());
+$app->add(new FieldRenameCommand());
 $app->add(new ModuleDownloadCommand());
 $app->add(new ModuleEnableCommand());
 $app->add(new ModuleDisableCommand());

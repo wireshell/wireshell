@@ -294,3 +294,40 @@ $ wireshell field:delete headline,body,link
 ```
 
 ---
+
+## Rename
+
+Rename (fieldname, not label) one or multiple field(s).
+
+```sh
+$ wireshell field:rename {fieldname}
+```
+
+### Available options:
+
+```sh
+--name : Change field name
+--tag : Filter by tag; when selected, only the fields with a specific tag will be listed
+--camelCaseToSnakeCase : Change field notation from camelCase to snake_case
+--chooseAll : Preselect all fields by default
+```
+
+### Examples
+
+Rename a single field, change name.
+
+```sh
+$ wireshell field:rename headline --name=header
+
+Field 'headline' renamed successfully to 'header'.
+```
+
+Rename multiple fields by tag, change notation.
+
+```sh
+$ wireshell field:rename --tag=opensource --camelCaseToSnakeCase
+
+Field 'opensourceCommunity' renamed successfully to 'opensource_community'.
+Field 'opensourceCMS' renamed successfully to 'opensource_cms'.
+Field 'opensourceSoftware' renamed successfully to 'opensource_software'.
+```

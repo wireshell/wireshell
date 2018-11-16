@@ -1,9 +1,5 @@
 <?php namespace Wireshell\Commands\Field;
 
-use ProcessWire\Field;
-use ProcessWire\Fieldgroup;
-use ProcessWire\InputfieldText;
-use InputfieldWrapper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
