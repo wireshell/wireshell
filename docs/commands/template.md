@@ -180,5 +180,3 @@ Get detailed information about template `basic-page`.
 ```sh
 $ wireshell template:info basic-page
 ```
-
----
