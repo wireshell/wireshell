@@ -309,7 +309,7 @@ $ wireshell field:rename {fieldname}
 --name : Change field name
 --tag : Filter by tag; when selected, only the fields with a specific tag will be listed
 --camelCaseToSnakeCase : Change field notation from camelCase to snake_case
---chooseAll : Preselect all fields by default
+--all : Preselect all fields by default
 ```
 
 ### Examples
@@ -330,4 +330,30 @@ $ wireshell field:rename --tag=opensource --camelCaseToSnakeCase
 Field 'opensourceCommunity' renamed successfully to 'opensource_community'.
 Field 'opensourceCMS' renamed successfully to 'opensource_cms'.
 Field 'opensourceSoftware' renamed successfully to 'opensource_software'.
+```
+
+Rename using regex pattern only
+
+```sh
+$ wireshell field:rename opensource_community --regexPattern='/opensource_/'
+
+Field 'opensource_community' renamed successfully to 'community'.
+```
+
+Rename using regex pattern and replacement
+
+```sh
+$ wireshell field:rename opensource_community --regexPattern='/opensource/' --regexReplacement='tech'
+
+Field 'opensource_community' renamed successfully to 'tech_community'.
+```
+
+Rename multiple fields by tag using regex
+
+```sh
+$ wireshell field:rename tag=opensource --regexPattern='/opensource_/' --all
+
+Field 'opensource_community' renamed successfully to 'community'.
+Field 'opensource_cms' renamed successfully to 'cms'.
+Field 'opensource_software' renamed successfully to 'software'.
 ```

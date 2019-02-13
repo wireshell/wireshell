@@ -32,7 +32,9 @@ class FieldRenameCommand extends PwConnector {
       ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'Change field name')
       ->addOption('tag', null, InputOption::VALUE_OPTIONAL, 'Restrict field list by tag')
       ->addOption('camelCaseToSnakeCase', null, InputOption::VALUE_NONE, 'Change field name notation')
-      ->addOption('chooseAll', null, InputOption::VALUE_NONE, 'Choose all fields by default');
+      ->addOption('regexPattern', null, InputOption::VALUE_OPTIONAL, 'Change field name using regex – search pattern')
+      ->addOption('regexReplacement', null, InputOption::VALUE_OPTIONAL, 'Change field name using regex – replacement')
+      ->addOption('all', null, InputOption::VALUE_NONE, 'Choose all fields by default');
   }
 
   /**
@@ -58,7 +60,7 @@ class FieldRenameCommand extends PwConnector {
 
     // select fields
     foreach ($fieldsRestricted as $field) $availableFields[] = $field->name;
-    $preselect = $input->getOption('chooseAll') ? implode(',', array_keys($availableFields)) : 0;
+    $preselect = $input->getOption('all') ? implode(',', array_keys($availableFields)) : 0;
     $chosenFields = $tools->askChoice($input->getArgument('field'), 'Select field', $availableFields, $preselect, true);
     if (!is_array($chosenFields)) $chosenFields = array($chosenFields);
 
@@ -77,6 +79,10 @@ class FieldRenameCommand extends PwConnector {
       } else if ($input->getOption('camelCaseToSnakeCase')) {
         // transform fieldname from camelCase to snake_case
         $fieldToEdit->name = $this->camelCaseToSnakeCase($fieldToEdit->name);
+      } else if ($pattern = $input->getOption('regexPattern')) {
+        // use regex
+        $replacement = $input->getOption('regexReplacement') ? $input->getOption('regexReplacement') : '';
+        $fieldToEdit->name = preg_replace($pattern, $replacement, $fieldToEdit->name);
       }
 
       $fieldToEdit->save();
