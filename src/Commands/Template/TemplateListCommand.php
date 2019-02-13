@@ -58,7 +58,7 @@ class TemplateListCommand extends PwConnector {
     $content = array();
     $advanced = \ProcessWire\wire('config')->advanced || $advanced;
     foreach (\ProcessWire\wire('templates') as $t) {
-      if (!$advanced && ($t->flags & Template::flagSystem)) continue;
+      if (!$advanced && ($t->flags && Template::flagSystem)) continue;
 
       $content[] = array(
         $t->name,

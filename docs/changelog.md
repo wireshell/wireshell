@@ -4,6 +4,10 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
 Check whether the latest build has passed: [Builds | Read the Docs](https://readthedocs.org/projects/wireshell/builds/)
 
+**1.0.4** (2019-02-13)
+
+- Extends `field:rename` command (add regex pattern options)
+
 **1.0.3** (2018-11-16)
 
 - Adds `template:tag` command
