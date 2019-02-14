@@ -5,21 +5,41 @@ repo_url: https://github.com/wireshell/wireshell
 repo_name: wireshell
 repo_name: Github
 site_description: A command-line interface for CMS/CMF ProcessWire based on the Symfony Console component. Can be easily extended through ProcessWire's ability of being bootstrapped into other applications, its great API and Symfony Console's modular command approach.
-theme: cinder
+theme:
+  name: null
+  custom_dir: 'cinder'
 markdown_extensions:
   - extra
 nav:
-- wireshell: index.md
-- General:
-  - Changelog: changelog.md
-  - FAQ: faq.md
-- Commands:
-  - Backup: commands/backup.md
-  - Common: commands/common.md
-  - Field: commands/field.md
-  - Log: commands/log.md
-  - Module: commands/module.md
-  - Page: commands/page.md
-  - Role: commands/role.md
-  - Template: commands/template.md
-  - User: commands/user.md
+  - wireshell: index.md
+  - General:
+    - Changelog: changelog.md
+    - FAQ: faq.md
+  - Commands:
+    - Backup: commands/backup.md
+    - Common: commands/common.md
+    - Field: commands/field.md
+    - Log: commands/log.md
+    - Module: commands/module.md
+    - Page: commands/page.md
+    - Role: commands/role.md
+    - Template: commands/template.md
+    - User: commands/user.md
+# The pages configuration setting is deprecated and will issue a warning if set in the configuration file.
+# The setting has been renamed nav.
+# ReadTheDocs does not know about nav atm, therefore keep `pages` for now
+pages:
+  - wireshell: index.md
+  - General:
+    - Changelog: changelog.md
+    - FAQ: faq.md
+  - Commands:
+    - Backup: commands/backup.md
+    - Common: commands/common.md
+    - Field: commands/field.md
+    - Log: commands/log.md
+    - Module: commands/module.md
+    - Page: commands/page.md
+    - Role: commands/role.md
+    - Template: commands/template.md
+    - User: commands/user.md
