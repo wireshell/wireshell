@@ -10,3 +10,4 @@ phpunit.xml
 # Directories etc.
 ProcessWire
 Tests/processwire.zip
+site
