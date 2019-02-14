@@ -1,4 +1,4 @@
-![Wireshell Logo](/assets/img/favicon-16x16.png){.logo} **Page**
+![Wireshell Logo](/img/favicon-16x16.png){.logo} **Page**
 
 ---
 
