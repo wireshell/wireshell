@@ -46,6 +46,7 @@ class BackupDatabaseCommand extends PwConnector {
     $host = $config->dbHost;
     $user = $config->dbUser;
     $pass = $config->dbPass;
+    $port = $config->dbPort;
 
     $inFilename = $input->getOption('filename');
     $filename = $inFilename ? "{$inFilename}.sql" : 'dump-' . date("Y-m-d-H-i-s") . '.sql';
@@ -56,7 +57,7 @@ class BackupDatabaseCommand extends PwConnector {
       $dump = new Dump;
       $dump
         ->file($target . $filename)
-        ->dsn("mysql:dbname={$database};host={$host}")
+        ->dsn("mysql:dbname={$database};host={$host};port={$port}")
         ->user($user)
         ->pass($pass)
         ->tmp(getcwd() . 'site/assets/tmp');
