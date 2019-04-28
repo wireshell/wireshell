@@ -95,7 +95,7 @@ class NewCommand extends Command {
       ->addOption('adminUrl', null, InputOption::VALUE_REQUIRED, 'Admin url')
       ->addOption('username', null, InputOption::VALUE_REQUIRED, 'Admin username')
       ->addOption('userpass', null, InputOption::VALUE_REQUIRED, 'Admin password')
-      ->addOption('useremail', null, InputOption::VALUE_REQUIRED, 'Admin email address')
+      ->addOption('useremail', null, InputOption::VALUE_OPTIONAL, 'Admin email address')
       ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`')
       ->addOption('src', null, InputOption::VALUE_REQUIRED, 'Path to pre-downloaded folder, zip or tgz: `path/to/src`')
       ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
@@ -233,7 +233,7 @@ class NewCommand extends Command {
         switch ($validator) {
         case 'email':
           $question->setValidator(function ($answer) {
-            if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+            if ($answer && !filter_var($answer, FILTER_VALIDATE_EMAIL)) {
               throw new \RuntimeException('Please enter a valid email address.');
             }
             return $answer;
