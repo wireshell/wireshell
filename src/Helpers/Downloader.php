@@ -155,6 +155,16 @@ class Downloader {
   public function extract($from, $to, $name = '') {
     $source = $name ? 'ProcessWire' : 'the module';
 
+    // check for empty directory
+    $filesInsideDir = new \FilesystemIterator($to, \FilesystemIterator::SKIP_DOTS);
+    if (iterator_count($filesInsideDir) > 1) {
+      throw new \RuntimeException(sprintf(
+        "ProcessWire can't be installed because the target folder `%s` is not empty.\n" .
+        "Use an empty directory or provide an argument where the new project will be created like `wireshell new <dirname>`",
+        $to
+      ));
+    }
+
     try {
       $distill = new Distill();
       $extractionSucceeded = $distill->extractWithoutRootDirectory($from, $to);
