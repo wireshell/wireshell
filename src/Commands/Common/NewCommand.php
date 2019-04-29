@@ -14,6 +14,7 @@ use Wireshell\Helpers\Downloader;
 use Wireshell\Helpers\Installer;
 use Wireshell\Helpers\PwConnector;
 use Wireshell\Helpers\WsTools as Tools;
+use Distill\Distill;
 
 /**
  * Class NewCommand
@@ -558,8 +559,9 @@ class NewCommand extends Command {
 
     try {
       $distill = new Distill();
-      $extractPath = $this->projectDir . DIRECTORY_SEPARATOR . '.' . uniqid(time()) . DIRECTORY_SEPARATOR . 'pwprofile';
-      $extractionSucceeded = $distill->extractWithoutRootDirectory($profile, $extractPath);
+
+      $extractPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid(time()) . DIRECTORY_SEPARATOR;
+      $extractionSucceeded = $distill->extract($profile, $extractPath);
 
       foreach (new \DirectoryIterator($extractPath) as $fileInfo) {
         if ($fileInfo->isDir() && !$fileInfo->isDot()) {
