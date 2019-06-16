@@ -46,6 +46,7 @@ class UpgradeCommand extends PwConnector {
       ->setName('upgrade')
       ->setDescription('Checks for core upgrades.')
       ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
+      ->addOption('dev', null, InputOption::VALUE_NONE, 'Download latest develeopment version')
       ->addOption('check', null, InputOption::VALUE_NONE, 'Just check for core upgrades.')
       ->addOption('download', null, InputOption::VALUE_NONE, 'Just download core upgrades.');
   }

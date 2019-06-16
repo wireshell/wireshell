@@ -4,9 +4,13 @@ Dates using [ISO 8601 Format](http://www.iso.org/iso/iso8601) (YYYY-MM-DD).
 
 Check whether the latest build has passed: [Builds | Read the Docs](https://readthedocs.org/projects/wireshell/builds/)
 
+**1.0.6** (2019-06-16)
+
+- Updates `new` and `upgrade` command, adds option to install the latest dev version using `--dev` [Issue #69](https://github.com/wireshell/wireshell/issues/69)
+
 **1.0.5** (2019-02-14)
 
-- Update Documentation, increase mkdocs version
+- Updates Documentation, increase mkdocs version
 
 **1.0.4** (2019-02-13)
 

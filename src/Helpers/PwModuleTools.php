@@ -40,12 +40,17 @@ class PwModuleTools extends PwConnector {
    *
    * @param InputInterface $input
    * @param OutputInterface $output
+   * @param Boolean $checkForPW
    */
-  public function init(InputInterface $input, OutputInterface $output) {
+  public function init(InputInterface $input, OutputInterface $output, $checkForPW = true) {
     $this
       ->setInput($input)
-      ->setOutput($output)
-      ->bootstrapProcessWire();
+      ->setOutput($output);
+
+    if ($checkForPW) {
+      $this->bootstrapProcessWire();
+    }
+
     $this->tools = parent::setTools();
   }
 

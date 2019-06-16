@@ -1,6 +1,5 @@
 <?php namespace Wireshell\Commands\Common;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,7 +12,6 @@ use Monolog\Handler\StreamHandler;
 use Wireshell\Helpers\Downloader;
 use Wireshell\Helpers\Installer;
 use Wireshell\Helpers\PwConnector;
-use Wireshell\Helpers\WsTools as Tools;
 use Distill\Distill;
 
 /**
@@ -32,7 +30,7 @@ use Distill\Distill;
  * @author Tabea David
  *
  */
-class NewCommand extends Command {
+class NewCommand extends PWConnector {
 
   /**
    * @var Filesystem
@@ -44,7 +42,6 @@ class NewCommand extends Command {
   private $compressedFilePath;
   private $requirementsErrors = array();
   private $installer;
-  private $tools;
 
   /**
    * @field array default config values
@@ -68,11 +65,6 @@ class NewCommand extends Command {
     'useremail' => '',
     'color' => 'classic',
   );
-
-  /**
-   * @var OutputInterface
-   */
-  private $output;
 
   /**
    * Configures the current command.
@@ -100,6 +92,7 @@ class NewCommand extends Command {
       ->addOption('profile', null, InputOption::VALUE_REQUIRED, 'Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`')
       ->addOption('src', null, InputOption::VALUE_REQUIRED, 'Path to pre-downloaded folder, zip or tgz: `path/to/src`')
       ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
+      ->addOption('dev', null, InputOption::VALUE_NONE, 'Download latest develeopment version')
       ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation')
       ->addOption('v', null, InputOption::VALUE_NONE, 'verbose');
   }
@@ -110,8 +103,7 @@ class NewCommand extends Command {
    * @return int|null|void
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->input = $input;
-    $this->output = $output;
+    $this->init($input, $output, false);
     $this->fs = new Filesystem();
     $this->projectDir = $this->getDirectory();
     $this->projectName = basename($this->projectDir);
@@ -125,8 +117,7 @@ class NewCommand extends Command {
     $logger = new Logger('name');
     $logger->pushHandler(new StreamHandler("php://output"));
     $this->installer = new Installer($logger, $this->projectDir, $this->verbose);
-    $this->tools = new Tools($output);
-    $this->version = PwConnector::getVersion();
+    $this->version = $this->getVersion();
     $this->helper = $this->getHelper('question');
 
     try {
@@ -169,7 +160,7 @@ class NewCommand extends Command {
         }
 
         $this->defaults['timezone'] = $this->ask('timezone', 'Please enter the timezone', 'Europe/Berlin', false, timezone_identifiers_list());
-        $httpHosts = $this->ask('httpHosts', 'Please enter the hostname without `www.`', 'pw.dev');
+        $httpHosts = $this->ask('httpHosts', 'Please enter the hostname without `www.`', 'pw.local');
         $this->defaults['httpHosts'] = $httpHosts . "\n" . "www." . $httpHosts;
         $this->defaults['username'] = $this->ask('username', 'Please enter admin user name', 'admin');
         $this->defaults['userpass'] = $this->ask('userpass', 'Please enter admin password', 'password', true);
@@ -320,9 +311,9 @@ class NewCommand extends Command {
    * @return string
    */
   private function getZipURL() {
-    $targetBranch = $this->input->getOption('sha') ? $this->input->getOption('sha') : PwConnector::BRANCH_MASTER;
-    $branch = str_replace('{branch}', $targetBranch, PwConnector::zipURL);
-    $check = str_replace('{branch}', $targetBranch, PwConnector::versionURL);
+    $targetBranch = $this->determineBranch();
+    $branch = str_replace('{branch}', $targetBranch, self::zipURL);
+    $check = str_replace('{branch}', $targetBranch, self::versionURL);
 
     try {
       $ch = curl_init($check);
