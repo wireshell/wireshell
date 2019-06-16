@@ -23,6 +23,7 @@ abstract class PwConnector extends SymfonyCommand {
   const versionURL = 'https://raw.githubusercontent.com/processwire/processwire/{branch}/wire/core/ProcessWire.php';
   const zipURL = 'https://github.com/processwire/processwire/archive/{branch}.zip';
   const BRANCH_MASTER = 'master';
+  const BRANCH_DEV = 'dev';
   const USER_PAGE_ID = '29';
   const ROLE_PAGE_ID = '30';
 
@@ -40,12 +41,16 @@ abstract class PwConnector extends SymfonyCommand {
    *
    * @param InputInterface $input
    * @param OutputInterface $output
+   * @param Boolean $checkForPW
    */
-  public function init(InputInterface $input, OutputInterface $output) {
+  public function init(InputInterface $input, OutputInterface $output, $checkForPW = true) {
     $this
       ->setInput($input)
-      ->setOutput($output)
-      ->bootstrapProcessWire();
+      ->setOutput($output);
+
+    if ($checkForPW) {
+      $this->bootstrapProcessWire();
+    }
   }
 
   /**
@@ -133,8 +138,14 @@ abstract class PwConnector extends SymfonyCommand {
   /**
    * Determine branch
    */
-  protected function determineBranch() {
-    return $this->input->getOption('sha') ? $this->input->getOption('sha') : self::BRANCH_MASTER;
+  public function determineBranch() {
+    $branch = self::BRANCH_MASTER;
+    if ($this->input->getOption('dev')) {
+      $branch = self::BRANCH_DEV;
+    } elseif ($this->input->getOption('sha')) {
+      $branch = $this->input->getOption('sha');
+    }
+    return $branch;
   }
 
   /**
@@ -144,16 +155,21 @@ abstract class PwConnector extends SymfonyCommand {
     $config = \ProcessWire\wire('config');
     $targetBranch = $this->determineBranch();
     $branches = $this->getCoreBranches($targetBranch);
+
+    if ($targetBranch === self::BRANCH_MASTER && version_compare($config->version, $branches[$targetBranch]['version'], '>')) {
+      $targetBranch = self::BRANCH_DEV;
+    }
+
     $upgrade = false;
-    $new = version_compare($branches['master']['version'], $config->version);
-    $branch = $branches['master'];
+    $branch = $branches[$targetBranch];
 
     // branch does not exist - assume commit hash
     if (!array_key_exists($targetBranch, $branches)) {
       $branch = $branches['sha'];
       $upgrade = true;
-    } elseif ($new > 0 && $targetBranch === self::BRANCH_MASTER) {
-      // master is newer than current
+    } elseif (version_compare($branches[$targetBranch]['version'], $config->version) > 0 
+      && ($targetBranch === self::BRANCH_MASTER || $targetBranch === self::BRANCH_DEV)) {
+      // branch is newer than current
       $upgrade = true;
     }
 
@@ -229,12 +245,15 @@ abstract class PwConnector extends SymfonyCommand {
     );
 
     switch ($name) {
-    case 'master':
-      $branch['title'] = 'Stable/Master';
-      break;
-    default:
-      $branch['title'] = 'Specific commit sha';
-      break;
+      case 'master':
+        $branch['title'] = 'Stable/Master';
+        break;
+      case 'dev':
+        $branch['title'] = 'Development';
+        break;
+      default:
+        $branch['title'] = 'Specific commit sha';
+        break;
     }
 
     $content = $http->get($branch['versionURL']);
@@ -248,9 +267,9 @@ abstract class PwConnector extends SymfonyCommand {
    *
    * @param string $content
    */
-  public static function getVersion($content = '') {
+  public static function getVersion($content = '', $branch = 'master') {
     if (!$content) {
-      $ch = curl_init(str_replace('{branch}', 'master', PwConnector::versionURL));
+      $ch = curl_init(str_replace('{branch}', $branch, PwConnector::versionURL));
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_USERAGENT, 'ProcessWireGetVersion');
       $content = curl_exec($ch);

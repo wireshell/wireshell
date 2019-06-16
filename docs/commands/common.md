@@ -33,6 +33,7 @@ $ wireshell new {directory}*
 --profile : Default site profile: `path/to/profile.zip` OR one of `beginner, blank, classic, default, languages`
 --src : Path to pre-downloaded folder, zip or tgz: `path/to/src`
 --sha : Download specific commit
+--dev : Download latest develeopment version
 --no-install : Disable installation
 --v : Increase the verbosity of messages
 ```
@@ -90,6 +91,7 @@ $ wireshell upgrade
 
 ```sh
 --sha : Download specific commit
+--dev : Download latest develeopment version
 --check : Just check for core upgrades.
 --download : Just download core upgrades.
 ```

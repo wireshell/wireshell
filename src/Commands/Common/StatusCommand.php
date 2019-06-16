@@ -76,9 +76,13 @@ class StatusCommand extends PwConnector {
     $on = $this->tools->writeInfo('On', false);
     $off = $this->tools->writeComment('Off', false);
     $none = $this->tools->writeComment('None', false);
-
     $version = $config->version;
-    $latestVersion = parent::getVersion();
+    $latestVersion = parent::getVersion(); // master
+
+    if (version_compare($version, $latestVersion, '>')) {
+      $latestVersion = parent::getVersion('', self::BRANCH_DEV); // dev
+      $version .= ' ' . self::BRANCH_DEV;
+    }
 
     if ($version !== $latestVersion) {
       $version .= ' ' . $this->tools->writeMark("(upgrade available: $latestVersion)", false);
